@@ -82,7 +82,7 @@ if __name__ == '__main__':
             _, predicted = torch.max(output.data, 1)
             total_acc += (predicted == train_labels).sum()
             total += len(train_labels)
-            total_loss += loss.item()*len(train_inputs)
+            total_loss += loss.data[0]*len(train_inputs)
 
         train_loss_.append(total_loss / total)
         train_acc_.append(total_acc / total)
@@ -108,11 +108,11 @@ if __name__ == '__main__':
             _, predicted = torch.max(output.data, 1)
             total_acc += (predicted == val_labels).sum()
             total += len(val_labels)
-            total_loss += loss.item()*len(val_inputs)
+            total_loss += loss.data[0]*len(val_inputs)
         val_loss_.append(total_loss / total)
         val_acc_.append(total_acc / total)
         end_time = time.time()
-        if total_acc/total > best_acc:
+        if total_acc/total >= best_acc:
             best_model = model
         print('[Epoch: %3d/%3d] Training Loss: %.4f, Validation Loss: %.4f,'
               ' Training Acc: %.3f, Validation Acc: %.3f, Time Cost: %.3f s'
@@ -140,5 +140,5 @@ if __name__ == '__main__':
         _, predicted = torch.max(output.data, 1)
         total_acc += (predicted == test_labels).sum()
         total += len(test_labels)
-        total_loss += loss.item() * len(test_inputs)
+        total_loss += loss.data[0] * len(test_inputs)
     print("Testing results(Acc):", total_acc / total)
