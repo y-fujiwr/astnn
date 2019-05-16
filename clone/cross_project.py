@@ -35,10 +35,10 @@ if __name__ == '__main__':
     lang = args.lang
     categories = 1
     if lang == 'java':
-        categories = 5
+        categories = 12
     print("Train for ", str.upper(lang))
-    train_data = pd.read_pickle(root+lang+'/train/blocks.pkl').sample(frac=1)
-    test_data = pd.read_pickle(root+lang+'/test/blocks.pkl').sample(frac=1)
+    #train_data = pd.read_pickle(root+lang+'/train/blocks.pkl').sample(frac=1)
+    test_data = pd.read_pickle(root+lang+'/closs_test/blocks.pkl').sample(frac=1)
 
     word2vec = Word2Vec.load(root+lang+"/train/embedding/node_w2v_128").wv
     MAX_TOKENS = word2vec.syn0.shape[0]
@@ -55,6 +55,7 @@ if __name__ == '__main__':
 
     model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
+    model.load_state_dict(torch.load("model/bcb.model"))
     if USE_GPU:
         model.cuda()
 
@@ -63,16 +64,18 @@ if __name__ == '__main__':
     loss_function = torch.nn.BCELoss()
 
     precision, recall, f1 = 0, 0, 0
-    print('Start training...')
+    print('Start testing...')
     for t in range(1, categories+1):
         if lang == 'java':
+            """
             train_data_t = train_data[train_data['label'].isin([t, 0])]
             train_data_t.loc[train_data_t['label'] > 0, 'label'] = 1
-
+            """
             test_data_t = test_data[test_data['label'].isin([t, 0])]
             test_data_t.loc[test_data_t['label'] > 0, 'label'] = 1
         else:
             train_data_t, test_data_t = train_data, test_data
+        """
         # training procedure
         for epoch in range(EPOCHS):
             start_time = time.time()
@@ -96,7 +99,9 @@ if __name__ == '__main__':
                 loss = loss_function(output, Variable(train_labels))
                 loss.backward()
                 optimizer.step()
+        """
         print("Testing-%d..."%t)
+        start = time.time()
         # testing procedure
         predicts = []
         trues = []
@@ -114,24 +119,23 @@ if __name__ == '__main__':
             model.hidden = model.init_hidden()
             output = model(test1_inputs, test2_inputs)
 
-            loss = loss_function(output, Variable(test_labels))
+            #loss = loss_function(output, Variable(test_labels))
 
             # calc testing acc
             predicted = (output.data > 0.5).cpu().numpy()
             predicts.extend(predicted)
             trues.extend(test_labels.cpu().numpy())
-            total += len(test_labels)
-            total_loss += loss.data[0] * len(test_labels)
+            #total += len(test_labels)
+            #total_loss += loss.data[0] * len(test_labels)
         if lang == 'java':
-            weights = [0, 0.005, 0.001, 0.002, 0.010, 0.982]
+            weights = pd.read_pickle("data/java/closs_test/labels_rate.pkl")
             p, r, f, _ = precision_recall_fscore_support(trues, predicts, average='binary')
             precision += weights[t] * p
             recall += weights[t] * r
             f1 += weights[t] * f
             print("Type-" + str(t) + ": " + str(p) + " " + str(r) + " " + str(f))
+            print("elapsed_time:{}[sec]".format(time.time()-start))
         else:
             precision, recall, f1, _ = precision_recall_fscore_support(trues, predicts, average='binary')
 
     print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
-    os.makedirs("model", exist_ok=True)
-    torch.save(model.state_dict(), "model/bcb.model")

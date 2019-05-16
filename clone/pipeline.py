@@ -10,18 +10,23 @@ class Pipeline:
         self.root = root
         self.language = language
         self.sources = None
+        self.sources_gcj = None
         self.blocks = None
+        self.blocks_gcj = None
         self.pairs = None
+        self.pairs_gcj = None
         self.train_file_path = None
         self.dev_file_path = None
         self.test_file_path = None
+        self.closs_test_file_path = None
         self.size = None
 
     # parse source code
     def parse_source(self, output_file, option):
         path = self.root+self.language+'/'+output_file
-        if os.path.exists(path) and option == 'existing':
+        if os.path.exists(path) and os.path.exists(self.root+self.language+"/ast_gcj.pkl") and option == 'existing':
             source = pd.read_pickle(path)
+            source_gcj = pd.read_pickle(self.root+self.language+"/ast_gcj.pkl")
         else:
             if self.language is 'c':
                 from pycparser import c_parser
@@ -38,21 +43,29 @@ class Pipeline:
                     tree = parser.parse_member_declaration()
                     return tree
                 source = pd.read_csv(self.root+self.language+'/bcb_funcs_all.tsv', sep='\t', header=None, encoding='utf-8')
+                source_gcj = pd.read_csv(self.root+self.language+'/gcj_funcs_all.csv', encoding='utf-8', engine='python')
                 source.columns = ['id', 'code']
                 source['code'] = source['code'].apply(parse_program)
+                source_gcj['code'] = source_gcj['code'].apply(parse_program)
                 source.to_pickle(path)
+                source_gcj.to_pickle(self.root+self.language+"/ast_gcj.pkl")
+
         self.sources = source
+        self.sources_gcj = source_gcj
         return source
 
     # create clone pairs
     def read_pairs(self, filename):
         pairs = pd.read_pickle(self.root+self.language+'/'+filename)
         self.pairs = pairs
+        pairs_gcj = pd.read_pickle(self.root+self.language+'/'+"gcj_pair_ids.pkl")
+        self.pairs_gcj = pairs_gcj
 
     # split data for training, developing and testing
     def split_data(self):
         data_path = self.root+self.language+'/'
         data = self.pairs
+        data_gcj = self.pairs_gcj
         data_num = len(data)
         ratios = [int(r) for r in self.ratio.split(':')]
         train_split = int(ratios[0]/sum(ratios)*data_num)
@@ -80,6 +93,12 @@ class Pipeline:
         check_or_create(test_path)
         self.test_file_path = test_path+'test_.pkl'
         test.to_pickle(self.test_file_path)
+
+        closs_test_path = data_path + 'closs_test/'
+        check_or_create(closs_test_path)
+        self.closs_test_file_path = closs_test_path+'closs_test_.pkl'
+        data_gcj.to_pickle(self.closs_test_file_path)
+        data_gcj.to_csv(closs_test_path + "closs_test_.csv")
 
     # construct dictionary and train word embedding
     def dictionary_and_embedding(self, input_file, size):
@@ -141,10 +160,15 @@ class Pipeline:
                 tree.append(btree)
             return tree
         trees = pd.DataFrame(self.sources, copy=True)
+        trees_gcj = pd.DataFrame(self.sources_gcj, copy=True)
         trees['code'] = trees['code'].apply(trans2seq)
+        trees_gcj['code'] = trees_gcj['code'].apply(trans2seq)
         if 'label' in trees.columns:
             trees.drop('label', axis=1, inplace=True)
+        if 'label' in trees_gcj.columns:
+            trees_gcj.drop('label', axis=1, inplace=True)
         self.blocks = trees
+        self.blocks_gcj = trees_gcj
 
     # merge pairs
     def merge(self,data_path,part):
@@ -157,6 +181,19 @@ class Pipeline:
         df.dropna(inplace=True)
 
         df.to_pickle(self.root+self.language+'/'+part+'/blocks.pkl')
+        df.to_csv(self.root+self.language+'/'+part+'/blocks.csv')
+
+    def merge_gcj(self,data_path,part):
+        pairs = pd.read_pickle(data_path)
+        pairs['id1'] = pairs['id1'].astype(int)
+        pairs['id2'] = pairs['id2'].astype(int)
+        df = pd.merge(pairs, self.blocks_gcj, how='left', left_on='id1', right_on='id')
+        df = pd.merge(df, self.blocks_gcj, how='left', left_on='id2', right_on='id')
+        df.drop(['id_x', 'id_y'], axis=1,inplace=True)
+        df.dropna(inplace=True)
+
+        df.to_pickle(self.root+self.language+'/'+part+'/blocks.pkl')
+        df.to_csv(self.root+self.language+'/'+part+'/blocks.csv')
 
     # run for processing data to train
     def run(self):
@@ -177,7 +214,7 @@ class Pipeline:
         self.merge(self.train_file_path, 'train')
         self.merge(self.dev_file_path, 'dev')
         self.merge(self.test_file_path, 'test')
-
+        self.merge_gcj(self.closs_test_file_path, 'closs_test')
 
 import argparse
 parser = argparse.ArgumentParser(description="Choose a dataset:[c|java]")
