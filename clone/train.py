@@ -25,7 +25,7 @@ def get_batch(dataset, idx, bs):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description="Choose a dataset:[c|java]")
+    parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
     parser.add_argument('--lang')
     args = parser.parse_args()
     if not args.lang:
@@ -36,6 +36,10 @@ if __name__ == '__main__':
     categories = 1
     if lang == 'java':
         categories = 5
+    elif lang in 'gcj':
+        categories = 12
+    elif lang in 'check':
+        categories = 2
     print("Train for ", str.upper(lang))
     train_data = pd.read_pickle(root+lang+'/train/blocks.pkl').sample(frac=1)
     test_data = pd.read_pickle(root+lang+'/test/blocks.pkl').sample(frac=1)
@@ -65,7 +69,7 @@ if __name__ == '__main__':
     precision, recall, f1 = 0, 0, 0
     print('Start training...')
     for t in range(1, categories+1):
-        if lang == 'java':
+        if lang in ['java','gcj','check']:
             train_data_t = train_data[train_data['label'].isin([t, 0])]
             train_data_t.loc[train_data_t['label'] > 0, 'label'] = 1
 
@@ -109,7 +113,6 @@ if __name__ == '__main__':
             test1_inputs, test2_inputs, test_labels = batch
             if USE_GPU:
                 test_labels = test_labels.cuda()
-
             model.batch_size = len(test_labels)
             model.hidden = model.init_hidden()
             output = model(test1_inputs, test2_inputs)
@@ -122,8 +125,13 @@ if __name__ == '__main__':
             trues.extend(test_labels.cpu().numpy())
             total += len(test_labels)
             total_loss += loss.data[0] * len(test_labels)
-        if lang == 'java':
-            weights = [0, 0.005, 0.001, 0.002, 0.010, 0.982]
+        if lang in ['java','gcj','check']:
+            if lang in 'java':
+                weights = [0, 0.005, 0.001, 0.002, 0.010, 0.982]
+            elif lang in ['gcj']:
+                weights = pd.read_pickle("data/gcj/labels_rate.pkl")
+            elif lang in 'check':
+                weights = [0, 0.962, 0.038]
             p, r, f, _ = precision_recall_fscore_support(trues, predicts, average='binary')
             precision += weights[t] * p
             recall += weights[t] * r
@@ -131,7 +139,10 @@ if __name__ == '__main__':
             print("Type-" + str(t) + ": " + str(p) + " " + str(r) + " " + str(f))
         else:
             precision, recall, f1, _ = precision_recall_fscore_support(trues, predicts, average='binary')
+        result = pd.DataFrame(trues,columns=['trues']).join(pd.DataFrame(predicts,columns=['predicts']))
+        os.makedirs("data/{}/log".format(lang),exist_ok=True)
+        result.to_csv("data/{}/log/Type-{}.csv".format(lang,t))
 
     print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
     os.makedirs("model", exist_ok=True)
-    torch.save(model.state_dict(), "model/bcb.model")
+    torch.save(model.state_dict(), "model/{}.model".format(lang))

@@ -37,8 +37,7 @@ if __name__ == '__main__':
     if lang == 'java':
         categories = 12
     print("Train for ", str.upper(lang))
-    #train_data = pd.read_pickle(root+lang+'/train/blocks.pkl').sample(frac=1)
-    test_data = pd.read_pickle(root+lang+'/closs_test/blocks.pkl').sample(frac=1)
+    test_data = pd.read_pickle(root+lang+'/cross_test/blocks.pkl').sample(frac=1)
 
     word2vec = Word2Vec.load(root+lang+"/train/embedding/node_w2v_128").wv
     MAX_TOKENS = word2vec.syn0.shape[0]
@@ -67,39 +66,10 @@ if __name__ == '__main__':
     print('Start testing...')
     for t in range(1, categories+1):
         if lang == 'java':
-            """
-            train_data_t = train_data[train_data['label'].isin([t, 0])]
-            train_data_t.loc[train_data_t['label'] > 0, 'label'] = 1
-            """
             test_data_t = test_data[test_data['label'].isin([t, 0])]
             test_data_t.loc[test_data_t['label'] > 0, 'label'] = 1
         else:
             train_data_t, test_data_t = train_data, test_data
-        """
-        # training procedure
-        for epoch in range(EPOCHS):
-            start_time = time.time()
-            # training epoch
-            total_acc = 0.0
-            total_loss = 0.0
-            total = 0.0
-            i = 0
-            while i < len(train_data_t):
-                batch = get_batch(train_data_t, i, BATCH_SIZE)
-                i += BATCH_SIZE
-                train1_inputs, train2_inputs, train_labels = batch
-                if USE_GPU:
-                    train1_inputs, train2_inputs, train_labels = train1_inputs, train2_inputs, train_labels.cuda()
-
-                model.zero_grad()
-                model.batch_size = len(train_labels)
-                model.hidden = model.init_hidden()
-                output = model(train1_inputs, train2_inputs)
-
-                loss = loss_function(output, Variable(train_labels))
-                loss.backward()
-                optimizer.step()
-        """
         print("Testing-%d..."%t)
         start = time.time()
         # testing procedure
@@ -119,16 +89,13 @@ if __name__ == '__main__':
             model.hidden = model.init_hidden()
             output = model(test1_inputs, test2_inputs)
 
-            #loss = loss_function(output, Variable(test_labels))
-
             # calc testing acc
             predicted = (output.data > 0.5).cpu().numpy()
             predicts.extend(predicted)
             trues.extend(test_labels.cpu().numpy())
-            #total += len(test_labels)
-            #total_loss += loss.data[0] * len(test_labels)
+
         if lang == 'java':
-            weights = pd.read_pickle("data/java/closs_test/labels_rate.pkl")
+            weights = pd.read_pickle("data/java/cross_test/labels_rate.pkl")
             p, r, f, _ = precision_recall_fscore_support(trues, predicts, average='binary')
             precision += weights[t] * p
             recall += weights[t] * r
@@ -137,5 +104,8 @@ if __name__ == '__main__':
             print("elapsed_time:{}[sec]".format(time.time()-start))
         else:
             precision, recall, f1, _ = precision_recall_fscore_support(trues, predicts, average='binary')
+        result = pd.DataFrame(trues,columns=['trues']).join(pd.DataFrame(predicts,columns=['predicts']))
+        os.makedirs("data/{}/log".format(lang),exist_ok=True)
+        result.to_csv("data/{}/log/Type-{}.csv".format(lang,t))
 
     print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
