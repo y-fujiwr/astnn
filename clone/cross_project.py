@@ -25,7 +25,7 @@ def get_batch(dataset, idx, bs):
 if __name__ == '__main__':
     import argparse
 
-    parser = argparse.ArgumentParser(description="Choose a dataset:[c|java]")
+    parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
     parser.add_argument('--lang')
     args = parser.parse_args()
     if not args.lang:
@@ -36,6 +36,8 @@ if __name__ == '__main__':
     categories = 1
     if lang == 'java':
         categories = 12
+    elif lang in 'gcj':
+        categories = 5
     print("Train for ", str.upper(lang))
     test_data = pd.read_pickle(root+lang+'/cross_test/blocks.pkl').sample(frac=1)
 
@@ -54,7 +56,10 @@ if __name__ == '__main__':
 
     model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
-    model.load_state_dict(torch.load("model/bcb.model"))
+    if lang in 'java':
+        model.load_state_dict(torch.load("model/bcb.model"))
+    elif lang in 'gcj':
+        model.load_state_dict(torch.load("model/gcj.model"))
     if USE_GPU:
         model.cuda()
 
@@ -65,7 +70,7 @@ if __name__ == '__main__':
     precision, recall, f1 = 0, 0, 0
     print('Start testing...')
     for t in range(1, categories+1):
-        if lang == 'java':
+        if lang in ['java','gcj']:
             test_data_t = test_data[test_data['label'].isin([t, 0])]
             test_data_t.loc[test_data_t['label'] > 0, 'label'] = 1
         else:
@@ -94,8 +99,11 @@ if __name__ == '__main__':
             predicts.extend(predicted)
             trues.extend(test_labels.cpu().numpy())
 
-        if lang == 'java':
-            weights = pd.read_pickle("data/java/cross_test/labels_rate.pkl")
+        if lang in ['java','gcj']:
+            if lang in 'java':
+                weights = pd.read_pickle("data/java/cross_test/labels_rate.pkl")
+            elif lang in 'gcj':
+                weights = [0, 0.005, 0.001, 0.002, 0.010, 0.982]
             p, r, f, _ = precision_recall_fscore_support(trues, predicts, average='binary')
             precision += weights[t] * p
             recall += weights[t] * r
@@ -105,7 +113,7 @@ if __name__ == '__main__':
         else:
             precision, recall, f1, _ = precision_recall_fscore_support(trues, predicts, average='binary')
         result = pd.DataFrame(trues,columns=['trues']).join(pd.DataFrame(predicts,columns=['predicts']))
-        os.makedirs("data/{}/log".format(lang),exist_ok=True)
-        result.to_csv("data/{}/log/Type-{}.csv".format(lang,t))
+        os.makedirs("data/{}/log_cross".format(lang),exist_ok=True)
+        result.to_csv("data/{}/log_cross/Type-{}.csv".format(lang,t))
 
     print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))

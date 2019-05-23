@@ -24,11 +24,11 @@ class Pipeline:
     # parse source code
     def parse_source(self, output_file, option):
         path = self.root+self.language+'/'+output_file
-        if self.language is 'java' and os.path.exists(path) and os.path.exists(self.root+self.language+"/ast_cross.pkl") and option == 'existing':
+        if self.language in ['java','gcj'] and os.path.exists(path) and os.path.exists(self.root+self.language+"/ast_cross.pkl") and option == 'existing':
             source = pd.read_pickle(path)
             source_cross = pd.read_pickle(self.root+self.language+"/ast_cross.pkl")
         elif os.path.exists(path) and option == 'existing':
-            source = pd.read_pickle(path)            
+            source = pd.read_pickle(path)     
         else:
             if self.language is 'c':
                 from pycparser import c_parser
@@ -44,7 +44,7 @@ class Pipeline:
                     parser = javalang.parser.Parser(tokens)
                     tree = parser.parse_member_declaration()
                     return tree
-                if self.language is 'java':
+                if self.language in 'java':
                     source = pd.read_csv(self.root+self.language+'/bcb_funcs_all.tsv', sep='\t', header=None, encoding='utf-8')
                 elif self.language in 'gcj':
                     source = pd.read_csv(self.root+self.language+'/gcj_funcs_all.csv', encoding='utf-8', engine='python')
@@ -53,13 +53,17 @@ class Pipeline:
                 source.columns = ['id', 'code']
                 source['code'] = source['code'].apply(parse_program)
                 source.to_pickle(path)
-                if self.language is 'java':
+                if self.language in 'java':
                     source_cross = pd.read_csv(self.root+self.language+'/gcj_funcs_all.csv', encoding='utf-8', engine='python')
                     source_cross['code'] = source_cross['code'].apply(parse_program)
                     source_cross.to_pickle(self.root+self.language+"/ast_cross.pkl")
-
+                elif self.language in 'gcj':
+                    source_cross = pd.read_csv(self.root+'java/bcb_funcs_all.tsv', sep='\t', header=None, encoding='utf-8')
+                    source_cross.columns = ['id','code']
+                    source_cross['code'] = source_cross['code'].apply(parse_program)
+                    source_cross.to_pickle(self.root+self.language+"/ast_cross.pkl")                        
         self.sources = source
-        if self.language is 'java':
+        if self.language in ['java', 'gcj']:
             self.source_cross = source_cross
         return source
 
@@ -70,6 +74,9 @@ class Pipeline:
         if self.language is 'java':
             pairs_cross = pd.read_pickle(self.root+self.language+'/'+"gcj_pair_ids.pkl")
             self.pairs_cross = pairs_cross
+        elif self.language in 'gcj':
+            pairs_cross = pd.read_pickle(self.root+"java/bcb_pair_ids.pkl")
+            self.pairs_cross = pairs_cross            
 
     # split data for training, developing and testing
     def split_data(self):
@@ -104,7 +111,7 @@ class Pipeline:
         self.test_file_path = test_path+'test_.pkl'
         test.to_pickle(self.test_file_path)
 
-        if self.language is 'java':
+        if self.language in ['java','gcj']:
             cross_test_path = data_path + 'cross_test/'
             check_or_create(cross_test_path)
             self.cross_test_file_path = cross_test_path+'cross_test_.pkl'
@@ -175,7 +182,7 @@ class Pipeline:
         if 'label' in trees.columns:
             trees.drop('label', axis=1, inplace=True)
         self.blocks = trees
-        if self.language in 'java':
+        if self.language in ['java','gcj']:
             trees_cross = pd.DataFrame(self.source_cross, copy=True)
             trees_cross['code'] = trees_cross['code'].apply(trans2seq)
             if 'label' in trees_cross.columns:
@@ -231,7 +238,7 @@ class Pipeline:
         self.merge(self.train_file_path, 'train')
         self.merge(self.dev_file_path, 'dev')
         self.merge(self.test_file_path, 'test')
-        if self.language is 'java':
+        if self.language in ['java','gcj']:
             self.merge_cross(self.cross_test_file_path, 'cross_test')
 
 import argparse
