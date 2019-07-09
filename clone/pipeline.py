@@ -37,19 +37,28 @@ class Pipeline:
                 source.columns = ['id', 'code', 'label']
                 source['code'] = source['code'].apply(parser.parse)
                 source.to_pickle(path)
-            elif self.language in ['java','gcj','check']:
+            elif self.language in ['java','gcj','sort','check','sesame','oreo']:
                 import javalang
                 def parse_program(func):
-                    tokens = javalang.tokenizer.tokenize(func)
-                    parser = javalang.parser.Parser(tokens)
-                    tree = parser.parse_member_declaration()
-                    return tree
+                    try:
+                        tokens = javalang.tokenizer.tokenize(func)
+                        parser = javalang.parser.Parser(tokens)
+                        tree = parser.parse_member_declaration()
+                        return tree
+                    except:
+                        tokens = javalang.tokenizer.tokenize("public int x(){return 0;}")
+                        parser = javalang.parser.Parser(tokens)
+                        tree = parser.parse_member_declaration()
+                        return tree
                 if self.language in 'java':
                     source = pd.read_csv(self.root+self.language+'/bcb_funcs_all.tsv', sep='\t', header=None, encoding='utf-8')
-                elif self.language in 'gcj':
-                    source = pd.read_csv(self.root+self.language+'/gcj_funcs_all.csv', encoding='utf-8', engine='python')
-                elif self.language in 'check':
-                    source = pd.read_csv(self.root+self.language+'/check_funcs_all.csv', encoding='utf-8', engine='python')
+                #elif self.language in 'gcj':
+                else:
+                    source = pd.read_csv(self.root+self.language+'/{}_funcs_all.csv'.format(self.language), encoding='utf-8', engine='python')
+                #elif self.language in 'sort':
+                    #source = pd.read_csv(self.root+self.language+'/sort_funcs_all.csv', encoding='utf-8', engine='python')
+                #elif self.language in 'check':
+                    #source = pd.read_csv(self.root+self.language+'/check_funcs_all.csv', encoding='utf-8', engine='python')
                 source.columns = ['id', 'code']
                 source['code'] = source['code'].apply(parse_program)
                 source.to_pickle(path)
@@ -71,7 +80,7 @@ class Pipeline:
     def read_pairs(self, filename):
         pairs = pd.read_pickle(self.root+self.language+'/'+filename)
         self.pairs = pairs
-        if self.language is 'java':
+        if self.language in 'java':
             pairs_cross = pd.read_pickle(self.root+self.language+'/'+"gcj_pair_ids.pkl")
             self.pairs_cross = pairs_cross
         elif self.language in 'gcj':
@@ -133,7 +142,7 @@ class Pipeline:
         if self.language is 'c':
             sys.path.append('../')
             from prepare_data import get_sequences as func
-        elif self.language in ['java', 'gcj', 'check']:
+        elif self.language in ['java', 'gcj','sort', 'check','sesame','oreo']:
             from utils import get_sequence as func
 
         def trans_to_sequences(ast):
@@ -153,7 +162,7 @@ class Pipeline:
     def generate_block_seqs(self):
         if self.language is 'c':
             from prepare_data import get_blocks as func
-        elif self.language in ['java', 'gcj', 'check']:
+        elif self.language in ['java', 'gcj', 'sort','check', 'sesame','oreo']:
             from utils import get_blocks_v1 as func
         from gensim.models.word2vec import Word2Vec
 
@@ -220,14 +229,15 @@ class Pipeline:
         print('parse source code...')
         self.parse_source(output_file='ast.pkl',option='existing')
         print('read id pairs...')
-        if self.language is 'c':
+        if self.language in 'c':
             self.read_pairs('oj_clone_ids.pkl')
-        elif self.language is 'java':
+        elif self.language in 'java':
             self.read_pairs('bcb_pair_ids.pkl')
-        elif self.language in 'gcj':
-            self.read_pairs('gcj_pair_ids.pkl')
-        elif self.language in 'check':
-            self.read_pairs('check_pair_ids.pkl')
+        else:
+        #elif self.language in 'gcj':
+            self.read_pairs('{}_pair_ids.pkl'.format(self.language))
+        #elif self.language in 'check':
+            #self.read_pairs('check_pair_ids.pkl')
         print('split data...')
         self.split_data()
         print('train word embedding...')
@@ -240,6 +250,10 @@ class Pipeline:
         self.merge(self.test_file_path, 'test')
         if self.language in ['java','gcj']:
             self.merge_cross(self.cross_test_file_path, 'cross_test')
+        if self.language in 'sort':
+            x = pd.read_pickle("data/sort/train/blocks.pkl").append(pd.read_pickle("data/sort/dev/blocks.pkl")).append(pd.read_pickle("data/sort/test/blocks.pkl"))
+            x.to_csv("data/sort/test/blocks.csv")
+            x.to_pickle("data/sort/test/blocks.pkl")
 
 import argparse
 parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
@@ -248,7 +262,10 @@ args = parser.parse_args()
 if not args.lang:
     print("No specified dataset")
     exit(1)
-ppl = Pipeline('3:1:1', 'data/', str(args.lang))
+if args.lang in 'sort':
+    ppl = Pipeline('1:1:1', 'data/', str(args.lang))
+else:
+    ppl = Pipeline('3:1:1', 'data/', str(args.lang))
 ppl.run()
 
 

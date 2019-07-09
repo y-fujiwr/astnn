@@ -52,6 +52,8 @@ def get_blocks_v1(node, block_seq):
     if name in ['MethodDeclaration', 'ConstructorDeclaration']:
         block_seq.append(BlockNode(node))
         body = node.body
+        if body == None:
+            return
         for child in body:
             if get_token(child) not in logic and not hasattr(child, 'block'):
                 block_seq.append(BlockNode(child))

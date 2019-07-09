@@ -33,7 +33,7 @@ if __name__ == '__main__':
     HIDDEN_DIM = 100
     ENCODE_DIM = 128
     LABELS = 104
-    EPOCHS = 15
+    EPOCHS = 1
     BATCH_SIZE = 64
     USE_GPU = False
     MAX_TOKENS = word2vec.syn0.shape[0]
@@ -41,6 +41,8 @@ if __name__ == '__main__':
 
     model = BatchProgramClassifier(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
+    model.load_state_dict(torch.load("model/model"))
+    
     if USE_GPU:
         model.cuda()
 
@@ -53,6 +55,7 @@ if __name__ == '__main__':
     train_acc_ = []
     val_acc_ = []
     best_acc = 0.0
+    """
     print('Start training...')
     # training procedure
     for epoch in range(EPOCHS):
@@ -118,12 +121,13 @@ if __name__ == '__main__':
               ' Training Acc: %.3f, Validation Acc: %.3f, Time Cost: %.3f s'
               % (epoch, EPOCHS, train_loss_[epoch], val_loss_[epoch],
                  train_acc_[epoch], val_acc_[epoch], end_time - start_time))
-
+    """
     total_acc = 0.0
     total_loss = 0.0
     total = 0.0
     i = 0
-    model = best_model
+    #model = best_model
+    
     while i < len(test_data):
         batch = get_batch(test_data, i, BATCH_SIZE)
         i += BATCH_SIZE
@@ -142,3 +146,5 @@ if __name__ == '__main__':
         total += len(test_labels)
         total_loss += loss.data[0] * len(test_inputs)
     print("Testing results(Acc):", total_acc / total)
+    os.makedirs("model",exist_ok=True)
+    torch.save(model.state_dict(), "model/model")
