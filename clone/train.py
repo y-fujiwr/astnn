@@ -27,6 +27,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
     parser.add_argument('--lang')
+    parser.add_argument('-g','--gpu', action='store_true')
     args = parser.parse_args()
     if not args.lang:
         print("No specified dataset")
@@ -57,7 +58,10 @@ if __name__ == '__main__':
     LABELS = 1
     EPOCHS = 10
     BATCH_SIZE = 32
-    USE_GPU = False
+    if args.gpu == False:
+        USE_GPU = False
+    else:
+        USE_GPU = True
 
     model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
