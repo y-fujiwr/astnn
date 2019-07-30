@@ -28,6 +28,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
     parser.add_argument('--lang')
     parser.add_argument('-g','--gpu', action='store_true')
+    parser.add_argument('-b','--batch_size', type=int, default=1024)
     args = parser.parse_args()
     if not args.lang:
         print("No specified dataset")
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     ENCODE_DIM = 128
     LABELS = 1
     EPOCHS = 10
-    BATCH_SIZE = 32
+    BATCH_SIZE = args.batch_size
     if args.gpu == False:
         USE_GPU = False
     else:
@@ -69,7 +70,7 @@ if __name__ == '__main__':
         model.cuda()
 
     parameters = model.parameters()
-    optimizer = torch.optim.Adam(parameters)
+    optimizer = torch.optim.SGD(parameters, lr=0.01, weight_decay=5e-4)
     loss_function = torch.nn.BCELoss()
 
     precision, recall, f1 = 0, 0, 0
