@@ -133,6 +133,8 @@ class BatchProgramCC(nn.Module):
             end += lens[i]
             if max_len-lens[i]:
                 seq.append(self.get_zeros(max_len-lens[i]))
+            if start == end:
+                continue
             seq.append(encodes[start:end])
             start = end
         encodes = torch.cat(seq)

@@ -3,6 +3,13 @@ import os
 import sys
 import warnings
 warnings.filterwarnings('ignore')
+import csv
+csv.field_size_limit(1000000000)
+sys.setrecursionlimit(100000)
+from time import time
+import numpy as np
+from tqdm import trange
+import javalang
 
 class Pipeline:
     def __init__(self,  ratio, root, language):
@@ -27,7 +34,7 @@ class Pipeline:
         if self.language in ['java','gcj'] and os.path.exists(path) and os.path.exists(self.root+self.language+"/ast_cross.pkl") and option == 'existing':
             source = pd.read_pickle(path)
             source_cross = pd.read_pickle(self.root+self.language+"/ast_cross.pkl")
-        elif os.path.exists(path) and option == 'existing':
+        elif os.path.exists(path) and option == 'existing' and self.language not in ['check']:
             source = pd.read_pickle(path)     
         else:
             if self.language is 'c':
@@ -38,7 +45,6 @@ class Pipeline:
                 source['code'] = source['code'].apply(parser.parse)
                 source.to_pickle(path)
             elif self.language in ['java','gcj','sort','check','sesame','oreo']:
-                import javalang
                 def parse_program(func):
                     try:
                         tokens = javalang.tokenizer.tokenize(func)
@@ -46,21 +52,17 @@ class Pipeline:
                         tree = parser.parse_member_declaration()
                         return tree
                     except:
-                        tokens = javalang.tokenizer.tokenize("public int x(){return 0;}")
-                        parser = javalang.parser.Parser(tokens)
-                        tree = parser.parse_member_declaration()
-                        return tree
+                        return "parseError"
                 if self.language in 'java':
                     source = pd.read_csv(self.root+self.language+'/bcb_funcs_all.tsv', sep='\t', header=None, encoding='utf-8')
-                #elif self.language in 'gcj':
+                    source.columns = ['id', 'code']
+                elif self.language in 'oreo':
+                    source = pd.read_csv(self.root+self.language+'/{}_funcs_all.csv'.format(self.language), encoding='utf-8')
                 else:
-                    source = pd.read_csv(self.root+self.language+'/{}_funcs_all.csv'.format(self.language), encoding='utf-8', engine='python')
-                #elif self.language in 'sort':
-                    #source = pd.read_csv(self.root+self.language+'/sort_funcs_all.csv', encoding='utf-8', engine='python')
-                #elif self.language in 'check':
-                    #source = pd.read_csv(self.root+self.language+'/check_funcs_all.csv', encoding='utf-8', engine='python')
-                source.columns = ['id', 'code']
-                source['code'] = source['code'].apply(parse_program)
+                    source = pd.read_csv(self.root+self.language+'/{}_funcs_all.csv'.format(self.language), encoding='utf-8')
+                
+                if self.language not in ['oreo','check']:
+                    source['code'] = source['code'].apply(parse_program)
                 source.to_pickle(path)
                 if self.language in 'java':
                     source_cross = pd.read_csv(self.root+self.language+'/gcj_funcs_all.csv', encoding='utf-8', engine='python')
@@ -78,14 +80,16 @@ class Pipeline:
 
     # create clone pairs
     def read_pairs(self, filename):
+        parse_error = list(self.sources[self.sources['code'].isin(['parseError'])].id)
         pairs = pd.read_pickle(self.root+self.language+'/'+filename)
+        pairs = pairs[(~pairs['id1'].isin(parse_error)) & (~pairs['id2'].isin(parse_error))].dropna(how='any')
         self.pairs = pairs
         if self.language in 'java':
             pairs_cross = pd.read_pickle(self.root+self.language+'/'+"gcj_pair_ids.pkl")
             self.pairs_cross = pairs_cross
         elif self.language in 'gcj':
             pairs_cross = pd.read_pickle(self.root+"java/bcb_pair_ids.pkl")
-            self.pairs_cross = pairs_cross            
+            self.pairs_cross = pairs_cross
 
     # split data for training, developing and testing
     def split_data(self):
@@ -135,8 +139,21 @@ class Pipeline:
             input_file = self.train_file_path
         pairs = pd.read_pickle(input_file)
         train_ids = pairs['id1'].append(pairs['id2']).unique()
-
         trees = self.sources.set_index('id',drop=False).loc[train_ids]
+        if self.language in ['oreo','check']:
+            self.x = 0
+            def parse_program(func):
+                try:
+                    self.x += 1
+                    if self.x%1000 == 0:
+                        print(self.x)
+                    tokens = javalang.tokenizer.tokenize(func)
+                    parser = javalang.parser.Parser(tokens)
+                    tree = parser.parse_member_declaration()
+                    return tree
+                except:
+                    return "parseError"
+            trees['code'] = trees['code'].apply(parse_program)
         if not os.path.exists(data_path+'train/embedding'):
             os.mkdir(data_path+'train/embedding')
         if self.language is 'c':
@@ -204,11 +221,57 @@ class Pipeline:
         pairs = pd.read_pickle(data_path)
         pairs['id1'] = pairs['id1'].astype(int)
         pairs['id2'] = pairs['id2'].astype(int)
-        df = pd.merge(pairs, self.blocks, how='left', left_on='id1', right_on='id')
-        df = pd.merge(df, self.blocks, how='left', left_on='id2', right_on='id')
-        df.drop(['id_x', 'id_y'], axis=1,inplace=True)
-        df.dropna(inplace=True)
-
+        
+        if self.language in ['oreo','check']:
+            from utils import get_blocks_v1 as func
+            from gensim.models.word2vec import Word2Vec
+            word2vec = Word2Vec.load(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size)).wv
+            vocab = word2vec.vocab
+            max_token = word2vec.syn0.shape[0]
+            def parse_program(func):
+                try:
+                    self.x += 1
+                    if self.x%1000 == 0:
+                        print(self.x)
+                    tokens = javalang.tokenizer.tokenize(func)
+                    parser = javalang.parser.Parser(tokens)
+                    tree = parser.parse_member_declaration()
+                    return tree
+                except:
+                    return "parseError"
+            def tree_to_index(node):
+                token = node.token
+                result = [vocab[token].index if token in vocab else max_token]
+                children = node.children
+                for child in children:
+                    result.append(tree_to_index(child))
+                return result
+            def trans2seq(r):
+                blocks = []
+                func(r, blocks)
+                tree = []
+                for b in blocks:
+                    btree = tree_to_index(b)
+                    tree.append(btree)
+                return tree
+            train_ids = pairs['id1'].append(pairs['id2']).unique()
+            trees = self.sources.set_index('id',drop=False).loc[train_ids]
+            trees = trees.rename(columns={'id':'id3'})
+            self.x = 0
+            trees['code'] = trees['code'].apply(parse_program)
+            parse_error = list(trees[trees['code'].isin(['parseError'])].id3)
+            pairs = pairs[(~pairs['id1'].isin(parse_error)) & (~pairs['id2'].isin(parse_error))].dropna(how='any')
+            trees = trees[~trees['code'].isin(['parseError'])]
+            trees['code'] = trees['code'].apply(trans2seq)
+            df = pd.merge(pairs, trees, how='left', left_on='id1', right_on='id3')
+            df = pd.merge(df, trees, how='left', left_on='id2', right_on='id3')
+            df.drop(['id3_x', 'id3_y'], axis=1,inplace=True)
+            df.dropna(inplace=True)
+        else:
+            df = pd.merge(pairs, self.blocks, how='left', left_on='id1', right_on='id')
+            df = pd.merge(df, self.blocks, how='left', left_on='id2', right_on='id')
+            df.drop(['id_x', 'id_y'], axis=1,inplace=True)
+            df.dropna(inplace=True)        
         df.to_pickle(self.root+self.language+'/'+part+'/blocks.pkl')
         df.to_csv(self.root+self.language+'/'+part+'/blocks.csv')
 
@@ -234,16 +297,16 @@ class Pipeline:
         elif self.language in 'java':
             self.read_pairs('bcb_pair_ids.pkl')
         else:
-        #elif self.language in 'gcj':
             self.read_pairs('{}_pair_ids.pkl'.format(self.language))
-        #elif self.language in 'check':
-            #self.read_pairs('check_pair_ids.pkl')
         print('split data...')
         self.split_data()
         print('train word embedding...')
         self.dictionary_and_embedding(None,128)
-        print('generate block sequences...')
-        self.generate_block_seqs()
+        if self.language in ['oreo','check']:
+            self.blocks = self.sources
+        else:
+            print('generate block sequences...')
+            self.generate_block_seqs()
         print('merge pairs and blocks...')
         self.merge(self.train_file_path, 'train')
         self.merge(self.dev_file_path, 'dev')
@@ -265,7 +328,7 @@ if not args.lang:
 if args.lang in 'sort':
     ppl = Pipeline('1:1:1', 'data/', str(args.lang))
 else:
-    ppl = Pipeline('3:1:1', 'data/', str(args.lang))
+    ppl = Pipeline('8:1:1', 'data/', str(args.lang))
 ppl.run()
 
 

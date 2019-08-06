@@ -28,7 +28,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
     parser.add_argument('--lang')
     parser.add_argument('-g','--gpu', action='store_true')
-    parser.add_argument('-b','--batch_size', type=int, default=1024)
+    parser.add_argument('-b','--batch_size', type=int, default=32)
+    parser.add_argument('-e','--epoch', type=int, default=5)
     args = parser.parse_args()
     if not args.lang:
         print("No specified dataset")
@@ -46,7 +47,9 @@ if __name__ == '__main__':
         categories = 2
     print("Train for ", str.upper(lang))
     train_data = pd.read_pickle(root+lang+'/train/blocks.pkl').sample(frac=1)
+    train_data = train_data[~(train_data['code_x'] == "[]") & ~(train_data['code_y'] == "[]")]
     test_data = pd.read_pickle(root+lang+'/test/blocks.pkl').sample(frac=1)
+    test_data = test_data[~(test_data['code_x'] == "[]") & ~(test_data['code_y'] == "[]")]
 
     word2vec = Word2Vec.load(root+lang+"/train/embedding/node_w2v_128").wv
     MAX_TOKENS = word2vec.syn0.shape[0]
@@ -57,7 +60,7 @@ if __name__ == '__main__':
     HIDDEN_DIM = 128
     ENCODE_DIM = 128
     LABELS = 1
-    EPOCHS = 10
+    EPOCHS = args.epoch
     BATCH_SIZE = args.batch_size
     if args.gpu == False:
         USE_GPU = False
@@ -70,7 +73,7 @@ if __name__ == '__main__':
         model.cuda()
 
     parameters = model.parameters()
-    optimizer = torch.optim.SGD(parameters, lr=0.01, weight_decay=5e-4)
+    optimizer = torch.optim.Adamax(parameters)
     loss_function = torch.nn.BCELoss()
 
     precision, recall, f1 = 0, 0, 0
