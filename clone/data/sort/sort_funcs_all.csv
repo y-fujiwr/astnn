@@ -1,0 +1,3900 @@
+id,code
+0,"    void sort(int a[]) throws Exception {
+        for (int i = a.length; --i >= 0; ) {
+            boolean flipped = false;
+            for (int j = 0; j < i; j++) {
+                if (stopRequested) {
+                    return;
+                }
+                if (a[j] > a[j + 1]) {
+                    int T = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = T;
+                    flipped = true;
+                }
+                pause(i, j);
+            }
+            if (!flipped) {
+                return;
+            }
+        }
+    }
+"
+1,"    public void bubblesort(String filenames[]) {
+        for (int i = filenames.length - 1; i > 0; i--) {
+            for (int j = 0; j < i; j++) {
+                String temp;
+                if (filenames[j].compareTo(filenames[j + 1]) > 0) {
+                    temp = filenames[j];
+                    filenames[j] = filenames[j + 1];
+                    filenames[j + 1] = temp;
+                }
+            }
+        }
+    }
+"
+2,"    static void sort(int[] a) {
+        int i = 0;
+        while (i < a.length - 1) {
+            int j = 0;
+            while (j < (a.length - i) - 1) {
+                if (a[j] > a[j + 1]) {
+                    int aux = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = aux;
+                }
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+    }
+"
+3,"    public static void sort(float norm_abst[]) {
+        float temp;
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                if (norm_abst[j] > norm_abst[j + 1]) {
+                    temp = norm_abst[j];
+                    norm_abst[j] = norm_abst[j + 1];
+                    norm_abst[j + 1] = temp;
+                }
+            }
+        }
+        printFixed(norm_abst[0]);
+        print("" "");
+        printFixed(norm_abst[1]);
+        print("" "");
+        printFixed(norm_abst[2]);
+        print("" "");
+        printFixed(norm_abst[3]);
+        print("" "");
+        printFixed(norm_abst[4]);
+        print("" "");
+        printFixed(norm_abst[5]);
+        print("" "");
+        printFixed(norm_abst[6]);
+        print("" "");
+        printFixed(norm_abst[7]);
+        print(""\n"");
+    }
+"
+4,"    public static void sort(float norm_abst[]) {
+        float temp;
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                if (norm_abst[j] > norm_abst[j + 1]) {
+                    temp = norm_abst[j];
+                    norm_abst[j] = norm_abst[j + 1];
+                    norm_abst[j + 1] = temp;
+                }
+            }
+        }
+        printFixed(norm_abst[0]);
+        print("" "");
+        printFixed(norm_abst[1]);
+        print("" "");
+        printFixed(norm_abst[2]);
+        print("" "");
+        printFixed(norm_abst[3]);
+        print("" "");
+        printFixed(norm_abst[4]);
+        print("" "");
+        printFixed(norm_abst[5]);
+        print("" "");
+        printFixed(norm_abst[6]);
+        print("" "");
+        printFixed(norm_abst[7]);
+        print(""\n"");
+    }
+"
+5,"    void bsort(int a[], int lo, int hi) throws Exception {
+        for (int j = hi; j > lo; j--) {
+            for (int i = lo; i < j; i++) {
+                if (a[i] > a[i + 1]) {
+                    int T = a[i];
+                    a[i] = a[i + 1];
+                    a[i + 1] = T;
+                    pause();
+                }
+            }
+        }
+    }
+"
+6,"    static void sort(int[] a) {
+        int i = 0;
+        while (i < a.length - 1) {
+            int j = 0;
+            while (j < (a.length - i) - 1) {
+                if (a[j] > a[j + 1]) {
+                    int aux = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = aux;
+                }
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+    }
+"
+7,"    static void sort(int[] a) {
+        int i = 0;
+        while (i < a.length - 1) {
+            int j = 0;
+            while (j < (a.length - i) - 1) {
+                if (a[j] > a[j + 1]) {
+                    int aux = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = aux;
+                }
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+    }
+"
+8,"    void sort(int a[]) throws Exception {
+        int j;
+        int limit = a.length;
+        int st = -1;
+        while (st < limit) {
+            boolean flipped = false;
+            st++;
+            limit--;
+            for (j = st; j < limit; j++) {
+                if (stopRequested) {
+                    return;
+                }
+                if (a[j] > a[j + 1]) {
+                    int T = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = T;
+                    flipped = true;
+                    pause(st, limit);
+                }
+            }
+            if (!flipped) {
+                return;
+            }
+            for (j = limit; --j >= st; ) {
+                if (stopRequested) {
+                    return;
+                }
+                if (a[j] > a[j + 1]) {
+                    int T = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = T;
+                    flipped = true;
+                    pause(st, limit);
+                }
+            }
+            if (!flipped) {
+                return;
+            }
+        }
+        pause(st, limit);
+    }
+"
+9,"    public void bubblesort(String filenames[]) {
+        for (int i = filenames.length - 1; i > 0; i--) {
+            for (int j = 0; j < i; j++) {
+                String temp;
+                if (filenames[j].compareTo(filenames[j + 1]) > 0) {
+                    temp = filenames[j];
+                    filenames[j] = filenames[j + 1];
+                    filenames[j + 1] = temp;
+                }
+            }
+        }
+    }
+"
+10,"    protected static int[] sort(int[] arr) {
+        for (int i = arr.length - 1; i > 0; i--) {
+            for (int j = 0; j < i; j++) {
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+        return arr;
+    }
+"
+11,"    public static void sortSeries(double[] series) {
+        if (series == null) {
+            throw new IllegalArgumentException(""Incorrect series. It's null-pointed"");
+        }
+        int k = 0;
+        int right = series.length - 1;
+        while (right > 0) {
+            k = 0;
+            for (int i = 0; i <= right - 1; i++) {
+                if (series[i] > series[i + 1]) {
+                    k = i;
+                    double tmp = series[i];
+                    series[i] = series[i + 1];
+                    series[i + 1] = tmp;
+                }
+            }
+            right = k;
+        }
+    }
+"
+12,"    public void sortPlayersTurn() {
+        Token tempT = new Token();
+        Player tempP = new Player(""test name"", tempT);
+        int tempN = 0;
+        boolean exchangeMade = true;
+        for (int i = 0; i < playerNum - 1 && exchangeMade; i++) {
+            exchangeMade = false;
+            for (int j = 0; j < playerNum - 1 - i; j++) {
+                if (diceSum[j] < diceSum[j + 1]) {
+                    tempP = players[j];
+                    tempN = diceSum[j];
+                    players[j] = players[j + 1];
+                    diceSum[j] = diceSum[j + 1];
+                    players[j + 1] = tempP;
+                    diceSum[j + 1] = tempN;
+                    exchangeMade = true;
+                }
+            }
+        }
+    }
+"
+13,"    public static int[] sortstring(int[] a1) {
+        int temp;
+        for (int j = 0; j < (a1.length * a1.length); j++) {
+            for (int i = 0; i < a1.length - 1; i++) {
+                if (a1[i] > a1[i + 1]) {
+                    temp = a1[i];
+                    a1[i] = a1[i + 1];
+                    a1[i + 1] = temp;
+                }
+            }
+        }
+        return a1;
+    }
+"
+14,"    private int[] sortNodesToGoal(Graph g, int parent, int goal) {
+        float a, b;
+        int tempI, tempR;
+        float tempF;
+        int len = g.nodeList[parent].edges.length;
+        int[] nodes = new int[len];
+        float[] dists = new float[len];
+        int[] ref = new int[len];
+        if (len == 0) return null;
+        if (len == 1) {
+            ref[0] = 0;
+            return ref;
+        }
+        for (int i = 0; i < len; i++) {
+            nodes[i] = g.getOtherNode(parent, g.nodeList[parent].edges[i]);
+            a = g.nodeList[nodes[i]].x - g.nodeList[goal].x;
+            b = g.nodeList[nodes[i]].y - g.nodeList[goal].y;
+            dists[i] = (float) Math.sqrt(a * a + b * b);
+            ref[i] = i;
+        }
+        for (int i = len - 1; i >= 0; i--) {
+            for (int j = 0; j < i; j++) {
+                if (dists[j] > dists[j + 1]) {
+                    tempI = nodes[j];
+                    nodes[j] = nodes[j + 1];
+                    nodes[j + 1] = tempI;
+                    tempF = dists[j];
+                    dists[j] = dists[j + 1];
+                    dists[j + 1] = tempF;
+                    tempR = ref[j];
+                    ref[j] = ref[j + 1];
+                    ref[j + 1] = tempR;
+                }
+            }
+        }
+        return ref;
+    }
+"
+15,"    public int[] sort() {
+        int i, tmp;
+        int[] newIndex = new int[nrows];
+        for (i = 0; i < nrows; i++) {
+            newIndex[i] = i;
+        }
+        boolean change = true;
+        if (this.ascending) {
+            if (data[0][column] instanceof Comparable) {
+                while (change) {
+                    change = false;
+                    for (i = 0; i < nrows - 1; i++) {
+                        if (((Comparable) data[newIndex[i]][column]).compareTo((Comparable) data[newIndex[i + 1]][column]) > 0) {
+                            tmp = newIndex[i];
+                            newIndex[i] = newIndex[i + 1];
+                            newIndex[i + 1] = tmp;
+                            change = true;
+                        }
+                    }
+                }
+                return newIndex;
+            }
+            if (data[0][column] instanceof String || data[0][column] instanceof ClassLabel) {
+                while (change) {
+                    change = false;
+                    for (i = 0; i < nrows - 1; i++) {
+                        if ((data[newIndex[i]][column].toString()).compareTo(data[newIndex[i + 1]][column].toString()) > 0) {
+                            tmp = newIndex[i];
+                            newIndex[i] = newIndex[i + 1];
+                            newIndex[i + 1] = tmp;
+                            change = true;
+                        }
+                    }
+                }
+            }
+            return newIndex;
+        }
+        if (!this.ascending) {
+            if (data[0][column] instanceof Comparable) {
+                while (change) {
+                    change = false;
+                    for (i = 0; i < nrows - 1; i++) {
+                        if (((Comparable) data[newIndex[i]][column]).compareTo((Comparable) data[newIndex[i + 1]][column]) < 0) {
+                            tmp = newIndex[i];
+                            newIndex[i] = newIndex[i + 1];
+                            newIndex[i + 1] = tmp;
+                            change = true;
+                        }
+                    }
+                }
+                return newIndex;
+            }
+            if (data[0][column] instanceof String || data[0][column] instanceof ClassLabel) {
+                while (change) {
+                    change = false;
+                    for (i = 0; i < nrows - 1; i++) {
+                        if ((data[newIndex[i]][column].toString()).compareTo(data[newIndex[i + 1]][column].toString()) < 0) {
+                            tmp = newIndex[i];
+                            newIndex[i] = newIndex[i + 1];
+                            newIndex[i + 1] = tmp;
+                            change = true;
+                        }
+                    }
+                }
+            }
+            return newIndex;
+        } else return newIndex;
+    }
+"
+16,"    public void sort(int[] order, double[] values) {
+        int temp = 0;
+        boolean done = false;
+        for (int i = 0; i < values.length; i++) {
+            order[i] = i;
+        }
+        if (desendingValues) {
+            while (!done) {
+                done = true;
+                for (int i = values.length - 2; i >= 0; i--) {
+                    if (values[order[i]] < values[order[i + 1]]) {
+                        done = false;
+                        temp = order[i];
+                        order[i] = order[i + 1];
+                        order[i + 1] = temp;
+                    }
+                }
+            }
+        } else {
+            while (!done) {
+                done = true;
+                for (int i = values.length - 2; i >= 0; i--) {
+                    if (values[order[i]] > values[order[i + 1]]) {
+                        done = false;
+                        temp = order[i];
+                        order[i] = order[i + 1];
+                        order[i + 1] = temp;
+                    }
+                }
+            }
+        }
+    }
+"
+17,"    public ISpieler[] sortiereSpielerRamsch(ISpieler[] spieler) {
+        for (int i = 0; i < spieler.length; i++) {
+            for (int j = 0; j < spieler.length - 1; j++) {
+                if (werteAugen(spieler[j].getStiche()) > werteAugen(spieler[j + 1].getStiche())) {
+                    ISpieler a = spieler[j];
+                    spieler[j] = spieler[j + 1];
+                    spieler[j + 1] = a;
+                }
+            }
+        }
+        return spieler;
+    }
+"
+18,"    public Object[] bubblesort(Object[] tosort) {
+        Boolean sorting;
+        int upperlimit = tosort.length - 1;
+        do {
+            sorting = false;
+            for (int s0 = 0; s0 < upperlimit; s0++) {
+                if (tosort[s0].toString().compareTo(tosort[s0 + 1].toString()) < 0) {
+                } else if (tosort[s0].toString().compareTo(tosort[s0 + 1].toString()) == 0) {
+                    Object[] tosortnew = new Object[tosort.length - 1];
+                    for (int tmp = 0; tmp < s0; tmp++) {
+                        tosortnew[tmp] = tosort[tmp];
+                    }
+                    for (int tmp = s0; tmp < tosortnew.length; tmp++) {
+                        tosortnew[tmp] = tosort[tmp + 1];
+                    }
+                    tosort = tosortnew;
+                    upperlimit = upperlimit - 1;
+                    s0 = s0 - 1;
+                } else if (tosort[s0].toString().compareTo(tosort[s0 + 1].toString()) > 0) {
+                    String swap = (String) tosort[s0];
+                    tosort[s0] = tosort[s0 + 1];
+                    tosort[s0 + 1] = swap;
+                    sorting = true;
+                }
+            }
+            upperlimit = upperlimit - 1;
+        } while (sorting);
+        return tosort;
+    }
+"
+19,"    private void sort() {
+        boolean unsortiert = true;
+        Datei tmp = null;
+        while (unsortiert) {
+            unsortiert = false;
+            for (int i = 0; i < this.size - 1; i++) {
+                if (dateien[i] != null && dateien[i + 1] != null) {
+                    if (dateien[i].compareTo(dateien[i + 1]) < 0) {
+                        tmp = dateien[i];
+                        dateien[i] = dateien[i + 1];
+                        dateien[i + 1] = tmp;
+                        unsortiert = true;
+                    }
+                }
+            }
+        }
+    }
+"
+20,"    public void sortIndexes() {
+        int i, j, count;
+        int t;
+        count = m_ItemIndexes.length;
+        for (i = 1; i < count; i++) {
+            for (j = 0; j < count - i; j++) {
+                if (m_ItemIndexes[j] > m_ItemIndexes[j + 1]) {
+                    t = m_ItemIndexes[j];
+                    m_ItemIndexes[j] = m_ItemIndexes[j + 1];
+                    m_ItemIndexes[j + 1] = t;
+                }
+            }
+        }
+    }
+"
+21,"    void sortIds(int a[]) {
+        ExecutionTimer t = new ExecutionTimer();
+        t.start();
+        for (int i = a.length; --i >= 0; ) {
+            for (int j = 0; j < i; j++) {
+                if (a[j] > a[j + 1]) {
+                    int T = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = T;
+                }
+            }
+        }
+        t.end();
+        TimerRecordFile timerFile = new TimerRecordFile(""sort"", ""BufferSorting"", ""sortIds"", t.duration());
+    }
+"
+22,"    public void sort(int[] mas) {
+        int temp;
+        boolean t = true;
+        while (t) {
+            t = false;
+            for (int i = 0; i < mas.length - 1; i++) {
+                if (mas[i] > mas[i + 1]) {
+                    temp = mas[i];
+                    mas[i] = mas[i + 1];
+                    mas[i + 1] = temp;
+                    t = true;
+                }
+            }
+        }
+    }
+"
+23,"    private static String sort(final String item) {
+        final char[] chars = item.toCharArray();
+        for (int i = 1; i < chars.length; i++) {
+            for (int j = 0; j < chars.length - 1; j++) {
+                if (chars[j] > chars[j + 1]) {
+                    final char temp = chars[j];
+                    chars[j] = chars[j + 1];
+                    chars[j + 1] = temp;
+                }
+            }
+        }
+        return String.valueOf(chars);
+    }
+"
+24,"    public void sorter() {
+        String inputLine1, inputLine2;
+        String epiNames[] = new String[1000];
+        String epiEpisodes[] = new String[1000];
+        int lineCounter = 0;
+        try {
+            String pluginDir = pluginInterface.getPluginDirectoryName();
+            String eplist_file = pluginDir + System.getProperty(""file.separator"") + ""EpisodeList.txt"";
+            File episodeList = new File(eplist_file);
+            if (!episodeList.isFile()) {
+                episodeList.createNewFile();
+            }
+            final BufferedReader in = new BufferedReader(new FileReader(episodeList));
+            while ((inputLine1 = in.readLine()) != null) {
+                if ((inputLine2 = in.readLine()) != null) {
+                    epiNames[lineCounter] = inputLine1;
+                    epiEpisodes[lineCounter] = inputLine2;
+                    lineCounter++;
+                }
+            }
+            in.close();
+            int epiLength = epiNames.length;
+            for (int i = 0; i < (lineCounter); i++) {
+                for (int j = 0; j < (lineCounter - 1); j++) {
+                    if (epiNames[j].compareToIgnoreCase(epiNames[j + 1]) > 0) {
+                        String temp = epiNames[j];
+                        epiNames[j] = epiNames[j + 1];
+                        epiNames[j + 1] = temp;
+                        String temp2 = epiEpisodes[j];
+                        epiEpisodes[j] = epiEpisodes[j + 1];
+                        epiEpisodes[j + 1] = temp2;
+                    }
+                }
+            }
+            File episodeList2 = new File(eplist_file);
+            BufferedWriter bufWriter = new BufferedWriter(new FileWriter(episodeList2));
+            for (int i = 0; i <= lineCounter; i++) {
+                if (epiNames[i] == null) {
+                    break;
+                }
+                bufWriter.write(epiNames[i] + ""\n"");
+                bufWriter.write(epiEpisodes[i] + ""\n"");
+            }
+            bufWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+"
+25,"    public void sortArray() {
+        int a;
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array.length - 1; j++) {
+                if (array[j] < array[j + 1]) {
+                    a = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = a;
+                }
+            }
+        }
+    }
+"
+26,"    public static String[] bubbleSort(String[] unsortedString, boolean ascending) {
+        if (unsortedString.length < 2) return unsortedString;
+        String[] sortedString = new String[unsortedString.length];
+        for (int i = 0; i < unsortedString.length; i++) {
+            sortedString[i] = unsortedString[i];
+        }
+        if (ascending) {
+            for (int i = 0; i < sortedString.length - 1; i++) {
+                for (int j = 1; j < sortedString.length - 1 - i; j++) if (sortedString[j + 1].compareToIgnoreCase(sortedString[j]) < 0) {
+                    String swap = sortedString[j];
+                    sortedString[j] = sortedString[j + 1];
+                    sortedString[j + 1] = swap;
+                }
+            }
+        } else {
+            for (int i = sortedString.length - 2; i >= 0; i--) {
+                for (int j = sortedString.length - 2 - i; j >= 0; j--) if (sortedString[j + 1].compareToIgnoreCase(sortedString[j]) > 0) {
+                    String swap = sortedString[j];
+                    sortedString[j] = sortedString[j + 1];
+                    sortedString[j + 1] = swap;
+                }
+            }
+        }
+        return sortedString;
+    }
+"
+27,"    private void sortMasters() {
+        masterCounter = 0;
+        for (int i = 0; i < maxID; i++) {
+            if (users[i].getMasterPoints() > 0) {
+                masterHandleList[masterCounter] = users[i].getHandle();
+                masterPointsList[masterCounter] = users[i].getMasterPoints();
+                masterCounter = masterCounter + 1;
+            }
+        }
+        for (int i = masterCounter; --i >= 0; ) {
+            for (int j = 0; j < i; j++) {
+                if (masterPointsList[j] > masterPointsList[j + 1]) {
+                    int tempp = masterPointsList[j];
+                    String temppstring = masterHandleList[j];
+                    masterPointsList[j] = masterPointsList[j + 1];
+                    masterHandleList[j] = masterHandleList[j + 1];
+                    masterPointsList[j + 1] = tempp;
+                    masterHandleList[j + 1] = temppstring;
+                }
+            }
+        }
+    }
+"
+28,"    private Vector _sort(Pair[] ps, String id, int num) {
+        Vector ret = new Vector();
+        boolean swapped = true;
+        int j = 0;
+        Pair tmp;
+        while (swapped) {
+            swapped = false;
+            j++;
+            for (int i = 0; i < ps.length - j; i++) {
+                if (ps[i].c > ps[i + 1].c) {
+                    tmp = ps[i];
+                    ps[i] = ps[i + 1];
+                    ps[i + 1] = tmp;
+                    swapped = true;
+                }
+            }
+        }
+        int m = Math.min(num, ps.length);
+        for (int i = m - 1; i >= 0; i--) {
+            if (id == null) ret.addElement(ps[i].n); else if (ps[i].n.startsWith(id) && !ps[i].n.equals(id)) ret.addElement(ps[i].n);
+        }
+        return ret;
+    }
+"
+29,"    void sortclasses() {
+        int i, j;
+        boolean domore;
+        vclassptr = new int[numc];
+        for (i = 0; i < numc; i++) vclassptr[i] = i;
+        domore = true;
+        while (domore == true) {
+            domore = false;
+            for (i = 0; i < numc - 1; i++) {
+                if (vclassctr[vclassptr[i]] < vclassctr[vclassptr[i + 1]]) {
+                    int temp = vclassptr[i];
+                    vclassptr[i] = vclassptr[i + 1];
+                    vclassptr[i + 1] = temp;
+                    domore = true;
+                }
+            }
+        }
+    }
+"
+30,"    protected void sort(int a) {
+        int[] masiv = new int[a];
+        Random rand = new Random();
+        for (int i = 0; i <= a; i++) {
+            masiv[i] = rand.nextInt(200);
+        }
+        int d;
+        for (int j = 0; j < a; j++) {
+            for (int i = 0; i < a; i++) {
+                if (masiv[i] < masiv[i + 1]) {
+                } else {
+                    d = masiv[i];
+                    masiv[i] = masiv[i + 1];
+                    masiv[i + 1] = d;
+                }
+            }
+        }
+        while (a != 0) {
+            System.out.println(""sort: "" + masiv[a]);
+            a--;
+        }
+    }
+"
+31,"    public static void bubble_sort(Sortable[] objects) {
+        for (int i = objects.length; --i >= 0; ) {
+            boolean flipped = false;
+            for (int j = 0; j < i; j++) {
+                if (objects[j].greater_than(objects[j + 1])) {
+                    Sortable tmp = objects[j];
+                    objects[j] = objects[j + 1];
+                    objects[j + 1] = tmp;
+                    flipped = true;
+                }
+            }
+            if (!flipped) return;
+        }
+    }
+"
+32,"    public static void bubble_sort(int[] objects, int len) {
+        for (int i = len; --i >= 0; ) {
+            boolean flipped = false;
+            for (int j = 0; j < i; j++) {
+                if (objects[j + 1] < objects[j]) {
+                    int tmp = objects[j];
+                    objects[j] = objects[j + 1];
+                    objects[j + 1] = tmp;
+                    flipped = true;
+                }
+            }
+            if (!flipped) return;
+        }
+    }
+"
+33,"    public static int[] sort(int[] v) {
+        int i;
+        int l = v.length;
+        int[] index = new int[l];
+        for (i = 0; i < l; i++) index[i] = i;
+        int tmp;
+        boolean change = true;
+        while (change) {
+            change = false;
+            for (i = 0; i < l - 1; i++) {
+                if (v[index[i]] > v[index[i + 1]]) {
+                    tmp = index[i];
+                    index[i] = index[i + 1];
+                    index[i + 1] = tmp;
+                    change = true;
+                }
+            }
+        }
+        return index;
+    }
+"
+34,"    private int[] sort(int n) {
+        int[] mas = new int[n];
+        Random rand = new Random();
+        for (int i = 0; i < n; i++) {
+            mas[i] = rand.nextInt(10) + 1;
+        }
+        boolean t = true;
+        int tmp = 0;
+        while (t) {
+            t = false;
+            for (int i = 0; i < mas.length - 1; i++) {
+                if (mas[i] > mas[i + 1]) {
+                    tmp = mas[i];
+                    mas[i] = mas[i + 1];
+                    mas[i + 1] = tmp;
+                    t = true;
+                }
+            }
+        }
+        return mas;
+    }
+"
+35,"    private void sort() {
+        for (int i = 0; i < density.length; i++) {
+            for (int j = density.length - 2; j >= i; j--) {
+                if (density[j] > density[j + 1]) {
+                    KDNode n = nonEmptyNodesArray[j];
+                    nonEmptyNodesArray[j] = nonEmptyNodesArray[j + 1];
+                    nonEmptyNodesArray[j + 1] = n;
+                    double d = density[j];
+                    density[j] = density[j + 1];
+                    density[j + 1] = d;
+                }
+            }
+        }
+    }
+"
+36,"    public static int[] sortAscending(int input[]) {
+        int[] order = new int[input.length];
+        for (int i = 0; i < order.length; i++) order[i] = i;
+        for (int i = input.length; --i >= 0; ) {
+            for (int j = 0; j < i; j++) {
+                if (input[j] > input[j + 1]) {
+                    int mem = input[j];
+                    input[j] = input[j + 1];
+                    input[j + 1] = mem;
+                    int id = order[j];
+                    order[j] = order[j + 1];
+                    order[j + 1] = id;
+                }
+            }
+        }
+        return order;
+    }
+"
+37,"    public static int[] sortAscending(float input[]) {
+        int[] order = new int[input.length];
+        for (int i = 0; i < order.length; i++) order[i] = i;
+        for (int i = input.length; --i >= 0; ) {
+            for (int j = 0; j < i; j++) {
+                if (input[j] > input[j + 1]) {
+                    float mem = input[j];
+                    input[j] = input[j + 1];
+                    input[j + 1] = mem;
+                    int id = order[j];
+                    order[j] = order[j + 1];
+                    order[j + 1] = id;
+                }
+            }
+        }
+        return order;
+    }
+"
+38,"    public static int[] sortDescending(int input[]) {
+        int[] order = new int[input.length];
+        for (int i = 0; i < order.length; i++) order[i] = i;
+        for (int i = input.length; --i >= 0; ) {
+            for (int j = 0; j < i; j++) {
+                if (input[j] < input[j + 1]) {
+                    int mem = input[j];
+                    input[j] = input[j + 1];
+                    input[j + 1] = mem;
+                    int id = order[j];
+                    order[j] = order[j + 1];
+                    order[j + 1] = id;
+                }
+            }
+        }
+        return order;
+    }
+"
+39,"    public static int[] sortDescending(float input[]) {
+        int[] order = new int[input.length];
+        for (int i = 0; i < order.length; i++) order[i] = i;
+        for (int i = input.length; --i >= 0; ) {
+            for (int j = 0; j < i; j++) {
+                if (input[j] < input[j + 1]) {
+                    float mem = input[j];
+                    input[j] = input[j + 1];
+                    input[j + 1] = mem;
+                    int id = order[j];
+                    order[j] = order[j + 1];
+                    order[j + 1] = id;
+                }
+            }
+        }
+        return order;
+    }
+"
+40,"    public static int[] sortAscending(double input[]) {
+        int[] order = new int[input.length];
+        for (int i = 0; i < order.length; i++) order[i] = i;
+        for (int i = input.length; --i >= 0; ) {
+            for (int j = 0; j < i; j++) {
+                if (input[j] > input[j + 1]) {
+                    double mem = input[j];
+                    input[j] = input[j + 1];
+                    input[j + 1] = mem;
+                    int id = order[j];
+                    order[j] = order[j + 1];
+                    order[j + 1] = id;
+                }
+            }
+        }
+        return order;
+    }
+"
+41,"    public static int[] sortDescending(double input[]) {
+        int[] order = new int[input.length];
+        for (int i = 0; i < order.length; i++) order[i] = i;
+        for (int i = input.length; --i >= 0; ) {
+            for (int j = 0; j < i; j++) {
+                if (input[j] < input[j + 1]) {
+                    double mem = input[j];
+                    input[j] = input[j + 1];
+                    input[j + 1] = mem;
+                    int id = order[j];
+                    order[j] = order[j + 1];
+                    order[j + 1] = id;
+                }
+            }
+        }
+        return order;
+    }
+"
+42,"    private void sortWhats(String[] labels, int[] whats, String simplifyString) {
+        int n = whats.length;
+        boolean swapped;
+        do {
+            swapped = false;
+            for (int i = 0; i < n - 1; i++) {
+                int i0_pos = simplifyString.indexOf(labels[whats[i]]);
+                int i1_pos = simplifyString.indexOf(labels[whats[i + 1]]);
+                if (i0_pos > i1_pos) {
+                    int temp = whats[i];
+                    whats[i] = whats[i + 1];
+                    whats[i + 1] = temp;
+                    swapped = true;
+                }
+            }
+        } while (swapped);
+    }
+"
+43,"    public int[] sort() {
+        boolean t = true;
+        int temp = 0;
+        int[] mas = new int[N];
+        Random rand = new Random();
+        for (int i = 0; i < N; i++) {
+            mas[i] = rand.nextInt(10) + 1;
+        }
+        while (t) {
+            t = false;
+            for (int i = 0; i < mas.length - 1; i++) {
+                if (mas[i] > mas[i + 1]) {
+                    temp = mas[i];
+                    mas[i] = mas[i + 1];
+                    mas[i + 1] = temp;
+                    t = true;
+                }
+            }
+        }
+        return mas;
+    }
+"
+44,"    public static int[] simplex_reverse_sort(int[] vertices) {
+        if (vertices.length <= 1) return vertices;
+        for (int j = vertices.length - 1; j > 0; j--) {
+            for (int i = 0; i < j; i++) {
+                if (vertices[i + 1] > vertices[i]) {
+                    int dummy = vertices[i];
+                    vertices[i] = vertices[i + 1];
+                    vertices[i + 1] = dummy;
+                }
+            }
+        }
+        return vertices;
+    }
+"
+45,"    private int[] sortRows(int[] rows) {
+        for (int i = 0; i < rows.length; i++) {
+            for (int j = 0; j < rows.length - 1; j++) {
+                if (rows[j] > rows[j + 1]) {
+                    int temp = rows[j];
+                    rows[j] = rows[j + 1];
+                    rows[j + 1] = temp;
+                }
+            }
+        }
+        return rows;
+    }
+"
+46,"    public void sorter() {
+        String inputLine1, inputLine2;
+        String epiNames[] = new String[1000];
+        String epiEpisodes[] = new String[1000];
+        int lineCounter = 0;
+        try {
+            String pluginDir = pluginInterface.getPluginDirectoryName();
+            String eplist_file = pluginDir + System.getProperty(""file.separator"") + ""EpisodeList.txt"";
+            File episodeList = new File(eplist_file);
+            if (!episodeList.isFile()) {
+                episodeList.createNewFile();
+            }
+            final BufferedReader in = new BufferedReader(new FileReader(episodeList));
+            while ((inputLine1 = in.readLine()) != null) {
+                if ((inputLine2 = in.readLine()) != null) {
+                    epiNames[lineCounter] = inputLine1;
+                    epiEpisodes[lineCounter] = inputLine2;
+                    lineCounter++;
+                }
+            }
+            in.close();
+            int epiLength = epiNames.length;
+            for (int i = 0; i < (lineCounter); i++) {
+                for (int j = 0; j < (lineCounter - 1); j++) {
+                    if (epiNames[j].compareToIgnoreCase(epiNames[j + 1]) > 0) {
+                        String temp = epiNames[j];
+                        epiNames[j] = epiNames[j + 1];
+                        epiNames[j + 1] = temp;
+                        String temp2 = epiEpisodes[j];
+                        epiEpisodes[j] = epiEpisodes[j + 1];
+                        epiEpisodes[j + 1] = temp2;
+                    }
+                }
+            }
+            File episodeList2 = new File(eplist_file);
+            BufferedWriter bufWriter = new BufferedWriter(new FileWriter(episodeList2));
+            for (int i = 0; i <= lineCounter; i++) {
+                if (epiNames[i] == null) {
+                    break;
+                }
+                bufWriter.write(epiNames[i] + ""\n"");
+                bufWriter.write(epiEpisodes[i] + ""\n"");
+            }
+            bufWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+"
+47,"    protected void sort(int a) {
+        int[] masiv = new int[a + 1];
+        Random fff = new Random();
+        for (int i = 0; i <= a; i++) {
+            masiv[i] = fff.nextInt(9);
+        }
+        int d;
+        for (int j = 0; j < a; j++) {
+            for (int i = 0; i < a; i++) {
+                if (masiv[i] < masiv[i + 1]) {
+                } else {
+                    d = masiv[i];
+                    masiv[i] = masiv[i + 1];
+                    masiv[i + 1] = d;
+                }
+            }
+        }
+        while (a != 0) {
+            System.out.println(""sort: "" + masiv[a]);
+            a--;
+        }
+    }
+"
+48,"    public RobotList<Float> sort_incr_Float(RobotList<Float> list, String field) {
+        int length = list.size();
+        Index_value[] distri = new Index_value[length];
+        for (int i = 0; i < length; i++) {
+            distri[i] = new Index_value(i, list.get(i));
+        }
+        boolean permut;
+        do {
+            permut = false;
+            for (int i = 0; i < length - 1; i++) {
+                if (distri[i].value > distri[i + 1].value) {
+                    Index_value a = distri[i];
+                    distri[i] = distri[i + 1];
+                    distri[i + 1] = a;
+                    permut = true;
+                }
+            }
+        } while (permut);
+        RobotList<Float> sol = new RobotList<Float>(Float.class);
+        for (int i = 0; i < length; i++) {
+            sol.addLast(new Float(distri[i].value));
+        }
+        return sol;
+    }
+"
+49,"    public RobotList<Float> sort_decr_Float(RobotList<Float> list, String field) {
+        int length = list.size();
+        Index_value[] distri = new Index_value[length];
+        for (int i = 0; i < length; i++) {
+            distri[i] = new Index_value(i, list.get(i));
+        }
+        boolean permut;
+        do {
+            permut = false;
+            for (int i = 0; i < length - 1; i++) {
+                if (distri[i].value < distri[i + 1].value) {
+                    Index_value a = distri[i];
+                    distri[i] = distri[i + 1];
+                    distri[i + 1] = a;
+                    permut = true;
+                }
+            }
+        } while (permut);
+        RobotList<Float> sol = new RobotList<Float>(Float.class);
+        for (int i = 0; i < length; i++) {
+            sol.addLast(new Float(distri[i].value));
+        }
+        return sol;
+    }
+"
+50,"    public RobotList<Enemy> sort_incr_Enemy(RobotList<Enemy> list, String field) {
+        int length = list.size();
+        Index_value[] enemy_dist = new Index_value[length];
+        if (field.equals("""") || field.equals(""location"")) {
+            Location cur_loc = this.getLocation();
+            for (int i = 0; i < length; i++) {
+                enemy_dist[i] = new Index_value(i, distance(cur_loc, list.get(i).location));
+            }
+        } else if (field.equals(""health"")) {
+            for (int i = 0; i < length; i++) {
+                enemy_dist[i] = new Index_value(i, list.get(i).health);
+            }
+        } else {
+            say(""impossible to sort list - nothing modified"");
+            return list;
+        }
+        boolean permut;
+        do {
+            permut = false;
+            for (int i = 0; i < length - 1; i++) {
+                if (enemy_dist[i].value > enemy_dist[i + 1].value) {
+                    Index_value a = enemy_dist[i];
+                    enemy_dist[i] = enemy_dist[i + 1];
+                    enemy_dist[i + 1] = a;
+                    permut = true;
+                }
+            }
+        } while (permut);
+        RobotList<Enemy> new_enemy_list = new RobotList<Enemy>(Enemy.class);
+        for (int i = 0; i < length; i++) {
+            new_enemy_list.addLast(list.get(enemy_dist[i].index));
+        }
+        return new_enemy_list;
+    }
+"
+51,"    public RobotList<Enemy> sort_decr_Enemy(RobotList<Enemy> list, String field) {
+        int length = list.size();
+        Index_value[] enemy_dist = new Index_value[length];
+        if (field.equals("""") || field.equals(""location"")) {
+            Location cur_loc = this.getLocation();
+            for (int i = 0; i < length; i++) {
+                enemy_dist[i] = new Index_value(i, distance(cur_loc, list.get(i).location));
+            }
+        } else if (field.equals(""health"")) {
+            for (int i = 0; i < length; i++) {
+                enemy_dist[i] = new Index_value(i, list.get(i).health);
+            }
+        } else {
+            say(""impossible to sort list - nothing modified"");
+            return list;
+        }
+        boolean permut;
+        do {
+            permut = false;
+            for (int i = 0; i < length - 1; i++) {
+                if (enemy_dist[i].value < enemy_dist[i + 1].value) {
+                    Index_value a = enemy_dist[i];
+                    enemy_dist[i] = enemy_dist[i + 1];
+                    enemy_dist[i + 1] = a;
+                    permut = true;
+                }
+            }
+        } while (permut);
+        RobotList<Enemy> new_enemy_list = new RobotList<Enemy>(Enemy.class);
+        for (int i = 0; i < length; i++) {
+            new_enemy_list.addLast(list.get(enemy_dist[i].index));
+        }
+        return new_enemy_list;
+    }
+"
+52,"    public RobotList<Resource> sort_incr_Resource(RobotList<Resource> list, String field) {
+        int length = list.size();
+        Index_value[] resource_dist = new Index_value[length];
+        if (field.equals("""") || field.equals(""location"")) {
+            Location cur_loc = this.getLocation();
+            for (int i = 0; i < length; i++) {
+                resource_dist[i] = new Index_value(i, distance(cur_loc, list.get(i).location));
+            }
+        } else if (field.equals(""energy"")) {
+            for (int i = 0; i < length; i++) {
+                resource_dist[i] = new Index_value(i, list.get(i).energy);
+            }
+        } else if (field.equals(""ammostash"")) {
+            for (int i = 0; i < length; i++) {
+                resource_dist[i] = new Index_value(i, list.get(i).ammostash);
+            }
+        } else if (field.equals(""speed"")) {
+            for (int i = 0; i < length; i++) {
+                resource_dist[i] = new Index_value(i, list.get(i).speed);
+            }
+        } else if (field.equals(""health"")) {
+            for (int i = 0; i < length; i++) {
+                resource_dist[i] = new Index_value(i, list.get(i).health);
+            }
+        } else {
+            say(""impossible to sort list - nothing modified"");
+            return list;
+        }
+        boolean permut;
+        do {
+            permut = false;
+            for (int i = 0; i < length - 1; i++) {
+                if (resource_dist[i].value > resource_dist[i + 1].value) {
+                    Index_value a = resource_dist[i];
+                    resource_dist[i] = resource_dist[i + 1];
+                    resource_dist[i + 1] = a;
+                    permut = true;
+                }
+            }
+        } while (permut);
+        RobotList<Resource> new_resource_list = new RobotList<Resource>(Resource.class);
+        for (int i = 0; i < length; i++) {
+            new_resource_list.addLast(list.get(resource_dist[i].index));
+        }
+        return new_resource_list;
+    }
+"
+53,"    public RobotList<Resource> sort_decr_Resource(RobotList<Resource> list, String field) {
+        int length = list.size();
+        Index_value[] resource_dist = new Index_value[length];
+        if (field.equals("""") || field.equals(""location"")) {
+            Location cur_loc = this.getLocation();
+            for (int i = 0; i < length; i++) {
+                resource_dist[i] = new Index_value(i, distance(cur_loc, list.get(i).location));
+            }
+        } else if (field.equals(""energy"")) {
+            for (int i = 0; i < length; i++) {
+                resource_dist[i] = new Index_value(i, list.get(i).energy);
+            }
+        } else if (field.equals(""ammostash"")) {
+            for (int i = 0; i < length; i++) {
+                resource_dist[i] = new Index_value(i, list.get(i).ammostash);
+            }
+        } else if (field.equals(""speed"")) {
+            for (int i = 0; i < length; i++) {
+                resource_dist[i] = new Index_value(i, list.get(i).speed);
+            }
+        } else if (field.equals(""health"")) {
+            for (int i = 0; i < length; i++) {
+                resource_dist[i] = new Index_value(i, list.get(i).health);
+            }
+        } else {
+            say(""impossible to sort list - nothing modified"");
+            return list;
+        }
+        boolean permut;
+        do {
+            permut = false;
+            for (int i = 0; i < length - 1; i++) {
+                if (resource_dist[i].value < resource_dist[i + 1].value) {
+                    Index_value a = resource_dist[i];
+                    resource_dist[i] = resource_dist[i + 1];
+                    resource_dist[i + 1] = a;
+                    permut = true;
+                }
+            }
+        } while (permut);
+        RobotList<Resource> new_resource_list = new RobotList<Resource>(Resource.class);
+        for (int i = 0; i < length; i++) {
+            new_resource_list.addLast(list.get(resource_dist[i].index));
+        }
+        return new_resource_list;
+    }
+"
+54,"    public RobotList<Percentage> sort_incr_Percentage(RobotList<Percentage> list, String field) {
+        int length = list.size();
+        Index_value[] distri = new Index_value[length];
+        for (int i = 0; i < length; i++) {
+            distri[i] = new Index_value(i, list.get(i).percent);
+        }
+        boolean permut;
+        do {
+            permut = false;
+            for (int i = 0; i < length - 1; i++) {
+                if (distri[i].value > distri[i + 1].value) {
+                    Index_value a = distri[i];
+                    distri[i] = distri[i + 1];
+                    distri[i + 1] = a;
+                    permut = true;
+                }
+            }
+        } while (permut);
+        RobotList<Percentage> sol = new RobotList<Percentage>(Percentage.class);
+        for (int i = 0; i < length; i++) {
+            sol.addLast(new Percentage(distri[i].value));
+        }
+        return sol;
+    }
+"
+55,"    public RobotList<Percentage> sort_decr_Percentage(RobotList<Percentage> list, String field) {
+        int length = list.size();
+        Index_value[] distri = new Index_value[length];
+        for (int i = 0; i < length; i++) {
+            distri[i] = new Index_value(i, list.get(i).percent);
+        }
+        boolean permut;
+        do {
+            permut = false;
+            for (int i = 0; i < length - 1; i++) {
+                if (distri[i].value < distri[i + 1].value) {
+                    Index_value a = distri[i];
+                    distri[i] = distri[i + 1];
+                    distri[i + 1] = a;
+                    permut = true;
+                }
+            }
+        } while (permut);
+        RobotList<Percentage> sol = new RobotList<Percentage>(Percentage.class);
+        for (int i = 0; i < length; i++) {
+            sol.addLast(new Percentage(distri[i].value));
+        }
+        return sol;
+    }
+"
+56,"    public RobotList<Location> sort_incr_Location(RobotList<Location> list, String field) {
+        int length = list.size();
+        Index_value[] enemy_dist = new Index_value[length];
+        Location cur_loc = this.getLocation();
+        for (int i = 0; i < length; i++) {
+            enemy_dist[i] = new Index_value(i, distance(cur_loc, list.get(i)));
+        }
+        boolean permut;
+        do {
+            permut = false;
+            for (int i = 0; i < length - 1; i++) {
+                if (enemy_dist[i].value > enemy_dist[i + 1].value) {
+                    Index_value a = enemy_dist[i];
+                    enemy_dist[i] = enemy_dist[i + 1];
+                    enemy_dist[i + 1] = a;
+                    permut = true;
+                }
+            }
+        } while (permut);
+        RobotList<Location> new_location_list = new RobotList<Location>(Location.class);
+        for (int i = 0; i < length; i++) {
+            new_location_list.addLast(list.get(enemy_dist[i].index));
+        }
+        return new_location_list;
+    }
+"
+57,"    public RobotList<Location> sort_decr_Location(RobotList<Location> list, String field) {
+        int length = list.size();
+        Index_value[] enemy_dist = new Index_value[length];
+        if (field.equals("""") || field.equals(""location"")) {
+            Location cur_loc = this.getLocation();
+            for (int i = 0; i < length; i++) {
+                enemy_dist[i] = new Index_value(i, distance(cur_loc, list.get(i)));
+            }
+        } else if (field.equals(""x"")) {
+            for (int i = 0; i < length; i++) {
+                enemy_dist[i] = new Index_value(i, list.get(i).x);
+            }
+        } else if (field.equals(""y"")) {
+            for (int i = 0; i < length; i++) {
+                enemy_dist[i] = new Index_value(i, list.get(i).y);
+            }
+        } else {
+            say(""impossible to sort list - nothing modified"");
+            return list;
+        }
+        boolean permut;
+        do {
+            permut = false;
+            for (int i = 0; i < length - 1; i++) {
+                if (enemy_dist[i].value < enemy_dist[i + 1].value) {
+                    Index_value a = enemy_dist[i];
+                    enemy_dist[i] = enemy_dist[i + 1];
+                    enemy_dist[i + 1] = a;
+                    permut = true;
+                }
+            }
+        } while (permut);
+        RobotList<Location> new_location_list = new RobotList<Location>(Location.class);
+        for (int i = 0; i < length; i++) {
+            new_location_list.addLast(list.get(enemy_dist[i].index));
+        }
+        return new_location_list;
+    }
+"
+58,"    protected void sort(double[] a) throws Exception {
+        for (int i = a.length - 1; i >= 0; i--) {
+            boolean swapped = false;
+            for (int j = 0; j < i; j++) {
+                if (a[j] > a[j + 1]) {
+                    double d = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = d;
+                    swapped = true;
+                }
+            }
+            if (!swapped) return;
+        }
+    }
+"
+59,"    public static ObjectID[] sortDecending(ObjectID[] oids) {
+        for (int i = 1; i < oids.length; i++) {
+            ObjectID iId = oids[i];
+            for (int j = 0; j < oids.length - i; j++) {
+                if (oids[j].getTypePrefix() > oids[j + 1].getTypePrefix()) {
+                    ObjectID temp = oids[j];
+                    oids[j] = oids[j + 1];
+                    oids[j + 1] = temp;
+                }
+            }
+        }
+        return oids;
+    }
+"
+60,"    private void sortWhats(String[] labels, int[] whats, String simplifyString) {
+        int n = whats.length;
+        boolean swapped;
+        do {
+            swapped = false;
+            for (int i = 0; i < n - 1; i++) {
+                int i0_pos = simplifyString.indexOf(labels[whats[i]]);
+                int i1_pos = simplifyString.indexOf(labels[whats[i + 1]]);
+                if (i0_pos > i1_pos) {
+                    int temp = whats[i];
+                    whats[i] = whats[i + 1];
+                    whats[i + 1] = temp;
+                    swapped = true;
+                }
+            }
+        } while (swapped);
+    }
+"
+61,"    public void sortingByBubble(int[] array) {
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array.length - 1 - i; j++) {
+                if (array[j] > array[j + 1]) {
+                    int temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                }
+            }
+        }
+    }
+"
+62,"    private void sortByNum() {
+        int i, j, w;
+        for (i = count - 1; i >= 0; i--) {
+            ChannelItem ch = chans[i];
+            w = ch.getUsers();
+            j = i;
+            while ((j < count - 1) && (chans[j + 1].getUsers() > w)) {
+                chans[j] = chans[j + 1];
+                j++;
+            }
+            chans[j] = ch;
+        }
+    }
+"
+63,"    private void sortByNum() {
+        int i, j, w;
+        for (i = count - 1; i >= 0; i--) {
+            ChannelItem ch = chans[i];
+            w = ch.getUsers();
+            j = i;
+            while ((j < count - 1) && (chans[j + 1].getUsers() > w)) {
+                chans[j] = chans[j + 1];
+                j++;
+            }
+            chans[j] = ch;
+        }
+    }
+"
+64,"    private Object[] sort(Object[] obj) {
+        if (size == 0) {
+            return null;
+        }
+        Object[] dest = new Object[size];
+        System.arraycopy(obj, 0, dest, 0, size);
+        sort(obj, dest, 0, size, 0);
+        int i = 0, j = 0;
+        for (i = 0; i < size - 1; i++) {
+            if (dest[i] != dest[i + 1]) {
+                dest[i] = dest[i + 1];
+                j++;
+            }
+        }
+        return dest;
+    }
+"
+65,"    private Object[] sort(Object[] obj) {
+        if (size == 0) {
+            return null;
+        }
+        Object[] dest = new Object[size];
+        System.arraycopy(obj, 0, dest, 0, size);
+        sort(obj, dest, 0, size, 0);
+        int i = 0, j = 0;
+        for (i = 0; i < size - 1; i++) {
+            if (dest[i] != dest[i + 1]) {
+                dest[i] = dest[i + 1];
+                j++;
+            }
+        }
+        return dest;
+    }
+"
+66,"    private static void dualPivotQuicksort(final int[] a, final int low, final int high) {
+        if (high - low < 31) {
+            insertionsort0(a, low, high + 1);
+            return;
+        }
+        final int seventh = (high - low + 1 >>> 3) + (high - low + 1 >>> 6) + 1;
+        final int e3 = low + high >>> 1;
+        final int e2 = e3 - seventh;
+        final int e1 = e2 - seventh;
+        final int e4 = e3 + seventh;
+        final int e5 = e4 + seventh;
+        if (a[e2] < a[e1]) {
+            final int t = a[e2];
+            a[e2] = a[e1];
+            a[e1] = t;
+        }
+        if (a[e3] < a[e2]) {
+            final int t = a[e3];
+            a[e3] = a[e2];
+            a[e2] = t;
+            if (t < a[e1]) {
+                a[e2] = a[e1];
+                a[e1] = t;
+            }
+        }
+        if (a[e4] < a[e3]) {
+            final int t = a[e4];
+            a[e4] = a[e3];
+            a[e3] = t;
+            if (t < a[e2]) {
+                a[e3] = a[e2];
+                a[e2] = t;
+                if (t < a[e1]) {
+                    a[e2] = a[e1];
+                    a[e1] = t;
+                }
+            }
+        }
+        if (a[e5] < a[e4]) {
+            final int t = a[e5];
+            a[e5] = a[e4];
+            a[e4] = t;
+            if (t < a[e3]) {
+                a[e4] = a[e3];
+                a[e3] = t;
+                if (t < a[e2]) {
+                    a[e3] = a[e2];
+                    a[e2] = t;
+                    if (t < a[e1]) {
+                        a[e2] = a[e1];
+                        a[e1] = t;
+                    }
+                }
+            }
+        }
+        final int pivot1, pivot2;
+        int left = low;
+        int right = high;
+        if ((pivot1 = a[e2]) != (pivot2 = a[e4])) {
+            a[e2] = a[low];
+            a[e4] = a[high];
+            while (a[++left] < pivot1) {
+            }
+            while (a[--right] > pivot2) {
+            }
+            outer: for (int k = left; k <= right; k++) {
+                final int ak = a[k];
+                if (ak < pivot1) {
+                    a[k] = a[left];
+                    a[left] = ak;
+                    left++;
+                } else if (ak > pivot2) {
+                    while (a[right] > pivot2) {
+                        if (right-- == k) break outer;
+                    }
+                    if (a[right] < pivot1) {
+                        a[k] = a[left];
+                        a[left] = a[right];
+                        left++;
+                    } else {
+                        a[k] = a[right];
+                    }
+                    a[right] = ak;
+                    right--;
+                }
+            }
+            a[low] = a[left - 1];
+            a[left - 1] = pivot1;
+            a[high] = a[right + 1];
+            a[right + 1] = pivot2;
+            dualPivotQuicksort(a, low, left - 2);
+            dualPivotQuicksort(a, right + 2, high);
+            if (left < e1 && e5 < right) {
+                while (a[left] == pivot1) left++;
+                while (a[right] == pivot2) right--;
+                outer: for (int k = left; k <= right; k++) {
+                    final int ak = a[k];
+                    if (ak == pivot1) {
+                        a[k] = a[left];
+                        a[left] = ak;
+                        left++;
+                    } else if (ak == pivot2) {
+                        while (a[right] == pivot2) {
+                            if (right-- == k) break outer;
+                        }
+                        if (a[right] == pivot1) {
+                            a[k] = a[left];
+                            a[left] = pivot1;
+                            left++;
+                        } else {
+                            a[k] = a[right];
+                        }
+                        a[right] = ak;
+                        right--;
+                    }
+                }
+            }
+            dualPivotQuicksort(a, left, right);
+        } else {
+            for (int k = low; k <= right; k++) {
+                if (a[k] == pivot1) continue;
+                final int ak = a[k];
+                if (ak < pivot1) {
+                    a[k] = a[left];
+                    a[left] = ak;
+                    left++;
+                } else {
+                    while (a[right] > pivot1) {
+                        right--;
+                    }
+                    if (a[right] < pivot1) {
+                        a[k] = a[left];
+                        a[left] = a[right];
+                        left++;
+                    } else {
+                        a[k] = pivot1;
+                    }
+                    a[right] = ak;
+                    right--;
+                }
+            }
+            dualPivotQuicksort(a, low, left - 1);
+            dualPivotQuicksort(a, right + 1, high);
+        }
+    }
+"
+67,"    private static <E> void dualPivotQuicksort(final E[] a, final int low, final int high, final Comparator<? super E> cmp) {
+        if (high - low < 16) {
+            insertionsort0(a, low, high + 1, cmp);
+            return;
+        }
+        final int seventh = (high - low + 1 >>> 3) + (high - low + 1 >>> 6) + 1;
+        final int e3 = low + high >>> 1;
+        final int e2 = e3 - seventh;
+        final int e1 = e2 - seventh;
+        final int e4 = e3 + seventh;
+        final int e5 = e4 + seventh;
+        if (cmp.compare(a[e2], a[e1]) < 0) {
+            final E t = a[e2];
+            a[e2] = a[e1];
+            a[e1] = t;
+        }
+        if (cmp.compare(a[e3], a[e2]) < 0) {
+            final E t = a[e3];
+            a[e3] = a[e2];
+            a[e2] = t;
+            if (cmp.compare(t, a[e1]) < 0) {
+                a[e2] = a[e1];
+                a[e1] = t;
+            }
+        }
+        if (cmp.compare(a[e4], a[e3]) < 0) {
+            final E t = a[e4];
+            a[e4] = a[e3];
+            a[e3] = t;
+            if (cmp.compare(t, a[e2]) < 0) {
+                a[e3] = a[e2];
+                a[e2] = t;
+                if (cmp.compare(t, a[e1]) < 0) {
+                    a[e2] = a[e1];
+                    a[e1] = t;
+                }
+            }
+        }
+        if (cmp.compare(a[e5], a[e4]) < 0) {
+            final E t = a[e5];
+            a[e5] = a[e4];
+            a[e4] = t;
+            if (cmp.compare(t, a[e3]) < 0) {
+                a[e4] = a[e3];
+                a[e3] = t;
+                if (cmp.compare(t, a[e2]) < 0) {
+                    a[e3] = a[e2];
+                    a[e2] = t;
+                    if (cmp.compare(t, a[e1]) < 0) {
+                        a[e2] = a[e1];
+                        a[e1] = t;
+                    }
+                }
+            }
+        }
+        final E pivot1, pivot2;
+        int left = low;
+        int right = high;
+        if (cmp.compare(pivot1 = a[e2], pivot2 = a[e4]) != 0) {
+            a[e2] = a[low];
+            a[e4] = a[high];
+            while (cmp.compare(a[++left], pivot1) < 0) {
+            }
+            while (cmp.compare(a[--right], pivot2) > 0) {
+            }
+            outer: for (int k = left; k <= right; k++) {
+                final E ak = a[k];
+                if (cmp.compare(ak, pivot1) < 0) {
+                    a[k] = a[left];
+                    a[left] = ak;
+                    left++;
+                } else if (cmp.compare(ak, pivot2) > 0) {
+                    while (cmp.compare(a[right], pivot2) > 0) {
+                        if (right-- == k) break outer;
+                    }
+                    if (cmp.compare(a[right], pivot1) < 0) {
+                        a[k] = a[left];
+                        a[left] = a[right];
+                        left++;
+                    } else {
+                        a[k] = a[right];
+                    }
+                    a[right] = ak;
+                    right--;
+                }
+            }
+            a[low] = a[left - 1];
+            a[left - 1] = pivot1;
+            a[high] = a[right + 1];
+            a[right + 1] = pivot2;
+            dualPivotQuicksort(a, low, left - 2, cmp);
+            dualPivotQuicksort(a, right + 2, high, cmp);
+            if (left < e1 && e5 < right) {
+                while (cmp.compare(a[left], pivot1) == 0) left++;
+                while (cmp.compare(a[right], pivot2) == 0) right--;
+                outer: for (int k = left; k <= right; k++) {
+                    final E ak = a[k];
+                    if (cmp.compare(ak, pivot1) == 0) {
+                        a[k] = a[left];
+                        a[left] = ak;
+                        left++;
+                    } else if (cmp.compare(ak, pivot2) == 0) {
+                        while (cmp.compare(a[right], pivot2) == 0) {
+                            if (right-- == k) break outer;
+                        }
+                        if (cmp.compare(a[right], pivot1) == 0) {
+                            a[k] = a[left];
+                            a[left] = pivot1;
+                            left++;
+                        } else {
+                            a[k] = a[right];
+                        }
+                        a[right] = ak;
+                        right--;
+                    }
+                }
+            }
+            dualPivotQuicksort(a, left, right, cmp);
+        } else {
+            for (int k = low; k <= right; k++) {
+                if (cmp.compare(a[k], pivot1) == 0) continue;
+                final E ak = a[k];
+                if (cmp.compare(ak, pivot1) < 0) {
+                    a[k] = a[left];
+                    a[left] = ak;
+                    left++;
+                } else {
+                    while (cmp.compare(a[right], pivot1) > 0) right--;
+                    if (cmp.compare(a[right], pivot1) < 0) {
+                        a[k] = a[left];
+                        a[left] = a[right];
+                        left++;
+                    } else {
+                        a[k] = pivot1;
+                    }
+                    a[right] = ak;
+                    right--;
+                }
+            }
+            dualPivotQuicksort(a, low, left - 1, cmp);
+            dualPivotQuicksort(a, right + 1, high, cmp);
+        }
+    }
+"
+68,"    private void sortKnowledgeFiles() {
+        String sort = """";
+        for (int i = 9; i > 0; i--) {
+            for (KnowledgeFile current : knowledge.values()) {
+                if (current.getSettings().getProperty(msg.RANK, ""1"").equalsIgnoreCase("""" + i) == false) continue;
+                String name = current.toString();
+                sort = sort.concat(name + "";"");
+            }
+        }
+        if (utils.text.isEmpty(sort)) {
+            readPriority = new String[] {};
+            writePriority = new String[] {};
+        } else {
+            readPriority = sort.split("";"");
+            writePriority = readPriority;
+        }
+    }
+"
+69,"    private void sortOnChannelNumber() {
+        Collections.sort(patchDetails, new Comparator<PatchDetail>() {
+
+            public int compare(final PatchDetail pd1, final PatchDetail pd2) {
+                Dimmer dimmer1 = pd1.getDimmer();
+                Dimmer dimmer2 = pd2.getDimmer();
+                int result = 0;
+                if (!dimmer1.isPatched()) {
+                    if (dimmer2.isPatched()) {
+                        result = 1;
+                    }
+                } else if (!dimmer2.isPatched()) {
+                    result = -1;
+                } else {
+                    result = dimmer1.getChannelId() - dimmer2.getChannelId();
+                }
+                if (result == 0) {
+                    result = dimmer1.getId() - dimmer2.getId();
+                }
+                return result;
+            }
+        });
+    }
+"
+70,"    private void sortOnChannelName() {
+        Collections.sort(patchDetails, new Comparator<PatchDetail>() {
+
+            public int compare(final PatchDetail pd1, final PatchDetail pd2) {
+                Dimmer dimmer1 = pd1.getDimmer();
+                Dimmer dimmer2 = pd2.getDimmer();
+                int result = 0;
+                if (!dimmer1.isPatched()) {
+                    if (dimmer2.isPatched()) {
+                        result = 1;
+                    }
+                } else if (!dimmer2.isPatched()) {
+                    result = -1;
+                } else {
+                    String name1 = dimmer1.getChannel().getName();
+                    String name2 = dimmer2.getChannel().getName();
+                    result = name1.compareTo(name2);
+                }
+                if (result == 0) {
+                    result = dimmer1.getId() - dimmer2.getId();
+                }
+                return result;
+            }
+        });
+    }
+"
+71,"    private static final BigInteger[] sort(BigInteger[] result) {
+        while (true) {
+            int i = 0;
+            while ((i < 3) && (result[i].compareTo(result[i + 1]) < 1)) i++;
+            if (i == 3) return result;
+            BigInteger t = result[i];
+            result[i] = result[i + 1];
+            result[i + 1] = t;
+        }
+    }
+"
+72,"    public void sortChannels(List<NodeChannel> channels) {
+        final HashMap<String, Date> errorChannels = new HashMap<String, Date>();
+        for (OutgoingBatch batch : batches) {
+            if (batch.isErrorFlag()) {
+                errorChannels.put(batch.getChannelId(), batch.getLastUpdatedTime());
+            }
+        }
+        Collections.sort(channels, new Comparator<NodeChannel>() {
+
+            public int compare(NodeChannel b1, NodeChannel b2) {
+                boolean isError1 = errorChannels.containsKey(b1.getChannelId());
+                boolean isError2 = errorChannels.containsKey(b2.getChannelId());
+                if (!isError1 && !isError2) {
+                    return b1.getProcessingOrder() < b2.getProcessingOrder() ? -1 : 1;
+                } else if (isError1 && isError2) {
+                    return errorChannels.get(b1.getChannelId()).compareTo(errorChannels.get(b2.getChannelId()));
+                } else if (!isError1 && isError2) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
+        for (NodeChannel nodeChannel : channels) {
+            long extractPeriodMillis = nodeChannel.getExtractPeriodMillis();
+            Date lastExtractedTime = nodeChannel.getLastExtractTime();
+            if ((extractPeriodMillis < 1) || (lastExtractedTime == null) || (Calendar.getInstance().getTimeInMillis() - lastExtractedTime.getTime() >= extractPeriodMillis)) {
+                addActiveChannel(nodeChannel);
+            }
+        }
+        filterBatchesForInactiveChannels();
+    }
+"
+73,"    private String[] sortAlpha(Collection collection) {
+        String[] retur = new String[collection.size()];
+        Iterator it = collection.iterator();
+        int k = 0;
+        while (it.hasNext()) {
+            String temp = (String) it.next();
+            retur[k] = temp;
+            k++;
+        }
+        for (int i = 0; i + 1 < retur.length; i++) {
+            if (retur[i].compareTo(retur[i + 1]) > 0) {
+                String temp = retur[i];
+                retur[i] = retur[i + 1];
+                retur[i + 1] = temp;
+                int j = i;
+                boolean done = false;
+                while (j != 0 && !done) {
+                    if (retur[j].compareTo(retur[j - 1]) < 0) {
+                        temp = retur[j];
+                        retur[j] = retur[j - 1];
+                        retur[j - 1] = temp;
+                    } else done = true;
+                    j--;
+                }
+            }
+        }
+        return retur;
+    }
+"
+74,"    protected void sortFramesByTitle(JInternalFrame[] _frames) {
+        JInternalFrame tmp;
+        int i, l;
+        l = _frames.length;
+        for (i = 0; i + 1 < l; i++) {
+            String t1 = _frames[i].getTitle();
+            String t2 = _frames[i + 1].getTitle();
+            if ((t1 != null) && (t2 != null) && (t1.compareTo(t2) > 0)) {
+                tmp = _frames[i];
+                _frames[i] = _frames[i + 1];
+                _frames[i + 1] = tmp;
+                i--;
+                if (i >= 0) i--;
+            }
+        }
+    }
+"
+75,"    protected void sortFramesByHeight(JInternalFrame[] _frames) {
+        sortFramesByTitle(_frames);
+        JInternalFrame tmp;
+        int i, l;
+        l = _frames.length;
+        for (i = 0; i + 1 < l; i++) if (_frames[i].getHeight() > _frames[i + 1].getHeight()) {
+            tmp = _frames[i];
+            _frames[i] = _frames[i + 1];
+            _frames[i + 1] = tmp;
+            i--;
+            if (i >= 0) i--;
+        }
+    }
+"
+76,"    protected void sortFramesByWidth(JInternalFrame[] _frames) {
+        sortFramesByTitle(_frames);
+        JInternalFrame tmp;
+        int i, l;
+        l = _frames.length;
+        for (i = 0; i + 1 < l; i++) if (_frames[i].getWidth() < _frames[i + 1].getWidth()) {
+            tmp = _frames[i];
+            _frames[i] = _frames[i + 1];
+            _frames[i + 1] = tmp;
+            i--;
+            if (i >= 0) i--;
+        }
+    }
+"
+77,"    public void sort() {
+        Collections.sort(changes, new Comparator<ChannelChange>() {
+
+            public int compare(final ChannelChange cc1, final ChannelChange cc2) {
+                return cc1.getChannelId() - cc2.getChannelId();
+            }
+        });
+    }
+"
+78,"    private void sort(int jc) {
+        TaskResult taux;
+        int length = taur.length;
+        for (int i = jc; i < length; i++) {
+            if (taur[i] == null) {
+                int i2;
+                for (i2 = i; i2 < length - 1; i2++) {
+                    taur[i2] = taur[i2 + 1];
+                    taur[i2 + 1] = null;
+                }
+                length--;
+            } else {
+                for (int j = i + 1; j < length; j++) {
+                    if (taur[j] != null) {
+                        if (taur[i].getT1() > taur[j].getT1()) {
+                            taux = taur[i];
+                            taur[i] = taur[j];
+                            taur[j] = taux;
+                        } else {
+                            if (taur[i].getT1() == taur[j].getT1()) {
+                                if (taur[i].p < taur[j].p) {
+                                    taux = taur[i];
+                                    taur[i] = taur[j];
+                                    taur[j] = taux;
+                                } else {
+                                    if (taur[i].p == taur[j].p) {
+                                        if (taur[i].getInst() > taur[j].getInst()) {
+                                            taux = taur[i];
+                                            taur[i] = taur[j];
+                                            taur[j] = taux;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+"
+79,"    public void sortOnColumn(boolean sort_ascending, int col_idx) {
+        boolean made_change = true;
+        while (made_change) {
+            made_change = false;
+            for (int i = 0; i < data_grid.length - 1; i++) {
+                boolean flip = false;
+                if (data_grid[i][col_idx].equals("""") || data_grid[i + 1][col_idx].equals("""")) {
+                    if (data_grid[i][col_idx].equals("""") && data_grid[i + 1][col_idx].equals("""")) {
+                    } else {
+                        if ((sort_ascending && !data_grid[i][col_idx].equals("""") && data_grid[i + 1][col_idx].equals("""")) || (!sort_ascending && data_grid[i][col_idx].equals("""") && !data_grid[i + 1][col_idx].equals(""""))) {
+                            flip = true;
+                        }
+                    }
+                } else {
+                    if ((sort_ascending && (Float.parseFloat(data_grid[i][col_idx]) > Float.parseFloat(data_grid[i + 1][col_idx]))) || (!sort_ascending && (Float.parseFloat(data_grid[i][col_idx]) < Float.parseFloat(data_grid[i + 1][col_idx])))) {
+                        flip = true;
+                    } else {
+                    }
+                }
+                if (flip) {
+                    String[] temp = data_grid[i];
+                    data_grid[i] = data_grid[i + 1];
+                    data_grid[i + 1] = temp;
+                    String[] stemp = vert[i];
+                    vert[i] = vert[i + 1];
+                    vert[i + 1] = stemp;
+                    made_change = true;
+                }
+            }
+        }
+    }
+"
+80,"    public String[] sortAlpha(Collection collection) {
+        String[] retur = new String[collection.size()];
+        Iterator it = collection.iterator();
+        int k = 0;
+        while (it.hasNext()) {
+            String temp = (String) it.next();
+            retur[k] = temp;
+            k++;
+        }
+        for (int i = 0; i + 1 < retur.length; i++) {
+            if (retur[i].compareTo(retur[i + 1]) > 0) {
+                String temp = retur[i];
+                retur[i] = retur[i + 1];
+                retur[i + 1] = temp;
+                int j = i;
+                boolean done = false;
+                while (j != 0 && !done) {
+                    if (retur[j].compareTo(retur[j - 1]) < 0) {
+                        temp = retur[j];
+                        retur[j] = retur[j - 1];
+                        retur[j - 1] = temp;
+                    } else done = true;
+                    j--;
+                }
+            }
+        }
+        return retur;
+    }
+"
+81,"    private void sortClasses() {
+        final HashTable alreadySortedClasses = new HashTable(""SortedClasses"");
+        for (int c = 0; c < this.inputParameter.getCustomerClasses().size(); c++) {
+            double highestPriority = 100000;
+            Class actualClassWithHighestPriority = null;
+            for (int c2 = 0; c2 < this.inputParameter.getCustomerClasses().size(); c2++) {
+                final Class customerClass2 = (Class) this.inputParameter.getCustomerClasses().get(c2);
+                if (alreadySortedClasses.read(customerClass2.getClassID()) == 0) {
+                    if (customerClass2.getPriority() < highestPriority) {
+                        highestPriority = customerClass2.getPriority();
+                        actualClassWithHighestPriority = customerClass2;
+                    }
+                }
+            }
+            this.customerClasses.add(actualClassWithHighestPriority);
+            alreadySortedClasses.write(actualClassWithHighestPriority.getClassID(), highestPriority);
+        }
+    }
+"
+82,"    private static void dualPivotQuicksort(final int[] a, final int low, final int high, final boolean leftmost) {
+        final int length = high - low + 1;
+        if (length < 32) {
+            if (!leftmost) {
+                for (int j, i = low + 1; i <= high; i++) {
+                    final int ai = a[i];
+                    for (j = i - 1; ai < a[j]; j--) {
+                        a[j + 1] = a[j];
+                    }
+                    a[j + 1] = ai;
+                }
+            } else {
+                for (int i = low, j = i; i < high; j = ++i) {
+                    final int ai = a[i + 1];
+                    while (ai < a[j]) {
+                        a[j + 1] = a[j];
+                        if (j-- == low) {
+                            break;
+                        }
+                    }
+                    a[j + 1] = ai;
+                }
+            }
+            return;
+        }
+        final int seventh = (length >>> 3) + (length >>> 6) + 1;
+        final int e3 = (low + high) >>> 1;
+        final int e2 = e3 - seventh;
+        final int e1 = e2 - seventh;
+        final int e4 = e3 + seventh;
+        final int e5 = e4 + seventh;
+        if (a[e2] < a[e1]) {
+            final int t = a[e2];
+            a[e2] = a[e1];
+            a[e1] = t;
+        }
+        if (a[e3] < a[e2]) {
+            final int t = a[e3];
+            a[e3] = a[e2];
+            a[e2] = t;
+            if (t < a[e1]) {
+                a[e2] = a[e1];
+                a[e1] = t;
+            }
+        }
+        if (a[e4] < a[e3]) {
+            final int t = a[e4];
+            a[e4] = a[e3];
+            a[e3] = t;
+            if (t < a[e2]) {
+                a[e3] = a[e2];
+                a[e2] = t;
+                if (t < a[e1]) {
+                    a[e2] = a[e1];
+                    a[e1] = t;
+                }
+            }
+        }
+        if (a[e5] < a[e4]) {
+            final int t = a[e5];
+            a[e5] = a[e4];
+            a[e4] = t;
+            if (t < a[e3]) {
+                a[e4] = a[e3];
+                a[e3] = t;
+                if (t < a[e2]) {
+                    a[e3] = a[e2];
+                    a[e2] = t;
+                    if (t < a[e1]) {
+                        a[e2] = a[e1];
+                        a[e1] = t;
+                    }
+                }
+            }
+        }
+        final int pivot1 = a[e2];
+        final int pivot2 = a[e4];
+        int less = low;
+        int great = high;
+        if (pivot1 != pivot2) {
+            a[e2] = a[low];
+            a[e4] = a[high];
+            while (a[++less] < pivot1) ;
+            while (a[--great] > pivot2) ;
+            outer: for (int k = less; k <= great; k++) {
+                final int ak = a[k];
+                if (ak < pivot1) {
+                    a[k] = a[less];
+                    a[less] = ak;
+                    less++;
+                } else if (ak > pivot2) {
+                    while (a[great] > pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less] = a[great];
+                        less++;
+                    } else {
+                        a[k] = a[great];
+                    }
+                    a[great] = ak;
+                    great--;
+                }
+            }
+            a[low] = a[less - 1];
+            a[less - 1] = pivot1;
+            a[high] = a[great + 1];
+            a[great + 1] = pivot2;
+            dualPivotQuicksort(a, low, less - 2, leftmost);
+            dualPivotQuicksort(a, great + 2, high, false);
+            if (less < e1 && e5 < great) {
+                while (a[less] == pivot1) {
+                    less++;
+                }
+                while (a[great] == pivot2) {
+                    great--;
+                }
+                outer: for (int k = less; k <= great; k++) {
+                    final int ak = a[k];
+                    if (ak == pivot1) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                        less++;
+                    } else if (ak == pivot2) {
+                        while (a[great] == pivot2) {
+                            if (great-- == k) {
+                                break outer;
+                            }
+                        }
+                        if (a[great] == pivot1) {
+                            a[k] = a[less];
+                            a[less] = pivot1;
+                            less++;
+                        } else {
+                            a[k] = a[great];
+                        }
+                        a[great] = ak;
+                        great--;
+                    }
+                }
+            }
+            dualPivotQuicksort(a, less, great, false);
+        } else {
+            for (int k = low; k <= great; k++) {
+                if (a[k] == pivot1) {
+                    continue;
+                }
+                final int ak = a[k];
+                if (ak < pivot1) {
+                    a[k] = a[less];
+                    a[less] = ak;
+                    less++;
+                } else {
+                    while (a[great] > pivot1) {
+                        great--;
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less] = a[great];
+                        less++;
+                    } else {
+                        a[k] = pivot1;
+                    }
+                    a[great] = ak;
+                    great--;
+                }
+            }
+            dualPivotQuicksort(a, low, less - 1, leftmost);
+            dualPivotQuicksort(a, great + 1, high, false);
+        }
+    }
+"
+83,"    private void sortClasses() {
+        final HashTable alreadySortedClasses = new HashTable(""SortedClasses"");
+        for (int c = 0; c < this.inputParameter.getCustomerClasses().size(); c++) {
+            double highestPriority = 100000;
+            Class actualClassWithHighestPriority = null;
+            for (int c2 = 0; c2 < this.inputParameter.getCustomerClasses().size(); c2++) {
+                final Class customerClass2 = (Class) this.inputParameter.getCustomerClasses().get(c2);
+                if (alreadySortedClasses.read(customerClass2.getClassID()) == 0) {
+                    if (customerClass2.getPriority() < highestPriority) {
+                        highestPriority = customerClass2.getPriority();
+                        actualClassWithHighestPriority = customerClass2;
+                    }
+                }
+            }
+            this.customerClasses.add(actualClassWithHighestPriority);
+            alreadySortedClasses.write(actualClassWithHighestPriority.getClassID(), highestPriority);
+        }
+    }
+"
+84,"    private static void dualPivotQuicksort(int[] a, int left, int right) {
+        int sixth = (right - left + 1) / 6;
+        int e1 = left + sixth;
+        int e5 = right - sixth;
+        int e3 = (left + right) >>> 1;
+        int e4 = e3 + sixth;
+        int e2 = e3 - sixth;
+        int ae1 = a[e1], ae2 = a[e2], ae3 = a[e3], ae4 = a[e4], ae5 = a[e5];
+        if (ae1 > ae2) {
+            int t = ae1;
+            ae1 = ae2;
+            ae2 = t;
+        }
+        if (ae4 > ae5) {
+            int t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        if (ae1 > ae3) {
+            int t = ae1;
+            ae1 = ae3;
+            ae3 = t;
+        }
+        if (ae2 > ae3) {
+            int t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae1 > ae4) {
+            int t = ae1;
+            ae1 = ae4;
+            ae4 = t;
+        }
+        if (ae3 > ae4) {
+            int t = ae3;
+            ae3 = ae4;
+            ae4 = t;
+        }
+        if (ae2 > ae5) {
+            int t = ae2;
+            ae2 = ae5;
+            ae5 = t;
+        }
+        if (ae2 > ae3) {
+            int t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae4 > ae5) {
+            int t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        a[e1] = ae1;
+        a[e3] = ae3;
+        a[e5] = ae5;
+        int pivot1 = ae2;
+        a[e2] = a[left];
+        int pivot2 = ae4;
+        a[e4] = a[right];
+        int less = left + 1;
+        int great = right - 1;
+        boolean pivotsDiffer = (pivot1 != pivot2);
+        if (pivotsDiffer) {
+            outer: for (int k = less; k <= great; k++) {
+                int ak = a[k];
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else if (ak > pivot2) {
+                    while (a[great] > pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = a[great];
+                        a[great--] = ak;
+                    }
+                }
+            }
+        } else {
+            for (int k = less; k <= great; k++) {
+                int ak = a[k];
+                if (ak == pivot1) {
+                    continue;
+                }
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else {
+                    while (a[great] > pivot1) {
+                        great--;
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = pivot1;
+                        a[great--] = ak;
+                    }
+                }
+            }
+        }
+        a[left] = a[less - 1];
+        a[less - 1] = pivot1;
+        a[right] = a[great + 1];
+        a[great + 1] = pivot2;
+        doSort(a, left, less - 2);
+        doSort(a, great + 2, right);
+        if (!pivotsDiffer) {
+            return;
+        }
+        if (less < e1 && great > e5) {
+            while (a[less] == pivot1) {
+                less++;
+            }
+            while (a[great] == pivot2) {
+                great--;
+            }
+            outer: for (int k = less; k <= great; k++) {
+                int ak = a[k];
+                if (ak == pivot2) {
+                    while (a[great] == pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] == pivot1) {
+                        a[k] = a[less];
+                        a[less++] = pivot1;
+                    } else {
+                        a[k] = a[great];
+                    }
+                    a[great--] = pivot2;
+                } else if (ak == pivot1) {
+                    a[k] = a[less];
+                    a[less++] = pivot1;
+                }
+            }
+        }
+        doSort(a, less, great);
+    }
+"
+85,"    private static void dualPivotQuicksort(long[] a, int left, int right) {
+        int sixth = (right - left + 1) / 6;
+        int e1 = left + sixth;
+        int e5 = right - sixth;
+        int e3 = (left + right) >>> 1;
+        int e4 = e3 + sixth;
+        int e2 = e3 - sixth;
+        long ae1 = a[e1], ae2 = a[e2], ae3 = a[e3], ae4 = a[e4], ae5 = a[e5];
+        if (ae1 > ae2) {
+            long t = ae1;
+            ae1 = ae2;
+            ae2 = t;
+        }
+        if (ae4 > ae5) {
+            long t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        if (ae1 > ae3) {
+            long t = ae1;
+            ae1 = ae3;
+            ae3 = t;
+        }
+        if (ae2 > ae3) {
+            long t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae1 > ae4) {
+            long t = ae1;
+            ae1 = ae4;
+            ae4 = t;
+        }
+        if (ae3 > ae4) {
+            long t = ae3;
+            ae3 = ae4;
+            ae4 = t;
+        }
+        if (ae2 > ae5) {
+            long t = ae2;
+            ae2 = ae5;
+            ae5 = t;
+        }
+        if (ae2 > ae3) {
+            long t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae4 > ae5) {
+            long t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        a[e1] = ae1;
+        a[e3] = ae3;
+        a[e5] = ae5;
+        long pivot1 = ae2;
+        a[e2] = a[left];
+        long pivot2 = ae4;
+        a[e4] = a[right];
+        int less = left + 1;
+        int great = right - 1;
+        boolean pivotsDiffer = (pivot1 != pivot2);
+        if (pivotsDiffer) {
+            outer: for (int k = less; k <= great; k++) {
+                long ak = a[k];
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else if (ak > pivot2) {
+                    while (a[great] > pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = a[great];
+                        a[great--] = ak;
+                    }
+                }
+            }
+        } else {
+            for (int k = less; k <= great; k++) {
+                long ak = a[k];
+                if (ak == pivot1) {
+                    continue;
+                }
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else {
+                    while (a[great] > pivot1) {
+                        great--;
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = pivot1;
+                        a[great--] = ak;
+                    }
+                }
+            }
+        }
+        a[left] = a[less - 1];
+        a[less - 1] = pivot1;
+        a[right] = a[great + 1];
+        a[great + 1] = pivot2;
+        doSort(a, left, less - 2);
+        doSort(a, great + 2, right);
+        if (!pivotsDiffer) {
+            return;
+        }
+        if (less < e1 && great > e5) {
+            while (a[less] == pivot1) {
+                less++;
+            }
+            while (a[great] == pivot2) {
+                great--;
+            }
+            outer: for (int k = less; k <= great; k++) {
+                long ak = a[k];
+                if (ak == pivot2) {
+                    while (a[great] == pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] == pivot1) {
+                        a[k] = a[less];
+                        a[less++] = pivot1;
+                    } else {
+                        a[k] = a[great];
+                    }
+                    a[great--] = pivot2;
+                } else if (ak == pivot1) {
+                    a[k] = a[less];
+                    a[less++] = pivot1;
+                }
+            }
+        }
+        doSort(a, less, great);
+    }
+"
+86,"    private static void dualPivotQuicksort(short[] a, int left, int right) {
+        int sixth = (right - left + 1) / 6;
+        int e1 = left + sixth;
+        int e5 = right - sixth;
+        int e3 = (left + right) >>> 1;
+        int e4 = e3 + sixth;
+        int e2 = e3 - sixth;
+        short ae1 = a[e1], ae2 = a[e2], ae3 = a[e3], ae4 = a[e4], ae5 = a[e5];
+        if (ae1 > ae2) {
+            short t = ae1;
+            ae1 = ae2;
+            ae2 = t;
+        }
+        if (ae4 > ae5) {
+            short t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        if (ae1 > ae3) {
+            short t = ae1;
+            ae1 = ae3;
+            ae3 = t;
+        }
+        if (ae2 > ae3) {
+            short t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae1 > ae4) {
+            short t = ae1;
+            ae1 = ae4;
+            ae4 = t;
+        }
+        if (ae3 > ae4) {
+            short t = ae3;
+            ae3 = ae4;
+            ae4 = t;
+        }
+        if (ae2 > ae5) {
+            short t = ae2;
+            ae2 = ae5;
+            ae5 = t;
+        }
+        if (ae2 > ae3) {
+            short t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae4 > ae5) {
+            short t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        a[e1] = ae1;
+        a[e3] = ae3;
+        a[e5] = ae5;
+        short pivot1 = ae2;
+        a[e2] = a[left];
+        short pivot2 = ae4;
+        a[e4] = a[right];
+        int less = left + 1;
+        int great = right - 1;
+        boolean pivotsDiffer = (pivot1 != pivot2);
+        if (pivotsDiffer) {
+            outer: for (int k = less; k <= great; k++) {
+                short ak = a[k];
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else if (ak > pivot2) {
+                    while (a[great] > pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = a[great];
+                        a[great--] = ak;
+                    }
+                }
+            }
+        } else {
+            for (int k = less; k <= great; k++) {
+                short ak = a[k];
+                if (ak == pivot1) {
+                    continue;
+                }
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else {
+                    while (a[great] > pivot1) {
+                        great--;
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = pivot1;
+                        a[great--] = ak;
+                    }
+                }
+            }
+        }
+        a[left] = a[less - 1];
+        a[less - 1] = pivot1;
+        a[right] = a[great + 1];
+        a[great + 1] = pivot2;
+        doSort(a, left, less - 2);
+        doSort(a, great + 2, right);
+        if (!pivotsDiffer) {
+            return;
+        }
+        if (less < e1 && great > e5) {
+            while (a[less] == pivot1) {
+                less++;
+            }
+            while (a[great] == pivot2) {
+                great--;
+            }
+            outer: for (int k = less; k <= great; k++) {
+                short ak = a[k];
+                if (ak == pivot2) {
+                    while (a[great] == pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] == pivot1) {
+                        a[k] = a[less];
+                        a[less++] = pivot1;
+                    } else {
+                        a[k] = a[great];
+                    }
+                    a[great--] = pivot2;
+                } else if (ak == pivot1) {
+                    a[k] = a[less];
+                    a[less++] = pivot1;
+                }
+            }
+        }
+        doSort(a, less, great);
+    }
+"
+87,"    private static void dualPivotQuicksort(char[] a, int left, int right) {
+        int sixth = (right - left + 1) / 6;
+        int e1 = left + sixth;
+        int e5 = right - sixth;
+        int e3 = (left + right) >>> 1;
+        int e4 = e3 + sixth;
+        int e2 = e3 - sixth;
+        char ae1 = a[e1], ae2 = a[e2], ae3 = a[e3], ae4 = a[e4], ae5 = a[e5];
+        if (ae1 > ae2) {
+            char t = ae1;
+            ae1 = ae2;
+            ae2 = t;
+        }
+        if (ae4 > ae5) {
+            char t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        if (ae1 > ae3) {
+            char t = ae1;
+            ae1 = ae3;
+            ae3 = t;
+        }
+        if (ae2 > ae3) {
+            char t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae1 > ae4) {
+            char t = ae1;
+            ae1 = ae4;
+            ae4 = t;
+        }
+        if (ae3 > ae4) {
+            char t = ae3;
+            ae3 = ae4;
+            ae4 = t;
+        }
+        if (ae2 > ae5) {
+            char t = ae2;
+            ae2 = ae5;
+            ae5 = t;
+        }
+        if (ae2 > ae3) {
+            char t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae4 > ae5) {
+            char t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        a[e1] = ae1;
+        a[e3] = ae3;
+        a[e5] = ae5;
+        char pivot1 = ae2;
+        a[e2] = a[left];
+        char pivot2 = ae4;
+        a[e4] = a[right];
+        int less = left + 1;
+        int great = right - 1;
+        boolean pivotsDiffer = (pivot1 != pivot2);
+        if (pivotsDiffer) {
+            outer: for (int k = less; k <= great; k++) {
+                char ak = a[k];
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else if (ak > pivot2) {
+                    while (a[great] > pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = a[great];
+                        a[great--] = ak;
+                    }
+                }
+            }
+        } else {
+            for (int k = less; k <= great; k++) {
+                char ak = a[k];
+                if (ak == pivot1) {
+                    continue;
+                }
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else {
+                    while (a[great] > pivot1) {
+                        great--;
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = pivot1;
+                        a[great--] = ak;
+                    }
+                }
+            }
+        }
+        a[left] = a[less - 1];
+        a[less - 1] = pivot1;
+        a[right] = a[great + 1];
+        a[great + 1] = pivot2;
+        doSort(a, left, less - 2);
+        doSort(a, great + 2, right);
+        if (!pivotsDiffer) {
+            return;
+        }
+        if (less < e1 && great > e5) {
+            while (a[less] == pivot1) {
+                less++;
+            }
+            while (a[great] == pivot2) {
+                great--;
+            }
+            outer: for (int k = less; k <= great; k++) {
+                char ak = a[k];
+                if (ak == pivot2) {
+                    while (a[great] == pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] == pivot1) {
+                        a[k] = a[less];
+                        a[less++] = pivot1;
+                    } else {
+                        a[k] = a[great];
+                    }
+                    a[great--] = pivot2;
+                } else if (ak == pivot1) {
+                    a[k] = a[less];
+                    a[less++] = pivot1;
+                }
+            }
+        }
+        doSort(a, less, great);
+    }
+"
+88,"    private static void dualPivotQuicksort(byte[] a, int left, int right) {
+        int sixth = (right - left + 1) / 6;
+        int e1 = left + sixth;
+        int e5 = right - sixth;
+        int e3 = (left + right) >>> 1;
+        int e4 = e3 + sixth;
+        int e2 = e3 - sixth;
+        byte ae1 = a[e1], ae2 = a[e2], ae3 = a[e3], ae4 = a[e4], ae5 = a[e5];
+        if (ae1 > ae2) {
+            byte t = ae1;
+            ae1 = ae2;
+            ae2 = t;
+        }
+        if (ae4 > ae5) {
+            byte t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        if (ae1 > ae3) {
+            byte t = ae1;
+            ae1 = ae3;
+            ae3 = t;
+        }
+        if (ae2 > ae3) {
+            byte t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae1 > ae4) {
+            byte t = ae1;
+            ae1 = ae4;
+            ae4 = t;
+        }
+        if (ae3 > ae4) {
+            byte t = ae3;
+            ae3 = ae4;
+            ae4 = t;
+        }
+        if (ae2 > ae5) {
+            byte t = ae2;
+            ae2 = ae5;
+            ae5 = t;
+        }
+        if (ae2 > ae3) {
+            byte t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae4 > ae5) {
+            byte t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        a[e1] = ae1;
+        a[e3] = ae3;
+        a[e5] = ae5;
+        byte pivot1 = ae2;
+        a[e2] = a[left];
+        byte pivot2 = ae4;
+        a[e4] = a[right];
+        int less = left + 1;
+        int great = right - 1;
+        boolean pivotsDiffer = (pivot1 != pivot2);
+        if (pivotsDiffer) {
+            outer: for (int k = less; k <= great; k++) {
+                byte ak = a[k];
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else if (ak > pivot2) {
+                    while (a[great] > pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = a[great];
+                        a[great--] = ak;
+                    }
+                }
+            }
+        } else {
+            for (int k = less; k <= great; k++) {
+                byte ak = a[k];
+                if (ak == pivot1) {
+                    continue;
+                }
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else {
+                    while (a[great] > pivot1) {
+                        great--;
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = pivot1;
+                        a[great--] = ak;
+                    }
+                }
+            }
+        }
+        a[left] = a[less - 1];
+        a[less - 1] = pivot1;
+        a[right] = a[great + 1];
+        a[great + 1] = pivot2;
+        doSort(a, left, less - 2);
+        doSort(a, great + 2, right);
+        if (!pivotsDiffer) {
+            return;
+        }
+        if (less < e1 && great > e5) {
+            while (a[less] == pivot1) {
+                less++;
+            }
+            while (a[great] == pivot2) {
+                great--;
+            }
+            outer: for (int k = less; k <= great; k++) {
+                byte ak = a[k];
+                if (ak == pivot2) {
+                    while (a[great] == pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] == pivot1) {
+                        a[k] = a[less];
+                        a[less++] = pivot1;
+                    } else {
+                        a[k] = a[great];
+                    }
+                    a[great--] = pivot2;
+                } else if (ak == pivot1) {
+                    a[k] = a[less];
+                    a[less++] = pivot1;
+                }
+            }
+        }
+        doSort(a, less, great);
+    }
+"
+89,"    private static void dualPivotQuicksort(float[] a, int left, int right) {
+        int sixth = (right - left + 1) / 6;
+        int e1 = left + sixth;
+        int e5 = right - sixth;
+        int e3 = (left + right) >>> 1;
+        int e4 = e3 + sixth;
+        int e2 = e3 - sixth;
+        float ae1 = a[e1], ae2 = a[e2], ae3 = a[e3], ae4 = a[e4], ae5 = a[e5];
+        if (ae1 > ae2) {
+            float t = ae1;
+            ae1 = ae2;
+            ae2 = t;
+        }
+        if (ae4 > ae5) {
+            float t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        if (ae1 > ae3) {
+            float t = ae1;
+            ae1 = ae3;
+            ae3 = t;
+        }
+        if (ae2 > ae3) {
+            float t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae1 > ae4) {
+            float t = ae1;
+            ae1 = ae4;
+            ae4 = t;
+        }
+        if (ae3 > ae4) {
+            float t = ae3;
+            ae3 = ae4;
+            ae4 = t;
+        }
+        if (ae2 > ae5) {
+            float t = ae2;
+            ae2 = ae5;
+            ae5 = t;
+        }
+        if (ae2 > ae3) {
+            float t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae4 > ae5) {
+            float t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        a[e1] = ae1;
+        a[e3] = ae3;
+        a[e5] = ae5;
+        float pivot1 = ae2;
+        a[e2] = a[left];
+        float pivot2 = ae4;
+        a[e4] = a[right];
+        int less = left + 1;
+        int great = right - 1;
+        boolean pivotsDiffer = (pivot1 != pivot2);
+        if (pivotsDiffer) {
+            outer: for (int k = less; k <= great; k++) {
+                float ak = a[k];
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else if (ak > pivot2) {
+                    while (a[great] > pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = a[great];
+                        a[great--] = ak;
+                    }
+                }
+            }
+        } else {
+            for (int k = less; k <= great; k++) {
+                float ak = a[k];
+                if (ak == pivot1) {
+                    continue;
+                }
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else {
+                    while (a[great] > pivot1) {
+                        great--;
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = pivot1;
+                        a[great--] = ak;
+                    }
+                }
+            }
+        }
+        a[left] = a[less - 1];
+        a[less - 1] = pivot1;
+        a[right] = a[great + 1];
+        a[great + 1] = pivot2;
+        doSort(a, left, less - 2);
+        doSort(a, great + 2, right);
+        if (!pivotsDiffer) {
+            return;
+        }
+        if (less < e1 && great > e5) {
+            while (a[less] == pivot1) {
+                less++;
+            }
+            while (a[great] == pivot2) {
+                great--;
+            }
+            outer: for (int k = less; k <= great; k++) {
+                float ak = a[k];
+                if (ak == pivot2) {
+                    while (a[great] == pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] == pivot1) {
+                        a[k] = a[less];
+                        a[less++] = pivot1;
+                    } else {
+                        a[k] = a[great];
+                    }
+                    a[great--] = pivot2;
+                } else if (ak == pivot1) {
+                    a[k] = a[less];
+                    a[less++] = pivot1;
+                }
+            }
+        }
+        doSort(a, less, great);
+    }
+"
+90,"    private static void dualPivotQuicksort(double[] a, int left, int right) {
+        int sixth = (right - left + 1) / 6;
+        int e1 = left + sixth;
+        int e5 = right - sixth;
+        int e3 = (left + right) >>> 1;
+        int e4 = e3 + sixth;
+        int e2 = e3 - sixth;
+        double ae1 = a[e1], ae2 = a[e2], ae3 = a[e3], ae4 = a[e4], ae5 = a[e5];
+        if (ae1 > ae2) {
+            double t = ae1;
+            ae1 = ae2;
+            ae2 = t;
+        }
+        if (ae4 > ae5) {
+            double t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        if (ae1 > ae3) {
+            double t = ae1;
+            ae1 = ae3;
+            ae3 = t;
+        }
+        if (ae2 > ae3) {
+            double t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae1 > ae4) {
+            double t = ae1;
+            ae1 = ae4;
+            ae4 = t;
+        }
+        if (ae3 > ae4) {
+            double t = ae3;
+            ae3 = ae4;
+            ae4 = t;
+        }
+        if (ae2 > ae5) {
+            double t = ae2;
+            ae2 = ae5;
+            ae5 = t;
+        }
+        if (ae2 > ae3) {
+            double t = ae2;
+            ae2 = ae3;
+            ae3 = t;
+        }
+        if (ae4 > ae5) {
+            double t = ae4;
+            ae4 = ae5;
+            ae5 = t;
+        }
+        a[e1] = ae1;
+        a[e3] = ae3;
+        a[e5] = ae5;
+        double pivot1 = ae2;
+        a[e2] = a[left];
+        double pivot2 = ae4;
+        a[e4] = a[right];
+        int less = left + 1;
+        int great = right - 1;
+        boolean pivotsDiffer = (pivot1 != pivot2);
+        if (pivotsDiffer) {
+            outer: for (int k = less; k <= great; k++) {
+                double ak = a[k];
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else if (ak > pivot2) {
+                    while (a[great] > pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = a[great];
+                        a[great--] = ak;
+                    }
+                }
+            }
+        } else {
+            for (int k = less; k <= great; k++) {
+                double ak = a[k];
+                if (ak == pivot1) {
+                    continue;
+                }
+                if (ak < pivot1) {
+                    if (k != less) {
+                        a[k] = a[less];
+                        a[less] = ak;
+                    }
+                    less++;
+                } else {
+                    while (a[great] > pivot1) {
+                        great--;
+                    }
+                    if (a[great] < pivot1) {
+                        a[k] = a[less];
+                        a[less++] = a[great];
+                        a[great--] = ak;
+                    } else {
+                        a[k] = pivot1;
+                        a[great--] = ak;
+                    }
+                }
+            }
+        }
+        a[left] = a[less - 1];
+        a[less - 1] = pivot1;
+        a[right] = a[great + 1];
+        a[great + 1] = pivot2;
+        doSort(a, left, less - 2);
+        doSort(a, great + 2, right);
+        if (!pivotsDiffer) {
+            return;
+        }
+        if (less < e1 && great > e5) {
+            while (a[less] == pivot1) {
+                less++;
+            }
+            while (a[great] == pivot2) {
+                great--;
+            }
+            outer: for (int k = less; k <= great; k++) {
+                double ak = a[k];
+                if (ak == pivot2) {
+                    while (a[great] == pivot2) {
+                        if (great-- == k) {
+                            break outer;
+                        }
+                    }
+                    if (a[great] == pivot1) {
+                        a[k] = a[less];
+                        a[less++] = pivot1;
+                    } else {
+                        a[k] = a[great];
+                    }
+                    a[great--] = pivot2;
+                } else if (ak == pivot1) {
+                    a[k] = a[less];
+                    a[less++] = pivot1;
+                }
+            }
+        }
+        doSort(a, less, great);
+    }
+"
+91,"    public static void sort(Object[] arr, int start, int end) {
+        if (end - start <= 2) {
+            if (end - start == 2 && arr[start].toString().compareTo(arr[start + 1].toString()) > 0) {
+                Object tmp = arr[start];
+                arr[start] = arr[start + 1];
+                arr[start + 1] = tmp;
+            }
+            return;
+        }
+        if (end - start == 3) {
+            sort(arr, start, start + 2);
+            sort(arr, start + 1, start + 3);
+            sort(arr, start, start + 2);
+            return;
+        }
+        int middle = (start + end) / 2;
+        sort(arr, start, middle);
+        sort(arr, middle, end);
+        Object[] tmp = new Object[end - start];
+        int i0 = start;
+        int i1 = middle;
+        for (int i = 0; i < tmp.length; i++) {
+            if (i0 == middle) {
+                tmp[i] = arr[i1++];
+            } else if (i1 == end || arr[i0].toString().compareTo(arr[i1].toString()) < 0) {
+                tmp[i] = arr[i0++];
+            } else {
+                tmp[i] = arr[i1++];
+            }
+        }
+        System.arraycopy(tmp, 0, arr, start, tmp.length);
+    }
+"
+92,"    private void sortKey(String[] names) {
+        for (int i = 0; i + 1 < names.length; i++) {
+            if (names[i].compareTo(names[i + 1]) > 0) {
+                String temp = names[i];
+                names[i] = names[i + 1];
+                names[i + 1] = temp;
+                int j = i;
+                boolean done = false;
+                while (j != 0 && !done) {
+                    if (names[j].compareTo(names[j - 1]) < 0) {
+                        temp = names[j];
+                        names[j] = names[j - 1];
+                        names[j - 1] = temp;
+                    } else done = true;
+                    j--;
+                }
+            }
+        }
+    }
+"
+93,"    public String[] sortAlpha(Collection collection) {
+        String[] retur = new String[collection.size()];
+        Iterator it = collection.iterator();
+        int k = 0;
+        for (int i = 0; i < collection.size(); i++) {
+            retur[i] = (String) it.next();
+        }
+        for (int i = 0; i < retur.length - 1; i++) {
+            if (retur[i].compareTo(retur[i + 1]) > 0) {
+                String temp = retur[i];
+                retur[i] = retur[i + 1];
+                retur[i + 1] = temp;
+                int j = i;
+                boolean done = false;
+                while (j != 0 && !done) {
+                    if (retur[j].compareTo(retur[j - 1]) < 0) {
+                        temp = retur[j];
+                        retur[j] = retur[j - 1];
+                        retur[j - 1] = temp;
+                    } else done = true;
+                    j--;
+                }
+            }
+        }
+        return retur;
+    }
+"
+94,"    public final Object sortField(Object sidI) throws SortException {
+        if (sidI != SORT_CHANNEL_NAME) {
+            throw new com.rbnb.utility.SortException(""The sort identifier is not valid."");
+        }
+        return (getChannelName());
+    }
+"
+95,"    public static void sort(String[] args) throws IOException {
+        Date begin = new Date();
+        String input = args[1];
+        String out = args[2];
+        FileInputStream unsorted = null;
+        try {
+            unsorted = new FileInputStream(input);
+        } catch (FileNotFoundException e) {
+            System.err.println(""sort input file args[1]=\"""" + input + ""\"" caused FileNotFoundException"");
+            e.printStackTrace();
+            throw e;
+        }
+        ReadableByteChannel leftAsFile = unsorted.getChannel();
+        FileOutputStream outStream = new FileOutputStream(out);
+        WritableByteChannel outChannel = outStream.getChannel();
+        CondorDriver driver = new CondorDriver(leftAsFile, null, outChannel);
+        try {
+            driver.sort();
+        } finally {
+            if (leftAsFile != null) leftAsFile.close();
+            if (outStream != null) {
+                outStream.flush();
+                outStream.close();
+            }
+        }
+        if (driver.hasCaughtExceptions()) {
+            System.err.println(""main thread caught the following child exceptions: "");
+            System.err.println(""<exceptions>"");
+            StringWriter logOfExceptions = new StringWriter();
+            PrintWriter writer = new PrintWriter(logOfExceptions);
+            driver.printCaughtExceptions(writer);
+            System.err.print(logOfExceptions.toString());
+            System.err.println(""</exceptions>"");
+        } else {
+            System.out.println(""no exceptions caught by main thread."");
+        }
+        Date end = new Date();
+        System.out.println(""sort took: "" + (end.getTime() - begin.getTime()) + "" milliseconds"");
+    }
+"
+96,"    public void sort() {
+        long startime = System.currentTimeMillis();
+        synchronized (this) {
+            if (!needSort()) return;
+            if (logger.isDebugEnabled()) logger.debug(""Groupkey write start!Groupkey status："" + toString() + "" by Thread:"" + Thread.currentThread().getName());
+            for (Topkey key : sortedTopkeys) distinctTopkeys.put(key.getKey(), key);
+            distinctTopkeys.putAll(sampledTopkeys);
+            reset();
+        }
+        List<Topkey> sortedArr = new ArrayList<Topkey>(distinctTopkeys.values());
+        distinctTopkeys.clear();
+        Collections.sort(sortedArr);
+        if (sortedArr.size() > size) {
+            sortedArr.subList(size, sortedArr.size()).clear();
+        }
+        this.sortedTopkeys = sortedArr;
+        if (GkcConfig.getInstance().isStore() && sortedTopkeys.size() > 0) cachePersistent();
+        long timeEclipse = System.currentTimeMillis() - startime;
+        if (timeEclipse > 1000) logger.warn(""Groupkey write time too long! timeElapse:"" + timeEclipse + "" ms KeyBuffer.size:"" + KeyBuffer.size());
+        if (logger.isDebugEnabled()) logger.debug(""Groupkey status:"" + toString() + ""sortedTopkeys:"" + descSortedTopkeys());
+    }
+"
+97,"    private static <E> void movesort(final E[] values, final E[] buffer, final int start, final int bound, final Comparator<? super E> comparator) {
+        int t = start;
+        E v1, v2;
+        for (; t < bound; t++) {
+            if (comparator.compare(v1 = values[t], v2 = values[t + 1]) <= 0) {
+                buffer[t] = values[t];
+            } else {
+                buffer[t] = values[t + 1];
+                values[t + 1] = values[t];
+            }
+        }
+        buffer[t] = values[t];
+    }
+"
+98,"public void i(int A[]){
+    for (int j = 1; j < A.length; j++) {
+        int key = A[j];
+        int i = j - 1;
+        while (i >= 0 && A[i] > key) {
+            A[i + 1] = A[i];
+            i--;
+        }
+        A[i + 1] = key;
+    }
+}"
+99,"public static void bubbl(int[] array){
+        int temp;
+        for(int i = 0; i < array.length; i++){
+            for(int j = 0; j< array.length -i -1; j ++){
+                if(array[j] > array[j + 1]){
+                    temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                }
+            }
+        }
+    }"
+100,"public static void sele(int[] array){
+        for(int i = 0; i < array.length; i++ ){
+            int index = i;
+            for(int j = i + 1; j < array.length; j++){
+                if(array[j] < array[index]){
+                    index = j;
+                }
+            }
+            if(i != index){
+                int tmp = array[index];
+                array[index] = array[i];
+                array[i] = tmp;
+
+            }
+        }
+    }"
+101,"public static void Ins(int[] array){
+        for(int i = 1; i < array.length; i++){
+            int j = i;
+            while(j >= 1 && array[j-1] > array[j]){
+                int tmp = array[j];
+                array[j] = array[j - 1];
+                array[j-1] = tmp;
+                j --;
+
+            }
+        }
+
+    }"
+102,"public static void Shel(int[] array){
+        int h = array.length / 2;
+
+        while(h > 0){
+            for(int i=h; i < array.length; i++){
+                int j = i;
+                while(j >= h && array[j - h] > array[j]){
+                    int tmp = array[j];
+                    array[j] = array[j-h];
+                    array[j-h] = tmp;
+                    j --;
+                }
+            }
+            h /= 2;
+        }
+
+    }"
+103,"public static void quick(int[] array, int left, int right){
+        if(left <= right){
+            int p = array[(left + right) >>> 1];
+            int l = left;
+            int r = right;
+            while(l <= r){
+                while (array[l] < p){
+                    l ++;
+                }
+                while (array[r] > p){
+                    r --;
+                }
+                if (l <= r){
+                    int tmp = array[l];
+                    array[l] = array[r];
+                    array[r] = tmp;
+                    l++ ;
+                    r-- ;
+                }
+            }
+            quick(array, left, r);
+            quick(array, l, right);
+        }
+    }"
+104,"public static void heap(int[] array) {
+        int n = array.length;
+
+        for (int i = n /2 -1; i>=0; i--){
+            heap(array, n, i);
+        }
+
+        for (int i = n-1 ; i>=0; i --){
+            if (array[0] > array[i]) {
+                int tmp = array[0];
+                array[0] = array[i];
+                array[i] = tmp;
+
+                heap(array, i-1, 0);
+            }
+
+        }
+    }"
+105,"public static void bubb(int[] array, int maxValue){
+        int[] bucket = new int[maxValue + 1];
+
+        for (int i = 0; i < bucket.length; i++){
+            bucket[i] = 0;
+        }
+
+        for (int i = 0; i < array.length; i++){
+            bucket[array[i]] ++;
+        }
+
+        int outPos = 0;
+        for (int i = 0; i < bucket.length; i++){
+            for (int j = 0; j < bucket[i]; j++){
+                array[outPos++] = i;
+            }
+        }
+    }"
+106,"public static void se(String[] args) {
+		for (int i = 0; i < array.length; i++) {
+			int min = i;
+			for (int j = i + 1; j < array.length; j++){
+				if (array[min] > array[j]){
+					min = j;
+				}
+			}
+			int tmp = array[i];
+			array[i] = array[min];
+			array[min] = tmp;
+		}
+	}"
+107,"public static void bub(String[] args) {
+		for(int i = 0; i < array.length; i++){
+			for(int j = 0; j < array.length - 1 - i; j++){
+				if(array[j] > array[j + 1]){
+					int tmp = array[j];
+					array[j] = array[j + 1];
+					array[j + 1] = tmp;
+				}
+			}
+		}
+	}"
+108,"public static void In(String[] args) {
+		for(int i = 1; i < array.length; i++){
+			int insertionData = array[i];
+			int j = i;
+			for(; j >= 1 && array[j - 1] > insertionData; j--){
+				array[j] = array[j - 1];
+			}
+			array[j] = insertionData;
+		}
+	}"
+109,"public static void she(String[] args) {
+		for (int range = array.length / 2; range > 0; range /= 2) {
+			for (int h = 0; h < range; h++) {
+				for (int i = h + range; i < array.length; i += range) {
+					int insertionData = array[i];
+					int j = i;
+					for (; j >= range && array[j - range] > insertionData; j -= range) {
+						array[j] = array[j - range];
+					}
+					array[j] = insertionData;
+				}
+			}
+		}
+	}"
+110,"void bu(int numbers[], int array_size)
+{
+  int i, j, temp;
+
+  for (i = 0; i < (array_size - 1); i++) {
+    for (j = (array_size - 1); j > i; j--) {
+      if (numbers[j-1] > numbers[j]) {
+        temp = numbers[j-1];
+        numbers[j-1] = numbers[j];
+        numbers[j] = temp;
+      }
+    }
+  }
+}"
+111,"private static void b(int[] n) {
+        int tmp;
+        for(int i = 0; i < n.length - 1; i++) {
+            for(int j = n.length - 1; i < j; j--) {
+                if(n[j-1] > n[j]) {
+                    tmp = n[j-1];
+                    n[j-1] = n[j];
+                    n[j] = tmp;
+                }
+            }
+        }
+    }"
+112,"void shaker(int *arr,int lim)
+{
+        int tmp;
+        int last_swap;
+        int head_last_swap_pos = lim-1;
+        int tail_last_swap_pos = 0;
+        int i;
+
+        while( 1 )
+        {
+                last_swap = tail_last_swap_pos;
+                for( i=tail_last_swap_pos ; i<head_last_swap_pos ; i++ ) { if( arr[ i ] > arr[ i+1 ]  )
+                        {
+                                tmp = arr[ i ];
+                                arr[ i ] = arr[ i+1 ];
+                                arr[ i+1 ] = tmp;
+                                last_swap = i;
+                        }
+                }
+                head_last_swap_pos = last_swap;
+                if( head_last_swap_pos == tail_last_swap_pos )break;
+
+                for( i=head_last_swap_pos; i>tail_last_swap_pos ; i-- )
+                {
+                        if( arr[ i-1 ] > arr[ i ] )
+                        {
+                                tmp = arr[ i-1 ];
+                                arr[ i-1 ] = arr[ i ];
+                                arr[ i ] = tmp;
+                                last_swap = i;
+                        }
+                }
+                tail_last_swap_pos = last_swap;
+                if( head_last_swap_pos == tail_last_swap_pos )break;
+        }
+}"
+113,"static void qu(int *arr,int begin,int end)
+{
+        if( begin >= end )return;
+
+        int tmp;
+        int left = begin;
+        int right = end;
+        int pivot = arr[ (left+right)/2+1 ];
+
+        while( 1 )
+        {
+                while( arr[ left ] < pivot )left++;
+                while( arr[ right ] > pivot )right--;
+
+                if( left >= right )break;
+
+                tmp = arr[ left ];
+                arr[ left ] = arr[ right ];
+                arr[ right ] = tmp;
+                
+                left++;
+                right--;
+        }
+
+        q(arr,begin,left-1);
+        q(arr,left,end);
+}"
+114,"void shell(int *arr,int lim)
+{
+        int tmp;
+        int i,c,j,k;
+        int interval;
+
+        for( interval=1;interval<lim;interval=interval*3+1 );
+
+        for( i=interval ; i>0 ; i/=3 )
+        {
+                for( j=i ; j<lim ; j++ )
+                {
+                        tmp = arr[ j ];
+                        k = j - i;
+                        for( c=j ; k>=0 && arr[ k ] > tmp ; c-=i,k-=i )
+                        {
+                                arr[ c ] = arr[ k ];
+                        }
+                        arr[ c ] = tmp;
+                }
+        }
+}"
+115,"static void merge(int *arr,int count,int *tmp)
+{
+        if( count < 2 )return;
+
+        merge(arr,count/2,tmp);
+        merge(arr+count/2,count - count/2,tmp);
+
+        int i = 0;
+        int *tub1 = arr;
+        int *tub2 = arr+count/2;
+        int tub1_index = 0;
+        int tub2_index = 0;
+        int tub1_count = count/2;
+        int tub2_count = count - tub1_count;
+
+        while( tub1_index<tub1_count && tub2_index<tub2_count )
+        {
+                if( tub1[ tub1_index ] > tub2[ tub2_index ] )
+                        tmp[ i++ ] = tub2[ tub2_index++ ];
+                else
+                        tmp[ i++ ] = tub1[ tub1_index++ ];
+        }
+
+        if( tub1_index >= tub1_count )
+                while( tub2_index<tub2_count )tmp[ i++ ] = tub2[ tub2_index++ ];
+        else
+                while( tub1_index<tub1_count )tmp[ i++ ] = tub1[ tub1_index++ ];
+}"
+116,"int counting() {
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+    }
+
+    int num[MAX] = {0};
+    for (int i = 0; i < n; ++i) {
+        ++num[a[i]];
+    }
+
+    int sum[MAX] = {0};
+    for (int v = 1; v < MAX; ++v) {
+        sum[v] = sum[v-1] + num[v];
+    }
+
+    vector<int> sorted(n);
+    for (int i = n-1; i >= 0; --i) {
+        sorted[--sum[a[i]]] = a[i];
+    }
+
+    return 0;
+}"
+117,"void Gnome(vector<int> &a) {
+    int g = 1;
+    while (g < (int)a.size()) {
+        if (a[g - 1] <= a[g]) ++g;
+        else {
+            sw(a[g - 1], a[g]);
+            if (g > 1) --g;
+        }
+    }
+}"

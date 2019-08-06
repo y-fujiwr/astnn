@@ -1,0 +1,1236 @@
+id,code
+0,"public static void main(String[] args){
+  String fileName=""A-small-attempt1.in"";
+  try (BufferedReader br=new BufferedReader(new FileReader(fileName))){
+    try (BufferedWriter bw=new BufferedWriter(new FileWriter(fileName + "".out""))){
+      int tests=Integer.valueOf(br.readLine());
+      for (int test=1; test <= tests; ++test) {
+        Scanner scanner=new Scanner(br.readLine());
+        int nn=scanner.nextInt();
+        int rr=scanner.nextInt();
+        int pp=scanner.nextInt();
+        int ss=scanner.nextInt();
+        List<String> res=new ArrayList<>();
+        start:         for (int start=0; start <= 2; ++start) {
+          int n=nn;
+          int r=rr;
+          int p=pp;
+          int s=ss;
+          int prevLen=1;
+          char prev[]=new char[prevLen];
+          if (start == 0)           prev[0]='P';
+          if (start == 1)           prev[0]='R';
+          if (start == 2)           prev[0]='S';
+          int curLen;
+          while (n-- > 0) {
+            curLen=prevLen * 2;
+            char cur[]=new char[curLen];
+            for (int i=0; i < prevLen; ++i) {
+              if (prev[i] == 'P') {
+                cur[i * 2]='P';
+                cur[i * 2 + 1]='R';
+              }
+ else               if (prev[i] == 'R') {
+                if (n == 0) {
+                  cur[i * 2]='R';
+                  cur[i * 2 + 1]='S';
+                }
+ else {
+                  cur[i * 2]='S';
+                  cur[i * 2 + 1]='R';
+                }
+              }
+ else               if (prev[i] == 'S') {
+                if (n >= 2) {
+                  cur[i * 2]='S';
+                  cur[i * 2 + 1]='P';
+                }
+ else {
+                  cur[i * 2]='P';
+                  cur[i * 2 + 1]='S';
+                }
+              }
+            }
+            prevLen=curLen;
+            prev=cur;
+          }
+          int a=1;
+          for (          char c : prev) {
+            if ('P' == c)             --p;
+            if ('R' == c)             --r;
+            if ('S' == c)             --s;
+            if (p < 0 || s < 0 || r < 0)             continue start;
+          }
+          res.add(new String(prev));
+        }
+        bw.write(""Case #"" + test + "": "");
+        if (res.isEmpty())         bw.write(""IMPOSSIBLE"");
+ else {
+          String result=null;
+          for (          String s : res) {
+            if (result == null)             result=s;
+ else {
+              if (result.compareTo(s) > 0)               result=s;
+            }
+          }
+          bw.write(result);
+        }
+        bw.write(""\n"");
+      }
+      bw.close();
+    }
+   }
+ catch (  IOException e) {
+    e.printStackTrace();
+  }
+}"
+1,public static void main(String args[]) throws IOException
+2,"public static void main(String[] args) throws Exception {
+  String filePrefix=args.length > 0 ? args[0] : ""A-large"";
+  try {
+    A r=new A();
+    r.sc=new Scanner(new FileReader(filePrefix + "".in""));
+    r.pw=new PrintWriter(new FileWriter(filePrefix + "".out""));
+    int ntest=r.sc.nextInt();
+    for (int test=1; test <= ntest; test++) {
+      Scanner sc=r.sc;
+      r.N=sc.nextInt();
+      for (int i=0; i < 3; i++)       r.p[i]=sc.nextInt();
+      r.pw.print(""Case #"" + test + "": "");
+      System.out.print(""Case #"" + test + "": "");
+      int SIZE=1 << r.N;
+      char[] C={'R','P','S'};
+      char[] ans=null;
+      for (int i=0; i < 3; i++) {
+        int[] win=new int[SIZE * 2 - 1];
+        win[0]=i;
+        for (int j=0; j < SIZE - 1; j++) {
+          win[j * 2 + 1]=win[j];
+          win[j * 2 + 2]=(win[j] + 2) % 3;
+        }
+        int[] cnt=new int[3];
+        char[] ini=new char[SIZE];
+        for (int j=0; j < SIZE; j++) {
+          cnt[win[SIZE - 1 + j]]++;
+          ini[j]=C[win[SIZE - 1 + j]];
+        }
+        boolean ok=true;
+        for (int j=0; j < 3; j++)         if (cnt[j] != r.p[j])         ok=false;
+        if (!ok)         continue;
+        for (int j=0; j < r.N; j++) {
+          for (int k=0; k < SIZE; k+=1 << (j + 1)) {
+            boolean rev=false;
+            for (int l=0; l < 1 << j; l++) {
+              if (ini[k + l] > ini[k + (1 << j) + l]) {
+                rev=true;
+                break;
+              }
+            }
+            if (rev) {
+              for (int l=0; l < 1 << j; l++) {
+                char temp=ini[k + l];
+                ini[k + l]=ini[k + (1 << j) + l];
+                ini[k + (1 << j) + l]=temp;
+              }
+            }
+          }
+        }
+        if (ans == null || String.valueOf(ini).compareTo(String.valueOf(ans)) < 0)         ans=ini;
+      }
+      Object s=ans == null ? ""IMPOSSIBLE"" : String.valueOf(ans);
+      r.pw.println(s);
+      System.out.println(s);
+    }
+    System.out.println(""Finished."");
+    r.sc.close();
+    r.pw.close();
+  }
+ catch (  Exception e) {
+    System.err.println(e);
+  }
+}"
+3,"public static void main(String[] args) throws IOException {
+  Scanner kb=new Scanner(System.in);
+  PrintWriter out=new PrintWriter(new FileWriter(""showdown.out""));
+  int[][][] solutions=new int[13][3][3];
+  solutions[0][0][0]=1;
+  solutions[0][1][1]=1;
+  solutions[0][2][2]=1;
+  String[][] answers=new String[13][3];
+  answers[0][0]=""P"";
+  answers[0][1]=""R"";
+  answers[0][2]=""S"";
+  for (int i=1; i <= 12; i++) {
+    for (int j=0; j < 3; j++) {
+      solutions[i][j][0]=solutions[i - 1][j][0] + solutions[i - 1][j][2];
+      solutions[i][j][1]=solutions[i - 1][j][1] + solutions[i - 1][j][0];
+      solutions[i][j][2]=solutions[i - 1][j][2] + solutions[i - 1][j][1];
+    }
+    answers[i][0]=minString(answers[i - 1][0],answers[i - 1][1]);
+    answers[i][1]=minString(answers[i - 1][1],answers[i - 1][2]);
+    answers[i][2]=minString(answers[i - 1][2],answers[i - 1][0]);
+  }
+  int cases=kb.nextInt();
+  for (int n=0; n < cases; n++) {
+    out.print(""Case #"" + (n + 1) + "": "");
+    int N=kb.nextInt();
+    int r=kb.nextInt();
+    int p=kb.nextInt();
+    int s=kb.nextInt();
+    boolean found=false;
+    for (int j=0; j < 3; j++) {
+      if (solutions[N][j][0] == p && solutions[N][j][1] == r && solutions[N][j][2] == s) {
+        out.print(answers[N][j]);
+        found=true;
+      }
+    }
+    if (!found)     out.print(""IMPOSSIBLE"");
+    out.println();
+  }
+  out.close();
+}"
+4,"public static void main(String[] args) throws IOException {
+  Scanner qwe=new Scanner(new File(""A.in""));
+  int T=qwe.nextInt();
+  int p=0;
+  int r=1;
+  int s=2;
+  int[][][] am=new int[13][3][3];
+  int[][] ordering=new int[13][3];
+  String[][] str=new String[13][3];
+  for (int i=0; i < 3; i++)   am[0][i][i]=1;
+  ordering[0][p]=0;
+  ordering[0][r]=1;
+  ordering[0][s]=2;
+  str[0][p]=""P"";
+  str[0][r]=""R"";
+  str[0][s]=""S"";
+  for (int lvl=1; lvl < 13; lvl++) {
+    for (int i=0; i < 3; i++) {
+      for (int j=0; j < 3; j++)       am[lvl][i][j]=am[lvl - 1][(i + 1) % 3][j] + am[lvl - 1][i][j];
+    }
+    for (int i=0; i < 3; i++) {
+      ordering[lvl][i]=ordering[lvl - 1][i] + ordering[lvl - 1][(i + 1) % 3] - 1;
+      String a=str[lvl - 1][i] + str[lvl - 1][(i + 1) % 3];
+      String b=str[lvl - 1][(i + 1) % 3] + str[lvl - 1][i];
+      if (a.compareTo(b) < 0) {
+        str[lvl][i]=a;
+      }
+ else       str[lvl][i]=b;
+    }
+  }
+  for (int cse=1; cse <= T; cse++) {
+    int N=qwe.nextInt();
+    int R=qwe.nextInt();
+    int P=qwe.nextInt();
+    int S=qwe.nextInt();
+    boolean pos=false;
+    int best=3;
+    String ans="""";
+    for (int i=0; i < 3; i++) {
+      int next=ordering[N][i];
+      if (next < best) {
+        if (am[N][i][p] == P && am[N][i][r] == R && am[N][i][s] == S) {
+          ans=str[N][i];
+          best=next;
+          pos=true;
+        }
+      }
+    }
+    if (pos)     System.out.println(""Case #"" + cse + "": ""+ ans);
+ else {
+      System.out.println(""Case #"" + cse + "": IMPOSSIBLE"");
+    }
+  }
+  qwe.close();
+}"
+5,"public static void main(String[] args) throws NumberFormatException, IOException {
+  Scanner in=new Scanner(new BufferedReader(new InputStreamReader(System.in)));
+  int numCases=Integer.parseInt(in.nextLine());
+  for (int caseNum=1; caseNum <= numCases; caseNum++) {
+    String line=in.nextLine();
+    Scanner sc=new Scanner(line);
+    int n=Integer.parseInt(sc.next());
+    int r=Integer.parseInt(sc.next());
+    int p=Integer.parseInt(sc.next());
+    int s=Integer.parseInt(sc.next());
+    int[] test=new int[3];
+    test[0]=1;
+    test[1]=1;
+    for (int i=1; i < n; i++) {
+      int[] nextStep=new int[3];
+      nextStep[0]=test[0] + test[2];
+      nextStep[1]=test[1] + test[0];
+      nextStep[2]=test[1] + test[2];
+      test[0]=nextStep[0];
+      test[1]=nextStep[1];
+      test[2]=nextStep[2];
+    }
+    ArrayList<String> round=new ArrayList<String>();
+    if (test[0] == p && test[1] == r && test[2] == s) {
+      round.add(""PR"");
+    }
+ else     if (test[0] == r && test[1] == s && test[2] == p) {
+      round.add(""RS"");
+    }
+ else     if (test[0] == s && test[1] == p && test[2] == r) {
+      round.add(""PS"");
+    }
+ else {
+      System.out.println(""Case #"" + caseNum + "": ""+ ""IMPOSSIBLE"");
+      continue;
+    }
+    for (int i=1; i < n; i++) {
+      ArrayList<String> nextRound=new ArrayList<String>();
+      for (int j=0; j < round.size(); j++) {
+        if (round.get(j).equals(""PR"")) {
+          nextRound.add(""PR"");
+          nextRound.add(""RS"");
+        }
+ else         if (round.get(j).equals(""PS"")) {
+          nextRound.add(""PR"");
+          nextRound.add(""PS"");
+        }
+ else         if (round.get(j).equals(""RS"")) {
+          nextRound.add(""RS"");
+          nextRound.add(""PS"");
+        }
+      }
+      round=nextRound;
+    }
+    for (int i=1; i < n; i++) {
+      ArrayList<String> lastRound=new ArrayList<String>();
+      for (int j=0; j < round.size() / 2; j++) {
+        String s1=round.get(2 * j);
+        String s2=round.get(2 * j + 1);
+        if (s1.compareTo(s2) < 0) {
+          lastRound.add(s1 + s2);
+        }
+ else {
+          lastRound.add(s2 + s1);
+        }
+      }
+      round=lastRound;
+    }
+    if (round.size() != 1) {
+      System.out.println(""FAIL"");
+    }
+    System.out.println(""Case #"" + caseNum + "": ""+ round.get(0));
+  }
+}"
+6,"public static void main(String[] args){
+  Scanner in=new Scanner(System.in);
+  int num=in.nextInt();
+  for (int i=0; i < num; i++) {
+    boolean ayy=false;
+    System.out.print(""Case #"" + (i + 1) + "": "");
+    int n=in.nextInt();
+    int nn=(int)Math.pow(2,n);
+    int r=in.nextInt();
+    int p=in.nextInt();
+    int s=in.nextInt();
+    char[] test=new char[nn];
+    Arrays.fill(test,'p');
+    if (p == nn) {
+      System.out.print(""IMPOSSIBLE"");
+      ayy=true;
+    }
+ else {
+      boolean solvable=true;
+      boolean unsolved=true;
+      while (solvable) {
+        for (int ii=nn - 1; ii >= 0; ii--) {
+          if (test[ii] == 'p') {
+            test[ii]='r';
+            break;
+          }
+ else           if (test[ii] == 'r') {
+            test[ii]='s';
+            break;
+          }
+          if (ii == 0) {
+            solvable=false;
+            s=-1;
+            break;
+          }
+ else {
+            test[ii]='p';
+          }
+        }
+        int cr=0;
+        int cp=0;
+        int cs=0;
+        for (int j=0; j < nn; j++) {
+          if (test[j] == 'p')           cp++;
+          if (test[j] == 'r')           cr++;
+          if (test[j] == 's')           cs++;
+        }
+        if (cr != r || cp != p || cs != s) {
+          continue;
+        }
+        boolean decent=true;
+        while (true && unsolved && decent) {
+          int nnn=nn;
+          char[] prev=new char[nn];
+          char[] rec;
+          for (int sp=0; sp < nn; sp++) {
+            prev[sp]=test[sp];
+          }
+          while (nnn > 1) {
+            nnn/=2;
+            rec=new char[nnn];
+            for (int mm=0; mm < nnn; mm++) {
+              if (prev[mm * 2] == prev[mm * 2 + 1]) {
+                nnn=0;
+                decent=false;
+                break;
+              }
+              if (prev[mm * 2] != 'r' && prev[mm * 2 + 1] != 'r') {
+                rec[mm]='s';
+              }
+ else               if (prev[mm * 2] != 's' && prev[mm * 2 + 1] != 's') {
+                rec[mm]='p';
+              }
+ else {
+                rec[mm]='r';
+              }
+            }
+            prev=rec;
+          }
+          if (decent) {
+            unsolved=false;
+          }
+        }
+        if (!unsolved) {
+          for (int meh=0; meh < nn; meh++) {
+            if (test[meh] == 'r')             System.out.print('R');
+ else             if (test[meh] == 's')             System.out.print('S');
+ else             System.out.print('P');
+          }
+          ayy=true;
+          break;
+        }
+      }
+    }
+    if (!ayy)     System.out.print(""IMPOSSIBLE"");
+    System.out.println();
+  }
+}"
+7,"public static void main(String[] args) throws IOException {
+  BufferedReader x=new BufferedReader(new InputStreamReader(System.in));
+  int t=Integer.parseInt(x.readLine());
+  for (int cases=1; cases <= t; cases++) {
+    StringTokenizer st=new StringTokenizer(x.readLine());
+    int n=Integer.parseInt(st.nextToken());
+    int r=Integer.parseInt(st.nextToken());
+    int p=Integer.parseInt(st.nextToken());
+    int s=Integer.parseInt(st.nextToken());
+    int num1=1;
+    for (int i1=0; i1 < n; i1++) {
+      num1*=2;
+    }
+    int num=num1;
+    if (n % 2 == 1)     num++;
+    num/=3;
+    if ((r == num && s == num) || (s == num && p == num) || (r == num && p == num)) {
+      if (n == 1) {
+        if (r == 0)         System.out.println(""Case #"" + cases + "": PS"");
+        if (s == 0)         System.out.println(""Case #"" + cases + "": PR"");
+        if (p == 0)         System.out.println(""Case #"" + cases + "": RS"");
+        continue;
+      }
+      String ans="""";
+      if (n % 2 == 0) {
+        if (p != num)         ans=""S"";
+        if (r != num)         ans=""P"";
+        if (s != num)         ans=""R"";
+      }
+ else {
+        if (p != num)         ans=""P"";
+        if (r != num)         ans=""R"";
+        if (s != num)         ans=""S"";
+      }
+      for (int i=n - 1; i >= 0; i--) {
+        String temp="""";
+        for (int j=0; j < ans.length(); j++) {
+          if (ans.charAt(j) == 'S') {
+            if (i % 6 == 0 || i % 6 == 1 || i % 6 == 5) {
+              temp+=""PS"";
+            }
+ else {
+              temp+=""SP"";
+            }
+          }
+          if (ans.charAt(j) == 'P') {
+            if (i % 6 == 0 || i % 6 == 1 || i % 6 == 2) {
+              temp+=""PR"";
+            }
+ else {
+              temp+=""RP"";
+            }
+          }
+          if (ans.charAt(j) == 'R') {
+            if (i % 6 == 0 || i % 6 == 4 || i % 6 == 5) {
+              temp+=""RS"";
+            }
+ else {
+              temp+=""SR"";
+            }
+          }
+        }
+        ans=temp;
+      }
+      System.out.println(""Case #"" + cases + "": ""+ ans);
+    }
+ else {
+      System.out.println(""Case #"" + cases + "": IMPOSSIBLE"");
+    }
+  }
+}"
+8,"public static void main(String[] args){
+  String[][] table=new String[3][13];
+  for (int i=0; i < 3; i++)   table[i][0]="""" + let[i];
+  for (int n=0; n <= 11; n++)   for (int i=0; i < 3; i++) {
+    String a=table[i][n], b=table[(i + 1) % 3][n];
+    if (a.compareTo(b) < 0)     table[i][n + 1]=a + b;
+ else     table[i][n + 1]=b + a;
+  }
+  Scanner in=new Scanner(System.in);
+  int numRuns=in.nextInt();
+  int[] count=new int[3];
+  for (int run=1; run <= numRuns; run++) {
+    int n=in.nextInt();
+    count[1]=in.nextInt();
+    count[0]=in.nextInt();
+    count[2]=in.nextInt();
+    boolean match=false;
+    for (int i=0; i < 3; i++) {
+      match=true;
+      String game=table[i][n];
+      for (int j=0; j < 3; j++)       if (game.length() - game.replace("""" + let[j],"""").length() != count[j])       match=false;
+      if (match) {
+        System.out.println(""Case #"" + run + "": ""+ game);
+        break;
+      }
+    }
+    if (!match)     System.out.println(""Case #"" + run + "": IMPOSSIBLE"");
+  }
+}"
+9,"public static void main(String[] args) throws Exception {
+  File inputFile=new File(""A-large.in"");
+  Scanner in=new Scanner(inputFile);
+  File outputFile=new File(""output.txt"");
+  PrintWriter out=new PrintWriter(outputFile);
+  String[][] answers=new String[13][3];
+  answers[0]=new String[]{""P"",""R"",""S""};
+  for (int n=1; n <= 12; n++) {
+    String s1=answers[n - 1][0] + answers[n - 1][1];
+    String s2=answers[n - 1][1] + answers[n - 1][0];
+    answers[n][0]=s1.compareTo(s2) < 0 ? s1 : s2;
+    s1=answers[n - 1][1] + answers[n - 1][2];
+    s2=answers[n - 1][2] + answers[n - 1][1];
+    answers[n][1]=s1.compareTo(s2) < 0 ? s1 : s2;
+    s1=answers[n - 1][2] + answers[n - 1][0];
+    s2=answers[n - 1][0] + answers[n - 1][2];
+    answers[n][2]=s1.compareTo(s2) < 0 ? s1 : s2;
+  }
+  int T=in.nextInt();
+  for (int t=0; t < T; t++) {
+    int N=in.nextInt();
+    int R=in.nextInt();
+    int P=in.nextInt();
+    int S=in.nextInt();
+    String best=null;
+    for (int i=0; i < 3; i++) {
+      String cand=answers[N][i];
+      int[] stats=new int[3];
+      for (      char c : cand.toCharArray()) {
+        if (c == 'R') {
+          stats[0]++;
+        }
+ else         if (c == 'P') {
+          stats[1]++;
+        }
+ else {
+          stats[2]++;
+        }
+      }
+      if (stats[0] == R && stats[1] == P && stats[2] == S) {
+        if (best == null || cand.compareTo(best) < 0) {
+          best=cand;
+        }
+      }
+    }
+    String answer=(best == null) ? ""IMPOSSIBLE"" : best;
+    out.println(""Case #"" + (t + 1) + "": ""+ answer);
+  }
+  out.close();
+}"
+10,"public static void main(String[] args){
+  r[0]=""R"";
+  p[0]=""P"";
+  s[0]=""S"";
+  for (int i=0; i < 12; i++) {
+    if (r[i].compareTo(p[i]) < 0) {
+      p[i + 1]=r[i] + p[i];
+    }
+ else {
+      p[i + 1]=p[i] + r[i];
+    }
+    if (r[i].compareTo(s[i]) < 0) {
+      r[i + 1]=r[i] + s[i];
+    }
+ else {
+      r[i + 1]=s[i] + r[i];
+    }
+    if (s[i].compareTo(p[i]) < 0) {
+      s[i + 1]=s[i] + p[i];
+    }
+ else {
+      s[i + 1]=p[i] + s[i];
+    }
+  }
+  Scanner sc=new Scanner(System.in);
+  int numCases=sc.nextInt();
+  for (int caseNum=1; caseNum <= numCases; caseNum++) {
+    int N=sc.nextInt();
+    int[] R=new int[N + 1];
+    R[0]=sc.nextInt();
+    int[] P=new int[N + 1];
+    P[0]=sc.nextInt();
+    int[] S=new int[N + 1];
+    S[0]=sc.nextInt();
+    for (int i=0; i < N; i++) {
+      P[i + 1]=(P[i] + R[i] - S[i]) / 2;
+      R[i + 1]=(R[i] + S[i] - P[i]) / 2;
+      S[i + 1]=(P[i] + S[i] - R[i]) / 2;
+    }
+    System.out.print(""Case #"" + caseNum + "": "");
+    boolean possible=true;
+    for (int i=0; i <= N; i++) {
+      if (R[i] < 0 || P[i] < 0 || S[i] < 0) {
+        System.out.println(""IMPOSSIBLE"");
+        possible=false;
+        break;
+      }
+    }
+    if (!possible) {
+      continue;
+    }
+    if (R[N] == 1) {
+      System.out.println(r[N]);
+    }
+ else     if (P[N] == 1) {
+      System.out.println(p[N]);
+    }
+ else {
+      System.out.println(s[N]);
+    }
+  }
+  sc.close();
+}"
+11,"public static void main(String[] args) throws IOException {
+  Scanner sc=new Scanner(new BufferedReader(new InputStreamReader(new FileInputStream(""src/A-large.in""))));
+  String output="""";
+  int t=sc.nextInt();
+  sc.nextLine();
+  for (int i=1; i <= t; i++) {
+    int n=sc.nextInt();
+    int r=sc.nextInt();
+    int p=sc.nextInt();
+    int s=sc.nextInt();
+    ArrayList<String> poss=new ArrayList<String>();
+    String ans=""P"";
+    int ar=0;
+    int ap=0;
+    int as=0;
+    for (int j=0; j < n; j++) {
+      StringBuilder next=new StringBuilder();
+      for (      char c : ans.toCharArray()) {
+        if (c == 'P')         next.append(""PR"");
+        if (c == 'S')         next.append(""PS"");
+        if (c == 'R')         next.append(""RS"");
+      }
+      ans=next.toString();
+    }
+    for (    char c : ans.toCharArray()) {
+      if (c == 'P')       ap++;
+      if (c == 'R')       ar++;
+      if (c == 'S')       as++;
+    }
+    if (ap == p && ar == r && as == s) {
+      for (int j=0; j < n; j++) {
+        StringBuilder fa=new StringBuilder();
+        int step=1 << j;
+        for (int k=0; k < ans.length(); k+=step * 2) {
+          if (ans.substring(k,k + step).compareTo(ans.substring(k + step,k + step * 2)) < 0) {
+            fa.append(ans.substring(k,k + step * 2));
+          }
+ else {
+            fa.append(ans.substring(k + step,k + step * 2));
+            fa.append(ans.substring(k,k + step));
+          }
+        }
+        ans=fa.toString();
+      }
+      poss.add(ans);
+    }
+    ans=""R"";
+    ar=0;
+    ap=0;
+    as=0;
+    for (int j=0; j < n; j++) {
+      StringBuilder next=new StringBuilder();
+      for (      char c : ans.toCharArray()) {
+        if (c == 'P')         next.append(""PR"");
+        if (c == 'S')         next.append(""PS"");
+        if (c == 'R')         next.append(""RS"");
+      }
+      ans=next.toString();
+    }
+    for (    char c : ans.toCharArray()) {
+      if (c == 'P')       ap++;
+      if (c == 'R')       ar++;
+      if (c == 'S')       as++;
+    }
+    if (ap == p && ar == r && as == s) {
+      for (int j=0; j < n; j++) {
+        StringBuilder fa=new StringBuilder();
+        int step=1 << j;
+        for (int k=0; k < ans.length(); k+=step * 2) {
+          if (ans.substring(k,k + step).compareTo(ans.substring(k + step,k + step * 2)) < 0) {
+            fa.append(ans.substring(k,k + step * 2));
+          }
+ else {
+            fa.append(ans.substring(k + step,k + step * 2));
+            fa.append(ans.substring(k,k + step));
+          }
+        }
+        ans=fa.toString();
+      }
+      poss.add(ans);
+    }
+    ans=""S"";
+    ar=0;
+    ap=0;
+    as=0;
+    for (int j=0; j < n; j++) {
+      StringBuilder next=new StringBuilder();
+      for (      char c : ans.toCharArray()) {
+        if (c == 'P')         next.append(""PR"");
+        if (c == 'S')         next.append(""PS"");
+        if (c == 'R')         next.append(""RS"");
+      }
+      ans=next.toString();
+    }
+    for (    char c : ans.toCharArray()) {
+      if (c == 'P')       ap++;
+      if (c == 'R')       ar++;
+      if (c == 'S')       as++;
+    }
+    if (ap == p && ar == r && as == s) {
+      for (int j=0; j < n; j++) {
+        StringBuilder fa=new StringBuilder();
+        int step=1 << j;
+        for (int k=0; k < ans.length(); k+=step * 2) {
+          if (ans.substring(k,k + step).compareTo(ans.substring(k + step,k + step * 2)) < 0) {
+            fa.append(ans.substring(k,k + step * 2));
+          }
+ else {
+            fa.append(ans.substring(k + step,k + step * 2));
+            fa.append(ans.substring(k,k + step));
+          }
+        }
+        ans=fa.toString();
+      }
+      poss.add(ans);
+    }
+    if (poss.size() == 0)     output+=""Case #"" + i + "": ""+ ""IMPOSSIBLE""+ ""\n"";
+ else {
+      Collections.sort(poss);
+      output+=""Case #"" + i + "": ""+ poss.get(0)+ ""\n"";
+    }
+  }
+  BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(""src/A-large.out""),""utf-8""));
+  bw.write(output);
+  bw.close();
+}"
+12,"public static void main(String[] args) throws IOException {
+  BufferedReader in=new BufferedReader(new FileReader(""A.in""));
+  BufferedWriter out=new BufferedWriter(new FileWriter(""A.out""));
+  int T=Integer.parseInt(in.readLine());
+  for (int t=1; t <= T; t++) {
+    StringTokenizer st=new StringTokenizer(in.readLine());
+    int N=Integer.parseInt(st.nextToken());
+    int R=Integer.parseInt(st.nextToken());
+    int P=Integer.parseInt(st.nextToken());
+    int S=Integer.parseInt(st.nextToken());
+    String ans=""IMPOSSIBLE"";
+    int[][] win={{0,1},{1,2},{0,2}};
+    for (int i=0; i < 3; i++) {
+      String store=new String[]{""P"",""R"",""S""}[i];
+      for (int k=0; k < N; k++) {
+        String temp="""";
+        for (        char c : store.toCharArray())         if (c == 'P')         temp+=""PR"";
+ else         if (c == 'R')         temp+=""RS"";
+ else         temp+=""PS"";
+        store=temp;
+      }
+      int p=0, r=0, s=0;
+      for (      char c : store.toCharArray())       if (c == 'P')       p++;
+ else       if (c == 'R')       r++;
+ else       s++;
+      for (int j=1; j < (1 << N); j*=2)       for (int k=0; k + j < (1 << N); k+=j + j)       if (store.substring(k + j,k + 2 * j).compareTo(store.substring(k,k + j)) < 0)       store=store.substring(0,k) + store.substring(k + j,k + 2 * j) + store.substring(k,k + j)+ store.substring(k + 2 * j);
+      if (P == p && R == r && S == s && (ans.equals(""IMPOSSIBLE"") || store.compareTo(ans) < 0))       ans=store;
+    }
+    out.write(""Case #"" + t + "": "");
+    out.write(ans);
+    out.write(""\n"");
+  }
+  in.close();
+  out.close();
+}"
+13,"public static void main(String[] args){
+  try {
+    Scanner in=new Scanner(new BufferedReader(new FileReader(new File(""A-large.in"")),256 << 10));
+    BufferedWriter out=new BufferedWriter(new FileWriter(new File(""output.txt"")),256 << 10);
+    int testsNumber=in.nextInt();
+    for (int testId=1; testId <= testsNumber; testId++) {
+      int rounds=in.nextInt();
+      int n=1 << rounds;
+      int r=in.nextInt();
+      int p=in.nextInt();
+      int s=in.nextInt();
+      String[] pp=new String[rounds + 1];
+      String[] rr=new String[rounds + 1];
+      String[] ss=new String[rounds + 1];
+      pp[0]=""P"";
+      rr[0]=""R"";
+      ss[0]=""S"";
+      for (int i=1; i <= rounds; i++) {
+        if (pp[i - 1].compareTo(rr[i - 1]) < 0)         pp[i]=pp[i - 1] + rr[i - 1];
+ else         pp[i]=rr[i - 1] + pp[i - 1];
+        if (rr[i - 1].compareTo(ss[i - 1]) < 0)         rr[i]=rr[i - 1] + ss[i - 1];
+ else         rr[i]=ss[i - 1] + rr[i - 1];
+        if (pp[i - 1].compareTo(ss[i - 1]) < 0)         ss[i]=pp[i - 1] + ss[i - 1];
+ else         ss[i]=ss[i - 1] + pp[i - 1];
+      }
+      String result=null;
+      int ar=0, ap=0, as=0;
+      for (int i=0; i < pp[rounds].length(); i++) {
+        char ch=pp[rounds].charAt(i);
+        if (ch == 'P')         ap++;
+ else         if (ch == 'R')         ar++;
+ else         if (ch == 'S')         as++;
+      }
+      if (ar == r & as == s & ap == p) {
+        if (result == null || result.compareTo(pp[rounds]) > 0)         result=pp[rounds];
+      }
+      ar=0;
+      ap=0;
+      as=0;
+      for (int i=0; i < rr[rounds].length(); i++) {
+        char ch=rr[rounds].charAt(i);
+        if (ch == 'P')         ap++;
+ else         if (ch == 'R')         ar++;
+ else         if (ch == 'S')         as++;
+      }
+      if (ar == r & as == s & ap == p) {
+        if (result == null || result.compareTo(rr[rounds]) > 0)         result=rr[rounds];
+      }
+      ar=0;
+      ap=0;
+      as=0;
+      for (int i=0; i < ss[rounds].length(); i++) {
+        char ch=ss[rounds].charAt(i);
+        if (ch == 'P')         ap++;
+ else         if (ch == 'R')         ar++;
+ else         if (ch == 'S')         as++;
+      }
+      if (ar == r & as == s & ap == p) {
+        if (result == null || result.compareTo(ss[rounds]) > 0)         result=ss[rounds];
+      }
+      if (result == null)       result=IMPOSSIBLE;
+      out.append(""Case #"" + testId + "": ""+ result);
+      out.append(""\n"");
+    }
+    in.close();
+    out.close();
+  }
+ catch (  RuntimeException rte) {
+    throw rte;
+  }
+catch (  Exception e) {
+    System.err.println(""Error:"" + e.getMessage());
+  }
+}"
+14,"public static void main(String[] args) throws IOException {
+  BufferedReader buf=new BufferedReader(new FileReader(""RPS.in""));
+  PrintWriter out=new PrintWriter(new BufferedWriter(new FileWriter(""RPS.out"")));
+  int t=Integer.parseInt(buf.readLine());
+  for (int i=1; i <= t; i++) {
+    String[] str=buf.readLine().split("" "");
+    int n=Integer.parseInt(str[0]);
+    int r=Integer.parseInt(str[1]);
+    int p=Integer.parseInt(str[2]);
+    int s=Integer.parseInt(str[3]);
+    String st=""R"";
+    String st2=""P"";
+    String st3=""S"";
+    for (int j=0; j < n; j++) {
+      String stemp="""";
+      String stemp2="""";
+      String stemp3="""";
+      if (st.compareTo(st2) < 0) {
+        stemp=st + st2;
+      }
+ else {
+        stemp=st2 + st;
+      }
+      if (st2.compareTo(st3) < 0) {
+        stemp2=st2 + st3;
+      }
+ else {
+        stemp2=st3 + st2;
+      }
+      if (st3.compareTo(st) < 0) {
+        stemp3=st3 + st;
+      }
+ else {
+        stemp3=st + st3;
+      }
+      st=stemp;
+      st2=stemp2;
+      st3=stemp3;
+    }
+    out.print(""Case #"" + i + "": "");
+    int countr=0;
+    int countp=0;
+    int counts=0;
+    for (int j=0; j < st.length(); j++) {
+      if (st.charAt(j) == 'R') {
+        countr++;
+      }
+ else       if (st.charAt(j) == 'P') {
+        countp++;
+      }
+ else       if (st.charAt(j) == 'S') {
+        counts++;
+      }
+    }
+    if (countr == r && countp == p && counts == s) {
+      out.println(st);
+    }
+ else {
+      countr=0;
+      countp=0;
+      counts=0;
+      for (int j=0; j < st.length(); j++) {
+        if (st2.charAt(j) == 'R') {
+          countr++;
+        }
+ else         if (st2.charAt(j) == 'P') {
+          countp++;
+        }
+ else         if (st2.charAt(j) == 'S') {
+          counts++;
+        }
+      }
+      if (countr == r && countp == p && counts == s) {
+        out.println(st2);
+      }
+ else {
+        countr=0;
+        countp=0;
+        counts=0;
+        for (int j=0; j < st.length(); j++) {
+          if (st3.charAt(j) == 'R') {
+            countr++;
+          }
+ else           if (st3.charAt(j) == 'P') {
+            countp++;
+          }
+ else           if (st3.charAt(j) == 'S') {
+            counts++;
+          }
+        }
+        if (countr == r && countp == p && counts == s) {
+          out.println(st3);
+        }
+ else {
+          out.println(""IMPOSSIBLE"");
+        }
+      }
+    }
+  }
+  out.close();
+}"
+15,"public static void main(String[] args){
+  List[] p=new ArrayList[MAX_N];
+  List[] r=new ArrayList[MAX_N];
+  List[] s=new ArrayList[MAX_N];
+  List[] merged=new ArrayList[MAX_N];
+  for (int i=0; i < MAX_N; ++i) {
+    p[i]=new ArrayList();
+    r[i]=new ArrayList();
+    s[i]=new ArrayList();
+    if (i == 0) {
+      p[0].add(""PR"");
+      r[0].add(""RS"");
+      s[0].add(""PS"");
+    }
+ else {
+      for (      Object ao : p[i - 1])       for (      Object bo : r[i - 1]) {
+        String aos=ao.toString();
+        String bos=bo.toString();
+        if (aos.compareTo(bos) > 0) {
+          aos=bo.toString();
+          bos=ao.toString();
+        }
+        p[i].add(aos + bos);
+      }
+      for (      Object ao : r[i - 1])       for (      Object bo : s[i - 1]) {
+        String aos=ao.toString();
+        String bos=bo.toString();
+        if (aos.compareTo(bos) > 0) {
+          aos=bo.toString();
+          bos=ao.toString();
+        }
+        r[i].add(aos + bos);
+      }
+      for (      Object ao : p[i - 1])       for (      Object bo : s[i - 1]) {
+        String aos=ao.toString();
+        String bos=bo.toString();
+        if (aos.compareTo(bos) > 0) {
+          aos=bo.toString();
+          bos=ao.toString();
+        }
+        s[i].add(aos + bos);
+      }
+    }
+    merged[i]=new ArrayList();
+    merged[i].addAll(p[i]);
+    merged[i].addAll(r[i]);
+    merged[i].addAll(s[i]);
+    Collections.sort(merged[i]);
+  }
+  Scanner scan=new Scanner(System.in);
+  int tcc=scan.nextInt();
+  for (int tc=1; tc <= tcc; ++tc) {
+    int n=scan.nextInt();
+    int rc=scan.nextInt();
+    int pc=scan.nextInt();
+    int sc=scan.nextInt();
+    String best=null;
+    for (    Object o : merged[n - 1]) {
+      String os=o.toString();
+      if (best != null && o.toString().compareTo(best) > 0)       break;
+      int rrc=0;
+      int rpc=0;
+      int rsc=0;
+      for (int i=0; i < os.length(); ++i) {
+        if (os.charAt(i) == 'R')         ++rrc;
+        if (os.charAt(i) == 'P')         ++rpc;
+        if (os.charAt(i) == 'S')         ++rsc;
+      }
+      if (rrc == rc && rpc == pc && rsc == sc)       best=os;
+    }
+    System.out.printf(""Case #%d: "",tc);
+    System.out.println(best == null ? ""IMPOSSIBLE"" : best);
+  }
+}"
+16,"public static void main(String[] args) throws IOException {
+  BufferedReader br=new BufferedReader(new FileReader(new File(""A.in"")));
+  PrintWriter pw=new PrintWriter(new BufferedWriter(new FileWriter(new File(""A.out""))));
+  String[][] prs=new String[13][3];
+  prs[0][0]=""P"";
+  prs[0][1]=""R"";
+  prs[0][2]=""S"";
+  int[][] prsp=new int[13][3];
+  int[][] prsr=new int[13][3];
+  int[][] prss=new int[13][3];
+  prsp[0][0]=1;
+  prsr[0][1]=1;
+  prss[0][2]=1;
+  for (int n=0; n < 12; n++) {
+    prsp[n + 1][0]=prsp[n][0] + prsp[n][1];
+    prsp[n + 1][1]=prsp[n][1] + prsp[n][2];
+    prsp[n + 1][2]=prsp[n][2] + prsp[n][0];
+    prsr[n + 1][0]=prsr[n][0] + prsr[n][1];
+    prsr[n + 1][1]=prsr[n][1] + prsr[n][2];
+    prsr[n + 1][2]=prsr[n][2] + prsr[n][0];
+    prss[n + 1][0]=prss[n][0] + prss[n][1];
+    prss[n + 1][1]=prss[n][1] + prss[n][2];
+    prss[n + 1][2]=prss[n][2] + prss[n][0];
+    if (prs[n][0].compareTo(prs[n][1]) < 0)     prs[n + 1][0]=prs[n][0] + prs[n][1];
+ else     prs[n + 1][0]=prs[n][1] + prs[n][0];
+    if (prs[n][1].compareTo(prs[n][2]) < 0)     prs[n + 1][1]=prs[n][1] + prs[n][2];
+ else     prs[n + 1][1]=prs[n][2] + prs[n][1];
+    if (prs[n][2].compareTo(prs[n][0]) < 0)     prs[n + 1][2]=prs[n][2] + prs[n][0];
+ else     prs[n + 1][2]=prs[n][0] + prs[n][2];
+  }
+  int T=Integer.parseInt(br.readLine());
+  for (int t=0; t < T; t++) {
+    String[] str=br.readLine().split("" "");
+    int N=Integer.parseInt(str[0]);
+    int R=Integer.parseInt(str[1]);
+    int P=Integer.parseInt(str[2]);
+    int S=Integer.parseInt(str[3]);
+    String answer=""IMPOSSIBLE"";
+    if (prsp[N][0] == P && prsr[N][0] == R && prss[N][0] == S)     answer=prs[N][0];
+ else     if (prsp[N][1] == P && prsr[N][1] == R && prss[N][1] == S)     answer=prs[N][1];
+ else     if (prsp[N][2] == P && prsr[N][2] == R && prss[N][2] == S)     answer=prs[N][2];
+    pw.println(""Case #"" + (t + 1) + "": ""+ answer);
+    pw.flush();
+  }
+  pw.close();
+  br.close();
+}"
+17,"public static void main(String[] args) throws Exception {
+  BufferedReader br=new BufferedReader(new FileReader(""A-small-attempt0.in""));
+  PrintWriter pw=new PrintWriter(new File(""A-small.out""));
+  int T=Integer.parseInt(br.readLine());
+  for (int i=1; i <= T; i++) {
+    String[] l=br.readLine().split("" "");
+    int n=Integer.parseInt(l[0]);
+    int r=Integer.parseInt(l[1]);
+    int p=Integer.parseInt(l[2]);
+    int s=Integer.parseInt(l[3]);
+    int max=Math.max(p,Math.max(r,s));
+    if (n == 1) {
+      if (max > 1) {
+        pw.println(""Case #"" + i + "": IMPOSSIBLE"");
+        continue;
+      }
+      if (p == 1 && r == 1) {
+        pw.println(""Case #"" + i + "": PR"");
+        continue;
+      }
+      if (p == 1 && s == 1) {
+        pw.println(""Case #"" + i + "": PS"");
+        continue;
+      }
+      if (s == 1 && r == 1) {
+        pw.println(""Case #"" + i + "": RS"");
+        continue;
+      }
+    }
+    if (n == 2) {
+      if (max >= 3 || p * r * s == 0) {
+        pw.println(""Case #"" + i + "": IMPOSSIBLE"");
+        continue;
+      }
+      if (p == 1 && r == 1) {
+        pw.println(""Case #"" + i + "": PSRS"");
+        continue;
+      }
+      if (p == 1 && s == 1) {
+        pw.println(""Case #"" + i + "": PRRS"");
+        continue;
+      }
+      if (s == 1 && r == 1) {
+        pw.println(""Case #"" + i + "": PRPS"");
+        continue;
+      }
+    }
+    if (n == 3) {
+      if (max >= 4 || p * r * s == 0) {
+        pw.println(""Case #"" + i + "": IMPOSSIBLE"");
+        continue;
+      }
+      if (p == 3 && r == 3) {
+        pw.println(""Case #"" + i + "": PRPSPRRS"");
+        continue;
+      }
+      if (p == 3 && s == 3) {
+        pw.println(""Case #"" + i + "": PRPSPSRS"");
+        continue;
+      }
+      if (s == 3 && r == 3) {
+        pw.println(""Case #"" + i + "": PRRSPSRS"");
+        continue;
+      }
+    }
+  }
+  pw.close();
+  br.close();
+}"
+18,"public static void main(String[] args) throws FileNotFoundException {
+  Scanner cin=new Scanner(new File(""A-large.in""));
+  PrintStream cout=new PrintStream(""A-large.out"");
+  int _case=0;
+  for (int T=cin.nextInt(); T > 0; T--) {
+    _case++;
+    StringBuilder ans=new StringBuilder();
+    String s=cin.next();
+    int totalRequested=0;
+    Stack<Character> stack=new Stack<>();
+    Stack<Integer> points=new Stack<>();
+    int maxPoints=0;
+    int cnt=0;
+    for (int i=0; i < s.length(); i++) {
+      if (!stack.empty() && stack.peek() == s.charAt(i) || totalRequested == s.length() / 2) {
+        maxPoints+=stack.pop() == s.charAt(i) ? points.pop() : points.pop() - 5;
+      }
+ else {
+        stack.push(s.charAt(i));
+        points.push(10);
+        totalRequested++;
+      }
+    }
+    ans.append(maxPoints);
+    cout.printf(""Case #%d: %s%n"",_case,ans.toString());
+  }
+  cin.close();
+  cout.close();
+}"
+19,"public static void main(String... orange) throws Exception {
+  Scanner input=new Scanner(System.in);
+  int numCases=input.nextInt();
+  for (int n=0; n < numCases; n++) {
+    char[] S=input.next().toCharArray();
+    int K=S.length;
+    int[][] table=new int[K + 1][K + 1];
+    for (int len=2; len <= K; len+=2)     for (int start=0; start + len <= K; start++) {
+      table[start][len]=(S[start] == S[start + len - 1] ? 10 : 5) + table[start + 1][len - 2];
+      for (int first=2; first < len; first+=2)       if (table[start][first] + table[start + first][len - first] > table[start][len])       table[start][len]=table[start][first] + table[start + first][len - first];
+    }
+    System.out.printf(""Case #%d: "",n + 1);
+    System.out.println(table[0][K]);
+  }
+}"
+20,"public static void main(String[] args) throws Exception {
+  Scanner in=new Scanner(new File(""AL.in""));
+  PrintWriter out=new PrintWriter(""AL.out"");
+  int tc=in.nextInt();
+  for (int cc=1; cc <= tc; cc++) {
+    String s=in.next();
+    int gain=0;
+    while (true) {
+      Stack<Character> stack=new Stack<>();
+      for (int i=0; i < s.length(); i++) {
+        if (!stack.isEmpty() && stack.peek() == s.charAt(i)) {
+          stack.pop();
+        }
+ else {
+          stack.push(s.charAt(i));
+        }
+      }
+      StringBuilder next=new StringBuilder();
+      for (      Character c : stack) {
+        next.append(c);
+      }
+      String nx=next.toString();
+      int value=(s.length() - nx.length()) / 2 * 10;
+      s=nx;
+      if (value == 0)       break;
+      gain+=value;
+    }
+    gain+=s.length() / 2 * 5;
+    System.out.printf(""Case #%d: %d\n"",cc,gain);
+    out.printf(""Case #%d: %d\n"",cc,gain);
+  }
+  out.close();
+}"
+21,public static void main(String[] args)
+22,Public static void main (String[] args)

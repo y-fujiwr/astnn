@@ -1,0 +1,352 @@
+id,code
+98,"public void i(int A[]){
+    for (int j = 1; j < A.length; j++) {
+        int key = A[j];
+        int i = j - 1;
+        while (i >= 0 && A[i] > key) {
+            A[i + 1] = A[i];
+            i--;
+        }
+        A[i + 1] = key;
+    }
+}"
+99,"public static void bubbl(int[] array){
+        int temp;
+        for(int i = 0; i < array.length; i++){
+            for(int j = 0; j< array.length -i -1; j ++){
+                if(array[j] > array[j + 1]){
+                    temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                }
+            }
+        }
+    }"
+100,"public static void sele(int[] array){
+        for(int i = 0; i < array.length; i++ ){
+            int index = i;
+            for(int j = i + 1; j < array.length; j++){
+                if(array[j] < array[index]){
+                    index = j;
+                }
+            }
+            if(i != index){
+                int tmp = array[index];
+                array[index] = array[i];
+                array[i] = tmp;
+
+            }
+        }
+    }"
+101,"public static void Ins(int[] array){
+        for(int i = 1; i < array.length; i++){
+            int j = i;
+            while(j >= 1 && array[j-1] > array[j]){
+                int tmp = array[j];
+                array[j] = array[j - 1];
+                array[j-1] = tmp;
+                j --;
+
+            }
+        }
+
+    }"
+102,"public static void Shel(int[] array){
+        int h = array.length / 2;
+
+        while(h > 0){
+            for(int i=h; i < array.length; i++){
+                int j = i;
+                while(j >= h && array[j - h] > array[j]){
+                    int tmp = array[j];
+                    array[j] = array[j-h];
+                    array[j-h] = tmp;
+                    j --;
+                }
+            }
+            h /= 2;
+        }
+
+    }"
+103,"public static void quick(int[] array, int left, int right){
+        if(left <= right){
+            int p = array[(left + right) >>> 1];
+            int l = left;
+            int r = right;
+            while(l <= r){
+                while (array[l] < p){
+                    l ++;
+                }
+                while (array[r] > p){
+                    r --;
+                }
+                if (l <= r){
+                    int tmp = array[l];
+                    array[l] = array[r];
+                    array[r] = tmp;
+                    l++ ;
+                    r-- ;
+                }
+            }
+            quick(array, left, r);
+            quick(array, l, right);
+        }
+    }"
+104,"public static void heap(int[] array) {
+        int n = array.length;
+
+        for (int i = n /2 -1; i>=0; i--){
+            heap(array, n, i);
+        }
+
+        for (int i = n-1 ; i>=0; i --){
+            if (array[0] > array[i]) {
+                int tmp = array[0];
+                array[0] = array[i];
+                array[i] = tmp;
+
+                heap(array, i-1, 0);
+            }
+
+        }
+    }"
+105,"public static void bubb(int[] array, int maxValue){
+        int[] bucket = new int[maxValue + 1];
+
+        for (int i = 0; i < bucket.length; i++){
+            bucket[i] = 0;
+        }
+
+        for (int i = 0; i < array.length; i++){
+            bucket[array[i]] ++;
+        }
+
+        int outPos = 0;
+        for (int i = 0; i < bucket.length; i++){
+            for (int j = 0; j < bucket[i]; j++){
+                array[outPos++] = i;
+            }
+        }
+    }"
+106,"public static void se(String[] args) {
+		for (int i = 0; i < array.length; i++) {
+			int min = i;
+			for (int j = i + 1; j < array.length; j++){
+				if (array[min] > array[j]){
+					min = j;
+				}
+			}
+			int tmp = array[i];
+			array[i] = array[min];
+			array[min] = tmp;
+		}
+	}"
+107,"public static void bub(String[] args) {
+		for(int i = 0; i < array.length; i++){
+			for(int j = 0; j < array.length - 1 - i; j++){
+				if(array[j] > array[j + 1]){
+					int tmp = array[j];
+					array[j] = array[j + 1];
+					array[j + 1] = tmp;
+				}
+			}
+		}
+	}"
+108,"public static void In(String[] args) {
+		for(int i = 1; i < array.length; i++){
+			int insertionData = array[i];
+			int j = i;
+			for(; j >= 1 && array[j - 1] > insertionData; j--){
+				array[j] = array[j - 1];
+			}
+			array[j] = insertionData;
+		}
+	}"
+109,"public static void she(String[] args) {
+		for (int range = array.length / 2; range > 0; range /= 2) {
+			for (int h = 0; h < range; h++) {
+				for (int i = h + range; i < array.length; i += range) {
+					int insertionData = array[i];
+					int j = i;
+					for (; j >= range && array[j - range] > insertionData; j -= range) {
+						array[j] = array[j - range];
+					}
+					array[j] = insertionData;
+				}
+			}
+		}
+	}"
+110,"void bu(int numbers[], int array_size)
+{
+  int i, j, temp;
+
+  for (i = 0; i < (array_size - 1); i++) {
+    for (j = (array_size - 1); j > i; j--) {
+      if (numbers[j-1] > numbers[j]) {
+        temp = numbers[j-1];
+        numbers[j-1] = numbers[j];
+        numbers[j] = temp;
+      }
+    }
+  }
+}"
+111,"private static void b(int[] n) {
+        int tmp;
+        for(int i = 0; i < n.length - 1; i++) {
+            for(int j = n.length - 1; i < j; j--) {
+                if(n[j-1] > n[j]) {
+                    tmp = n[j-1];
+                    n[j-1] = n[j];
+                    n[j] = tmp;
+                }
+            }
+        }
+    }"
+112,"void shaker(int *arr,int lim)
+{
+        int tmp;
+        int last_swap;
+        int head_last_swap_pos = lim-1;
+        int tail_last_swap_pos = 0;
+        int i;
+
+        while( 1 )
+        {
+                last_swap = tail_last_swap_pos;
+                for( i=tail_last_swap_pos ; i<head_last_swap_pos ; i++ ) { if( arr[ i ] > arr[ i+1 ]  )
+                        {
+                                tmp = arr[ i ];
+                                arr[ i ] = arr[ i+1 ];
+                                arr[ i+1 ] = tmp;
+                                last_swap = i;
+                        }
+                }
+                head_last_swap_pos = last_swap;
+                if( head_last_swap_pos == tail_last_swap_pos )break;
+
+                for( i=head_last_swap_pos; i>tail_last_swap_pos ; i-- )
+                {
+                        if( arr[ i-1 ] > arr[ i ] )
+                        {
+                                tmp = arr[ i-1 ];
+                                arr[ i-1 ] = arr[ i ];
+                                arr[ i ] = tmp;
+                                last_swap = i;
+                        }
+                }
+                tail_last_swap_pos = last_swap;
+                if( head_last_swap_pos == tail_last_swap_pos )break;
+        }
+}"
+113,"static void qu(int *arr,int begin,int end)
+{
+        if( begin >= end )return;
+
+        int tmp;
+        int left = begin;
+        int right = end;
+        int pivot = arr[ (left+right)/2+1 ];
+
+        while( 1 )
+        {
+                while( arr[ left ] < pivot )left++;
+                while( arr[ right ] > pivot )right--;
+
+                if( left >= right )break;
+
+                tmp = arr[ left ];
+                arr[ left ] = arr[ right ];
+                arr[ right ] = tmp;
+                
+                left++;
+                right--;
+        }
+
+        q(arr,begin,left-1);
+        q(arr,left,end);
+}"
+114,"void shell(int *arr,int lim)
+{
+        int tmp;
+        int i,c,j,k;
+        int interval;
+
+        for( interval=1;interval<lim;interval=interval*3+1 );
+
+        for( i=interval ; i>0 ; i/=3 )
+        {
+                for( j=i ; j<lim ; j++ )
+                {
+                        tmp = arr[ j ];
+                        k = j - i;
+                        for( c=j ; k>=0 && arr[ k ] > tmp ; c-=i,k-=i )
+                        {
+                                arr[ c ] = arr[ k ];
+                        }
+                        arr[ c ] = tmp;
+                }
+        }
+}"
+115,"static void merge(int *arr,int count,int *tmp)
+{
+        if( count < 2 )return;
+
+        merge(arr,count/2,tmp);
+        merge(arr+count/2,count - count/2,tmp);
+
+        int i = 0;
+        int *tub1 = arr;
+        int *tub2 = arr+count/2;
+        int tub1_index = 0;
+        int tub2_index = 0;
+        int tub1_count = count/2;
+        int tub2_count = count - tub1_count;
+
+        while( tub1_index<tub1_count && tub2_index<tub2_count )
+        {
+                if( tub1[ tub1_index ] > tub2[ tub2_index ] )
+                        tmp[ i++ ] = tub2[ tub2_index++ ];
+                else
+                        tmp[ i++ ] = tub1[ tub1_index++ ];
+        }
+
+        if( tub1_index >= tub1_count )
+                while( tub2_index<tub2_count )tmp[ i++ ] = tub2[ tub2_index++ ];
+        else
+                while( tub1_index<tub1_count )tmp[ i++ ] = tub1[ tub1_index++ ];
+}"
+116,"int counting() {
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
+    }
+
+    int num[MAX] = {0};
+    for (int i = 0; i < n; ++i) {
+        ++num[a[i]];
+    }
+
+    int sum[MAX] = {0};
+    for (int v = 1; v < MAX; ++v) {
+        sum[v] = sum[v-1] + num[v];
+    }
+
+    vector<int> sorted(n);
+    for (int i = n-1; i >= 0; --i) {
+        sorted[--sum[a[i]]] = a[i];
+    }
+
+    return 0;
+}"
+117,"void Gnome(vector<int> &a) {
+    int g = 1;
+    while (g < (int)a.size()) {
+        if (a[g - 1] <= a[g]) ++g;
+        else {
+            sw(a[g - 1], a[g]);
+            if (g > 1) --g;
+        }
+    }
+}"
