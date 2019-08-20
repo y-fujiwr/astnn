@@ -38,7 +38,7 @@ if __name__ == '__main__':
     categories = 1
     if lang == 'java':
         categories = 12
-    elif lang in 'gcj':
+    elif lang in ['gcj','oreo']:
         categories = 5
     print("Train for ", str.upper(lang))
     test_data = pd.read_pickle(root+lang+'/cross_test/blocks.pkl').sample(frac=1)
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     embeddings = np.zeros((MAX_TOKENS + 1, EMBEDDING_DIM), dtype="float32")
     embeddings[:word2vec.syn0.shape[0]] = word2vec.syn0
 
-    HIDDEN_DIM = 100
+    HIDDEN_DIM = 128
     ENCODE_DIM = 128
     LABELS = 1
     EPOCHS = 10
@@ -62,6 +62,8 @@ if __name__ == '__main__':
         model.load_state_dict(torch.load("model/bcb.model"))
     elif lang in 'gcj':
         model.load_state_dict(torch.load("model/gcj.model"))
+    elif lang in 'oreo':
+        model.load_state_dict(torch.load("model/oreo.model"))
     if USE_GPU:
         model.cuda()
 
@@ -72,7 +74,7 @@ if __name__ == '__main__':
     precision, recall, f1 = 0, 0, 0
     print('Start testing...')
     for t in range(1, categories+1):
-        if lang in ['java','gcj']:
+        if lang in ['java','gcj','oreo']:
             test_data_t = test_data[test_data['label'].isin([t, 0])]
             test_data_t.loc[test_data_t['label'] > 0, 'label'] = 1
         else:
@@ -108,7 +110,7 @@ if __name__ == '__main__':
         if lang in ['java','gcj']:
             if lang in 'java':
                 weights = pd.read_pickle("data/java/cross_test/labels_rate.pkl")
-            elif lang in 'gcj':
+            elif lang in ['gcj','oreo']:
                 weights = [0, 0.005, 0.001, 0.002, 0.010, 0.982]
             p, r, f, _ = precision_recall_fscore_support(trues, predicts, average='binary')
             precision += weights[t] * p

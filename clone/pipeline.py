@@ -56,8 +56,6 @@ class Pipeline:
                 if self.language in 'java':
                     source = pd.read_csv(self.root+self.language+'/bcb_funcs_all.tsv', sep='\t', header=None, encoding='utf-8')
                     source.columns = ['id', 'code']
-                elif self.language in 'oreo':
-                    source = pd.read_csv(self.root+self.language+'/{}_funcs_all.csv'.format(self.language), encoding='utf-8')
                 else:
                     source = pd.read_csv(self.root+self.language+'/{}_funcs_all.csv'.format(self.language), encoding='utf-8')
                 
