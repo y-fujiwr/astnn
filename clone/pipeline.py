@@ -293,7 +293,9 @@ class Pipeline:
         if self.language in 'c':
             self.read_pairs('oj_clone_ids.pkl')
         elif self.language in 'java':
-            self.read_pairs('bcb_pair_ids.pkl')
+            self.read_pairs('bcb_pair_sim.pkl')
+        elif self.language in 'oreo':
+            self.read_pairs('oreo_pair_sim.pkl')
         else:
             self.read_pairs('{}_pair_ids.pkl'.format(self.language))
         print('split data...')
@@ -325,6 +327,8 @@ if not args.lang:
     exit(1)
 if args.lang in 'sort':
     ppl = Pipeline('1:1:1', 'data/', str(args.lang))
+elif args.lang in 'java':
+    ppl = Pipeline('3:1:1', 'data/', str(args.lang))
 else:
     ppl = Pipeline('8:1:1', 'data/', str(args.lang))
 ppl.run()

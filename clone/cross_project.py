@@ -14,7 +14,7 @@ warnings.filterwarnings('ignore')
 
 def get_batch(dataset, idx, bs):
     tmp = dataset.iloc[idx: idx+bs]
-    x1, x2, labels = [], [], []
+    x1, x2, labels, id1, id2 = [], [], [], [], []
     for _, item in tmp.iterrows():
         x1.append(item['code_x'])
         x2.append(item['code_y'])
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
     if lang in 'java':
-        model.load_state_dict(torch.load("model/bcb.model"))
+        model.load_state_dict(torch.load("model/java.regmodel"))
     elif lang in 'gcj':
         model.load_state_dict(torch.load("model/gcj.model"))
     elif lang in 'oreo':
@@ -73,7 +73,10 @@ if __name__ == '__main__':
 
     precision, recall, f1 = 0, 0, 0
     print('Start testing...')
+    os.makedirs("data/{}/log_cross".format(lang),exist_ok=True)
     for t in range(1, categories+1):
+        result = open("data/{}/log_cross/Type-{}.csv".format(lang,t),"w")
+        result.write("id1,id2,trues,predicts,scores\n")
         if lang in ['java','gcj','oreo']:
             test_data_t = test_data[test_data['label'].isin([t, 0])]
             test_data_t.loc[test_data_t['label'] > 0, 'label'] = 1
@@ -101,13 +104,17 @@ if __name__ == '__main__':
 
             # calc testing acc
             predicted = (output.data > 0.5).cpu().numpy()
-            predicts.extend(predicted)
+            """
             scores.extend(output.data.numpy())
             id1.extend(id1_batch)
             id2.extend(id2_batch)
+            """
             trues.extend(test_labels.cpu().numpy())
+            predicts.extend(predicted)
+            for j in range(len(predicted)):
+                result.write("{},{},{},{},{}\n".format(id1_batch[j],id2_batch[j],test_labels.cpu().numpy()[j],predicted[j],output.data.numpy()[j]))
 
-        if lang in ['java','gcj']:
+        if lang in ['java','gcj','oreo']:
             if lang in 'java':
                 weights = pd.read_pickle("data/java/cross_test/labels_rate.pkl")
             elif lang in ['gcj','oreo']:
@@ -120,8 +127,10 @@ if __name__ == '__main__':
             print("elapsed_time:{}[sec]".format(time.time()-start))
         else:
             precision, recall, f1, _ = precision_recall_fscore_support(trues, predicts, average='binary')
+        result.close()
+        """
         result = pd.DataFrame(id1,columns=['id1']).join(pd.DataFrame(id2,columns=['id2'])).join(pd.DataFrame(trues,columns=['trues'])).join(pd.DataFrame(predicts,columns=['predicts'])).join(pd.DataFrame(scores,columns=['scores']))
-        os.makedirs("data/{}/log_cross".format(lang),exist_ok=True)
         result.to_csv("data/{}/log_cross/Type-{}.csv".format(lang,t))
+        """
 
     print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))

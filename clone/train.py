@@ -6,20 +6,21 @@ import warnings
 from gensim.models.word2vec import Word2Vec
 from model import BatchProgramCC
 from torch.autograd import Variable
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support,roc_curve,roc_auc_score
 import os
+import matplotlib.pyplot as plt
 warnings.filterwarnings('ignore')
-
-
 
 def get_batch(dataset, idx, bs):
     tmp = dataset.iloc[idx: idx+bs]
-    x1, x2, labels = [], [], []
+    x1, x2, labels, id1, id2 = [], [], [], [], []
     for _, item in tmp.iterrows():
         x1.append(item['code_x'])
         x2.append(item['code_y'])
         labels.append([item['label']])
-    return x1, x2, torch.FloatTensor(labels)
+        id1.append(item['id1'])
+        id2.append(item['id2'])
+    return x1, x2, torch.FloatTensor(labels), id1, id2
 
 
 if __name__ == '__main__':
@@ -28,6 +29,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
     parser.add_argument('--lang')
     parser.add_argument('-g','--gpu', action='store_true')
+    parser.add_argument('-r','--regression', action='store_true')
     parser.add_argument('-b','--batch_size', type=int, default=32)
     parser.add_argument('-e','--epoch', type=int, default=5)
     args = parser.parse_args()
@@ -74,13 +76,23 @@ if __name__ == '__main__':
 
     parameters = model.parameters()
     optimizer = torch.optim.Adamax(parameters)
-    loss_function = torch.nn.BCELoss()
+    if args.regression:
+        print("regression")
+        loss_function = torch.nn.MSELoss()
+        categories = 1
+    else:
+        loss_function = torch.nn.BCELoss()
 
     precision, recall, f1 = 0, 0, 0
     print('Start training...')
     os.makedirs("data/{}/log".format(lang),exist_ok=True)
     for t in range(1, categories+1):
-        if lang in ['java','gcj','check','sesame','oreo']:
+        result = open("data/{}/log/Type-{}.csv".format(lang,t),"w")
+        result.write("id1,id2,trues,predicts,scores\n")
+        if args.regression:
+            train_data_t = train_data
+            test_data_t = test_data
+        elif lang in ['java','gcj','check','sesame','oreo']:
             train_data_t = train_data[train_data['label'].isin([t, 0])]
             train_data_t.loc[train_data_t['label'] > 0, 'label'] = 1
 
@@ -100,7 +112,7 @@ if __name__ == '__main__':
             while i < len(train_data_t):
                 batch = get_batch(train_data_t, i, BATCH_SIZE)
                 i += BATCH_SIZE
-                train1_inputs, train2_inputs, train_labels = batch
+                train1_inputs, train2_inputs, train_labels, _, __ = batch
                 if USE_GPU:
                     train1_inputs, train2_inputs, train_labels = train1_inputs, train2_inputs, train_labels.cuda()
 
@@ -116,13 +128,14 @@ if __name__ == '__main__':
             # testing procedure
             predicts = []
             trues = []
+            outputs = []
             total_loss = 0.0
             total = 0.0
             i = 0
             while i < len(test_data_t):
                 batch = get_batch(test_data_t, i, BATCH_SIZE)
                 i += BATCH_SIZE
-                test1_inputs, test2_inputs, test_labels = batch
+                test1_inputs, test2_inputs, test_labels, id1_batch, id2_batch = batch
                 if USE_GPU:
                     test_labels = test_labels.cuda()
                 model.batch_size = len(test_labels)
@@ -132,12 +145,28 @@ if __name__ == '__main__':
                 loss = loss_function(output, Variable(test_labels))
 
                 # calc testing acc
+                outputs.extend(output.data.numpy())
                 predicted = (output.data > 0.5).cpu().numpy()
                 predicts.extend(predicted)
-                trues.extend(test_labels.cpu().numpy())
+                if args.regression:
+                    trues.extend(np.where(test_labels.cpu().numpy() >= 1, 1, 0))
+                else:
+                    trues.extend(test_labels.cpu().numpy())
                 total += len(test_labels)
                 total_loss += loss.data[0] * len(test_labels)
-            if lang in ['java','gcj','check','sesame','oreo']:
+                for j in range(len(predicted)):
+                    result.write("{},{},{},{},{}\n".format(id1_batch[j],id2_batch[j],test_labels.cpu().numpy()[j],predicted[j],output.data.numpy()[j]))
+
+            if args.regression:
+                fpr,tpr,thresholds = roc_curve(trues,outputs)
+                print("ROC_score: {}".format(roc_auc_score(trues,outputs)))
+                plt.plot(fpr, tpr, marker='o')
+                plt.xlabel('FPR: False positive rate')
+                plt.ylabel('TPR: True positive rate')
+                plt.grid()
+                plt.savefig('data/{}/log/roc_curve_epoch{}.png'.format(lang,epoch))
+
+            elif lang in ['java','gcj','check','sesame','oreo']:
                 if lang in 'java':
                     weights = [0, 0.005, 0.001, 0.002, 0.010, 0.982]
                 elif lang in ['gcj']:
@@ -155,9 +184,13 @@ if __name__ == '__main__':
                 print("Type-" + str(t) + ": " + str(p) + " " + str(r) + " " + str(f))
             else:
                 precision, recall, f1, _ = precision_recall_fscore_support(trues, predicts, average='binary')
-            result = pd.DataFrame(trues,columns=['trues']).join(pd.DataFrame(predicts,columns=['predicts']))
-            result.to_csv("data/{}/log/Type-{}.csv".format(lang,t))
+            #result = pd.DataFrame(trues,columns=['trues']).join(pd.DataFrame(predicts,columns=['predicts']))
+            #result.to_csv("data/{}/log/Type-{}.csv".format(lang,t))
 
     print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
     os.makedirs("model", exist_ok=True)
-    torch.save(model.state_dict(), "model/{}.model".format(lang))
+    if args.regression:
+        modelname = "model/{}.regmodel".format(lang)
+    else:
+        modelname = "model/{}.model".format(lang)
+    torch.save(model.state_dict(), modelname)
