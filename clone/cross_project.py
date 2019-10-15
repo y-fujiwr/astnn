@@ -6,8 +6,9 @@ import warnings
 from gensim.models.word2vec import Word2Vec
 from model import BatchProgramCC
 from torch.autograd import Variable
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support,roc_curve,roc_auc_score
 import os
+import matplotlib.pyplot as plt
 warnings.filterwarnings('ignore')
 
 
@@ -29,6 +30,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
     parser.add_argument('--lang')
+    parser.add_argument('-r','--regression', action='store_true')
+    parser.add_argument('-t','--testfile', type=str , default="blocks.pkl")
     args = parser.parse_args()
     if not args.lang:
         print("No specified dataset")
@@ -41,7 +44,7 @@ if __name__ == '__main__':
     elif lang in ['gcj','oreo']:
         categories = 5
     print("Train for ", str.upper(lang))
-    test_data = pd.read_pickle(root+lang+'/cross_test/blocks.pkl').sample(frac=1)
+    test_data = pd.read_pickle(root+lang+'/cross_test/{}'.format(args.testfile)).sample(frac=1)
 
     word2vec = Word2Vec.load(root+lang+"/train/embedding/node_w2v_128").wv
     MAX_TOKENS = word2vec.syn0.shape[0]
@@ -63,7 +66,7 @@ if __name__ == '__main__':
     elif lang in 'gcj':
         model.load_state_dict(torch.load("model/gcj.model"))
     elif lang in 'oreo':
-        model.load_state_dict(torch.load("model/oreo.model"))
+        model.load_state_dict(torch.load("model/oreo.regmodel"))
     if USE_GPU:
         model.cuda()
 
@@ -73,9 +76,10 @@ if __name__ == '__main__':
 
     precision, recall, f1 = 0, 0, 0
     print('Start testing...')
-    os.makedirs("data/{}/log_cross".format(lang),exist_ok=True)
+    resultdir = "data/{}/log_cross/{}/".format(lang,args.testfile.split(".")[0])
+    os.makedirs(resultdir,exist_ok=True)
     for t in range(1, categories+1):
-        result = open("data/{}/log_cross/Type-{}.csv".format(lang,t),"w")
+        result = open("{}Type-{}.csv".format(resultdir,t),"w")
         result.write("id1,id2,trues,predicts,scores\n")
         if lang in ['java','gcj','oreo']:
             test_data_t = test_data[test_data['label'].isin([t, 0])]
@@ -104,8 +108,8 @@ if __name__ == '__main__':
 
             # calc testing acc
             predicted = (output.data > 0.5).cpu().numpy()
-            """
             scores.extend(output.data.numpy())
+            """
             id1.extend(id1_batch)
             id2.extend(id2_batch)
             """
@@ -113,10 +117,20 @@ if __name__ == '__main__':
             predicts.extend(predicted)
             for j in range(len(predicted)):
                 result.write("{},{},{},{},{}\n".format(id1_batch[j],id2_batch[j],test_labels.cpu().numpy()[j],predicted[j],output.data.numpy()[j]))
+        
+        if args.regression:
+            fpr,tpr,thresholds = roc_curve(trues,scores)
+            print("ROC_score: {}".format(roc_auc_score(trues,scores)))
+            plt.plot(fpr, tpr, marker='o')
+            plt.xlabel('FPR: False positive rate')
+            plt.ylabel('TPR: True positive rate')
+            plt.grid()
+            plt.savefig('{}roc_curve_type{}.png'.format(resultdir,categories))
+        
 
         if lang in ['java','gcj','oreo']:
             if lang in 'java':
-                weights = pd.read_pickle("data/java/cross_test/labels_rate.pkl")
+                weights = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]#pd.read_pickle("data/java/cross_test/labels_rate.pkl")
             elif lang in ['gcj','oreo']:
                 weights = [0, 0.005, 0.001, 0.002, 0.010, 0.982]
             p, r, f, _ = precision_recall_fscore_support(trues, predicts, average='binary')
