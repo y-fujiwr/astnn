@@ -13,6 +13,9 @@ ASTNNでスクリプト上に出力される精度は実際のものではない
 83行目付近のresultdirにログを出力したいパスを指定  
 すれば，動くと思います．
 
+### train.py, cross_project.py, pipeline.py
+基本的に引数--langにデータセット名を指定します．
+
 # データセット
 ### deepsimのGCJデータセット
 
