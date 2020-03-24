@@ -1,5 +1,19 @@
 y-fujiwrがASTNNに追加したもの  
 
+# スクリプト  
+## calculate_alltype_precision.py
+ASTNNでスクリプト上に出力される精度は実際のものではない（非クローンペアが重複する）  
+引数に，検出ログ（Type${n}.csv）が含まれるディレクトリを指定すると，実際の検出精度を計算してくれる
+
+## cross_project.py
+あるデータセットのモデルに別のデータセットのコード片を入力して検出精度を調査するためのスクリプト
+ハードコーディングで申し訳ありませんが，  
+52行目付近の test_data に，各データセットからpipeline.pyにて作成される test/block.pkl をロード  
+73行目付近の，model.load_state_dict(torch.load() のloadの引数に使用したいモデルのパスを指定  
+83行目付近のresultdirにログを出力したいパスを指定  
+すれば，動くと思います．
+
+# データセット
 ## deepsimのGCJデータセット
 
 1. deepsimデータセット <https://github.com/parasol-aser/deepsim/tree/master/dataset>  のgooglejam4.tar.gzを展開してください．
@@ -19,7 +33,7 @@ required: .db 形式のファイルを読み込めてcsvに変換できるツー
 3. docs.dbを開き，テーブルinternal_filtered_methoddocsをcsv形式で出力
 4. preprocess_sesame.py
     結構な時間がかかります  
-    sesame_funcs_all.csv と gcj_pair_ids.pkl が作成されます．   
+    sesame_funcs_all.csv と sesame_pair_ids.pkl が作成されます．   
 ※オーバーロードなどで同名メソッドが複数存在する場合にメソッドをうまく抽出できていないという問題があります．  
 私はクローンデータセットに使用されたメソッドの内，同名メソッドが服する存在するものを確認して手動で修正しました．
 
@@ -42,3 +56,4 @@ required: Docker
 1. Semantic Benchmark.zip <https://drive.google.com/file/d/1KicfslV02p6GDPPBjZHNlmiXk-9IoGWl/view> をダウンロード，解凍
     論文：Farouq, Al-omari, Chanchal K. Roy, and Tonghao Chen, SemanticCloneBench: A Semanti Code Clone Benchmark using Crowd-Source Knowledge, Proc. of IWSC 2020, pp.57-63, London, ON, Canada, Feb. 2020.
 2. python preprocess_roy.py -d Semantic\ Benchmark/Java/Stand\ Alone\ Clones
+    roy_funcs_all.csv と roy_pair_ids.pkl が作成されます．
