@@ -13,6 +13,17 @@ ASTNNでスクリプト上に出力される精度は実際のものではない
 83行目付近のresultdirにログを出力したいパスを指定  
 すれば，動くと思います．
 
+### matching_w2v_vocab.py
+クエリと類似した識別子やそのindexを， gensim.models.word2vec の学習済みモデルに含まれているvocabの中から探すスクリプト  
+simstring （<http://www.chokkan.org/software/simstring/index.html.ja>， 実装：<https://github.com/nullnull/simstring>）を使用
+
+### train.py, cross_project.py, pipeline.py
+基本的に引数--langにデータセット名を指定します．
+
+### pipeline.py
+オプション-sを指定しない場合，クロスプロジェクト実験用のtestデータしか出力しません（誤操作による既存のデータセット破損を防ぐため）  
+また，クロスプロジェクト実験の際に利用するプロジェクトの指定方法は，現状，ハードコーディングになっており，pipeline.py 15行目付近の cross_project に名称指定してください．  
+
 # データセット
 ### deepsimのGCJデータセット
 
