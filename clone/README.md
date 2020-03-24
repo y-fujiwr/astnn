@@ -1,11 +1,11 @@
 y-fujiwrがASTNNに追加したもの  
 
 # スクリプト  
-## calculate_alltype_precision.py
+### calculate_alltype_precision.py
 ASTNNでスクリプト上に出力される精度は実際のものではない（非クローンペアが重複する）  
 引数に，検出ログ（Type${n}.csv）が含まれるディレクトリを指定すると，実際の検出精度を計算してくれる
 
-## cross_project.py
+### cross_project.py
 あるデータセットのモデルに別のデータセットのコード片を入力して検出精度を調査するためのスクリプト
 ハードコーディングで申し訳ありませんが，  
 52行目付近の test_data に，各データセットからpipeline.pyにて作成される test/block.pkl をロード  
@@ -14,7 +14,7 @@ ASTNNでスクリプト上に出力される精度は実際のものではない
 すれば，動くと思います．
 
 # データセット
-## deepsimのGCJデータセット
+### deepsimのGCJデータセット
 
 1. deepsimデータセット <https://github.com/parasol-aser/deepsim/tree/master/dataset>  のgooglejam4.tar.gzを展開してください．
 2. java -jar extractProcessingPart.jar -d ${1.のディレクトリ}  
@@ -24,7 +24,7 @@ ASTNNでスクリプト上に出力される精度は実際のものではない
 4. python preprocess_gcj.py -d ${1.のディレクトリ}  
     astnn/clone/data 内に gcj というディレクトリが作成され，中に，gcj_funcs_all_no_inout.csv と gcj_pair_ids.pkl が作成されます．
 
-## SeSaMeデータセット
+### SeSaMeデータセット
 
 required: .db 形式のファイルを読み込めてcsvに変換できるツール（私は DB Browser for SQLite を使用）
 1. SeSaMe <https://github.com/FAU-Inf2/sesame> リポジトリをクローン
@@ -37,7 +37,7 @@ required: .db 形式のファイルを読み込めてcsvに変換できるツー
 ※オーバーロードなどで同名メソッドが複数存在する場合にメソッドをうまく抽出できていないという問題があります．  
 私はクローンデータセットに使用されたメソッドの内，同名メソッドが服する存在するものを確認して手動で修正しました．
 
-## CodeSearchNetデータセット
+### CodeSearchNetデータセット
 
 required: Docker
 1. CodeSearchNet <https://github.com/github/CodeSearchNet> リポジトリをクローン
@@ -51,7 +51,7 @@ required: Docker
 6. コンソールを終了し，resourcesディレクトリ内の preprocess_csn.py を実行
     csn_funcs_all.csv と csn_pair_ids.pkl が作成されます．
 
-## Semantic dataset
+### Semantic dataset
 
 1. Semantic Benchmark.zip <https://drive.google.com/file/d/1KicfslV02p6GDPPBjZHNlmiXk-9IoGWl/view> をダウンロード，解凍
     論文：Farouq, Al-omari, Chanchal K. Roy, and Tonghao Chen, SemanticCloneBench: A Semanti Code Clone Benchmark using Crowd-Source Knowledge, Proc. of IWSC 2020, pp.57-63, London, ON, Canada, Feb. 2020.
