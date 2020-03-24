@@ -11,6 +11,9 @@ import numpy as np
 from tqdm import trange
 import javalang
 
+cross_only = True
+cross_project = "sesame"
+
 class Pipeline:
     def __init__(self,  ratio, root, language):
         self.ratio = ratio
@@ -30,11 +33,12 @@ class Pipeline:
 
     # parse source code
     def parse_source(self, output_file, option):
+        print(f"cross_only = {cross_only}")
         path = self.root+self.language+'/'+output_file
-        if self.language in ['java','gcj'] and os.path.exists(path) and os.path.exists(self.root+self.language+"/ast_cross.pkl") and option == 'existing':
+        if not cross_only and self.language in ['java','gcj'] and os.path.exists(path) and os.path.exists(self.root+self.language+"/ast_cross.pkl") and option == 'existing':
             source = pd.read_pickle(path)
             source_cross = pd.read_pickle(self.root+self.language+"/ast_cross.pkl")
-        elif os.path.exists(path) and option == 'existing' and self.language not in ['check']:
+        elif not cross_only and os.path.exists(path) and option == 'existing' and self.language not in ['check']:
             source = pd.read_pickle(path)     
         else:
             if self.language is 'c':
@@ -44,7 +48,7 @@ class Pipeline:
                 source.columns = ['id', 'code', 'label']
                 source['code'] = source['code'].apply(parser.parse)
                 source.to_pickle(path)
-            elif self.language in ['java','gcj','sort','check','sesame','oreo']:
+            elif self.language in ['java','gcj','sort','check','sesame','oreo','csn']:
                 def parse_program(func):
                     try:
                         tokens = javalang.tokenizer.tokenize(func)
@@ -63,7 +67,7 @@ class Pipeline:
                     source['code'] = source['code'].apply(parse_program)
                 source.to_pickle(path)
                 if self.language in 'java':
-                    source_cross = pd.read_csv(self.root+self.language+'/gcj_funcs_all.csv', encoding='utf-8', engine='python')
+                    source_cross = pd.read_csv(self.root+f'{cross_project}/{cross_project}_funcs_all.csv', encoding='utf-8', engine='python')
                     source_cross['code'] = source_cross['code'].apply(parse_program)
                     source_cross.to_pickle(self.root+self.language+"/ast_cross.pkl")
                 elif self.language in 'gcj':
@@ -83,7 +87,7 @@ class Pipeline:
         pairs = pairs[(~pairs['id1'].isin(parse_error)) & (~pairs['id2'].isin(parse_error))].dropna(how='any')
         self.pairs = pairs
         if self.language in 'java':
-            pairs_cross = pd.read_pickle(self.root+self.language+'/'+"gcj_pair_ids.pkl")
+            pairs_cross = pd.read_pickle(self.root+f"{cross_project}/{cross_project}_pair_ids.pkl")
             self.pairs_cross = pairs_cross
         elif self.language in 'gcj':
             pairs_cross = pd.read_pickle(self.root+"java/bcb_pair_ids.pkl")
@@ -107,21 +111,23 @@ class Pipeline:
         def check_or_create(path):
             if not os.path.exists(path):
                 os.mkdir(path)
-        train_path = data_path+'train/'
-        check_or_create(train_path)
-        self.train_file_path = train_path+'train_.pkl'
-        train.to_pickle(self.train_file_path)
 
-        dev_path = data_path+'dev/'
-        check_or_create(dev_path)
-        self.dev_file_path = dev_path+'dev_.pkl'
-        dev.to_pickle(self.dev_file_path)
+        if not cross_only:
+            train_path = data_path+'train/'
+            check_or_create(train_path)
+            self.train_file_path = train_path+'train_.pkl'
+            train.to_pickle(self.train_file_path)
 
-        test_path = data_path+'test/'
-        check_or_create(test_path)
-        self.test_file_path = test_path+'test_.pkl'
-        test.to_pickle(self.test_file_path)
+            dev_path = data_path+'dev/'
+            check_or_create(dev_path)
+            self.dev_file_path = dev_path+'dev_.pkl'
+            dev.to_pickle(self.dev_file_path)
 
+            test_path = data_path+'test/'
+            check_or_create(test_path)
+            self.test_file_path = test_path+'test_.pkl'
+            test.to_pickle(self.test_file_path)
+        
         if self.language in ['java','gcj']:
             cross_test_path = data_path + 'cross_test/'
             check_or_create(cross_test_path)
@@ -134,7 +140,7 @@ class Pipeline:
         self.size = size
         data_path = self.root+self.language+'/'
         if not input_file:
-            input_file = self.train_file_path
+            input_file = "data/{}/train/train_.pkl".format(self.language)#self.train_file_path
         pairs = pd.read_pickle(input_file)
         train_ids = pairs['id1'].append(pairs['id2']).unique()
         trees = self.sources.set_index('id',drop=False).loc[train_ids]
@@ -157,7 +163,7 @@ class Pipeline:
         if self.language is 'c':
             sys.path.append('../')
             from prepare_data import get_sequences as func
-        elif self.language in ['java', 'gcj','sort', 'check','sesame','oreo']:
+        elif self.language in ['java', 'gcj','sort', 'check','sesame','oreo','csn']:
             from utils import get_sequence as func
 
         def trans_to_sequences(ast):
@@ -169,15 +175,16 @@ class Pipeline:
         trees['code'] = pd.Series(str_corpus)
         # trees.to_csv(data_path+'train/programs_ns.tsv')
 
-        from gensim.models.word2vec import Word2Vec
-        w2v = Word2Vec(corpus, size=size, workers=16, sg=1, max_final_vocab=3000)
-        w2v.save(data_path+'train/embedding/node_w2v_' + str(size))
+        if not cross_only:
+            from gensim.models.word2vec import Word2Vec
+            w2v = Word2Vec(corpus, size=size, workers=16, sg=1, max_final_vocab=3000)
+            w2v.save(data_path+'train/embedding/node_w2v_' + str(size))
 
     # generate block sequences with index representations
     def generate_block_seqs(self):
         if self.language is 'c':
             from prepare_data import get_blocks as func
-        elif self.language in ['java', 'gcj', 'sort','check', 'sesame','oreo']:
+        elif self.language in ['java', 'gcj', 'sort','check', 'sesame','oreo','csn']:
             from utils import get_blocks_v1 as func
         from gensim.models.word2vec import Word2Vec
 
@@ -293,9 +300,11 @@ class Pipeline:
         if self.language in 'c':
             self.read_pairs('oj_clone_ids.pkl')
         elif self.language in 'java':
-            self.read_pairs('bcb_pair_sim.pkl')
+            self.read_pairs('bcb_pair_simast.pkl')
         elif self.language in 'oreo':
             self.read_pairs('oreo_pair_sim.pkl')
+        elif self.language in 'sesame':
+            self.read_pairs('sesame_pair_simast.pkl')
         else:
             self.read_pairs('{}_pair_ids.pkl'.format(self.language))
         print('split data...')
@@ -308,27 +317,30 @@ class Pipeline:
             print('generate block sequences...')
             self.generate_block_seqs()
         print('merge pairs and blocks...')
-        self.merge(self.train_file_path, 'train')
-        self.merge(self.dev_file_path, 'dev')
-        self.merge(self.test_file_path, 'test')
+        if not cross_only:
+            self.merge(self.train_file_path, 'train')
+            self.merge(self.dev_file_path, 'dev')
+            self.merge(self.test_file_path, 'test')
         if self.language in ['java','gcj']:
             self.merge_cross(self.cross_test_file_path, 'cross_test')
         if self.language in 'sort':
             x = pd.read_pickle("data/sort/train/blocks.pkl").append(pd.read_pickle("data/sort/dev/blocks.pkl")).append(pd.read_pickle("data/sort/test/blocks.pkl"))
-            x.to_csv("data/sort/test/blocks.csv")
-            x.to_pickle("data/sort/test/blocks.pkl")
+            x.to_csv("data/sort/test/blocks_for_cross.csv")
+            x.to_pickle("data/sort/test/blocks_for_cross.pkl")
 
 import argparse
 parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
 parser.add_argument('--lang')
+parser.add_argument('--single','-s', action='store_false')
 args = parser.parse_args()
 if not args.lang:
     print("No specified dataset")
     exit(1)
+cross_only = args.single
 if args.lang in 'sort':
     ppl = Pipeline('1:1:1', 'data/', str(args.lang))
 elif args.lang in 'java':
-    ppl = Pipeline('3:1:1', 'data/', str(args.lang))
+    ppl = Pipeline('998:1:1', 'data/', str(args.lang))
 else:
     ppl = Pipeline('8:1:1', 'data/', str(args.lang))
 ppl.run()

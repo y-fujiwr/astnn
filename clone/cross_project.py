@@ -41,8 +41,13 @@ if __name__ == '__main__':
     categories = 1
     if lang == 'java':
         categories = 12
+        if args.testfile == "csn.pkl":
+            categories = 100
+            print(100)
     elif lang in ['gcj','oreo']:
-        categories = 5
+        categories = 12
+    elif lang in "sesame":
+        categories = 2
     print("Train for ", str.upper(lang))
     test_data = pd.read_pickle(root+lang+'/cross_test/{}'.format(args.testfile)).sample(frac=1)
 
@@ -61,12 +66,11 @@ if __name__ == '__main__':
 
     model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
-    if lang in 'java':
-        model.load_state_dict(torch.load("model/java.regmodel"))
-    elif lang in 'gcj':
-        model.load_state_dict(torch.load("model/gcj.model"))
-    elif lang in 'oreo':
-        model.load_state_dict(torch.load("model/oreo.regmodel"))
+    model_extension = "model"
+    if args.regression:
+        model_extension = "regmodel"        
+
+    model.load_state_dict(torch.load("model/{}_simast.{}".format(lang,model_extension)))
     if USE_GPU:
         model.cuda()
 
@@ -76,12 +80,12 @@ if __name__ == '__main__':
 
     precision, recall, f1 = 0, 0, 0
     print('Start testing...')
-    resultdir = "data/{}/log_cross/{}/".format(lang,args.testfile.split(".")[0])
+    resultdir = "data/{}/log_cross/{}_{}/".format(lang,args.testfile.split(".")[0],model_extension)
     os.makedirs(resultdir,exist_ok=True)
     for t in range(1, categories+1):
         result = open("{}Type-{}.csv".format(resultdir,t),"w")
         result.write("id1,id2,trues,predicts,scores\n")
-        if lang in ['java','gcj','oreo']:
+        if lang in ['java','gcj','oreo','sesame']:
             test_data_t = test_data[test_data['label'].isin([t, 0])]
             test_data_t.loc[test_data_t['label'] > 0, 'label'] = 1
         else:
@@ -104,20 +108,24 @@ if __name__ == '__main__':
 
             model.batch_size = len(test_labels)
             model.hidden = model.init_hidden()
-            output = model(test1_inputs, test2_inputs)
+            try:
+                output = model(test1_inputs, test2_inputs)
+                # calc testing acc
+                predicted = (output.data > 0.5).cpu().numpy()
+                scores.extend(output.data.numpy())
+                """
+                id1.extend(id1_batch)
+                id2.extend(id2_batch)
+                """
+                trues.extend(test_labels.cpu().numpy())
+                predicts.extend(predicted)
+                for j in range(len(predicted)):
+                    result.write("{},{},{},{},{}\n".format(id1_batch[j],id2_batch[j],test_labels.cpu().numpy()[j],predicted[j],output.data.numpy()[j]))
+            except ValueError as e:
+                print(e)
+                print(f"{id1_batch},{id2_batch}")
 
-            # calc testing acc
-            predicted = (output.data > 0.5).cpu().numpy()
-            scores.extend(output.data.numpy())
-            """
-            id1.extend(id1_batch)
-            id2.extend(id2_batch)
-            """
-            trues.extend(test_labels.cpu().numpy())
-            predicts.extend(predicted)
-            for j in range(len(predicted)):
-                result.write("{},{},{},{},{}\n".format(id1_batch[j],id2_batch[j],test_labels.cpu().numpy()[j],predicted[j],output.data.numpy()[j]))
-        
+        """
         if args.regression:
             fpr,tpr,thresholds = roc_curve(trues,scores)
             print("ROC_score: {}".format(roc_auc_score(trues,scores)))
@@ -126,13 +134,13 @@ if __name__ == '__main__':
             plt.ylabel('TPR: True positive rate')
             plt.grid()
             plt.savefig('{}roc_curve_type{}.png'.format(resultdir,categories))
-        
+        """
 
         if lang in ['java','gcj','oreo']:
             if lang in 'java':
-                weights = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]#pd.read_pickle("data/java/cross_test/labels_rate.pkl")
+                weights = [1] * 100#pd.read_pickle("data/java/cross_test/labels_rate.pkl")
             elif lang in ['gcj','oreo']:
-                weights = [0, 0.005, 0.001, 0.002, 0.010, 0.982]
+                weights = [0, 0.005, 0.001, 0.002, 0.010, 0.982,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
             p, r, f, _ = precision_recall_fscore_support(trues, predicts, average='binary')
             precision += weights[t] * p
             recall += weights[t] * r

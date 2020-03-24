@@ -5,8 +5,7 @@ import sys
 from sklearn.metrics import precision_recall_fscore_support,roc_curve,roc_auc_score
 import os
 import matplotlib.pyplot as plt
-
-threshold = 0.15
+import numpy as np
 
 def read_csv(filename):
     dataframe = pd.read_csv(filename)
@@ -21,27 +20,38 @@ def read_csv(filename):
 
 target_directory = sys.argv[1]
 file_list = list(Path(target_directory).glob("**/*.csv"))
+data = read_csv(file_list[0])
 
-data = read_csv(file_list[3])
 for i in range(1,len(file_list)):
     dataForAppend = read_csv(file_list[i])
     dataForAppend = dataForAppend[dataForAppend["trues"]==1]
     data = data.append(dataForAppend)
-TruePositive = len(data[(data["trues"]==1) & (data["scores"]>=threshold)])
-FalsePositive = len(data[(data["trues"]==0) & (data["scores"]>=threshold)])
-FalseNegative = len(data[(data["trues"]==1) & (data["scores"]<threshold)])
-TrueNegative = len(data[(data["trues"]==0) & (data["scores"]<threshold)])
-precision = TruePositive / (TruePositive+FalsePositive)
-recall = TruePositive / (TruePositive+FalseNegative)
-print("p:{},r:{},f:{}".format(precision,recall,2*precision*recall/(precision+recall)))
+
+for threshold in np.arange(0.05, 0.95, 0.05):
+    TruePositive = len(data[(data["trues"]==1) & (data["scores"]>=threshold)])
+    FalsePositive = len(data[(data["trues"]==0) & (data["scores"]>=threshold)])
+    FalseNegative = len(data[(data["trues"]==1) & (data["scores"]<threshold)])
+    TrueNegative = len(data[(data["trues"]==0) & (data["scores"]<threshold)])
+    try:
+        precision = TruePositive / (TruePositive+FalsePositive)
+        recall = TruePositive / (TruePositive+FalseNegative)
+    except ZeroDivisionError:
+        precision = 0
+        recall = 1
+    print(f"threshold: {threshold}")
+    print(f"clone-pairs:{TruePositive+FalseNegative}, non-clone-pairs:{FalsePositive+TrueNegative}")
+    print("p:{},r:{},f:{}".format(precision,recall,2*precision*recall/(precision+recall)))
+    #print(TruePositive / (TruePositive+FalseNegative))
+    #print(FalsePositive / (TrueNegative+FalsePositive))
 
 trues = data["trues"].values
 scores = data["scores"].values
 
 fpr,tpr,thresholds = roc_curve(trues,scores)
-print("ROC_score: {}".format(roc_auc_score(trues,scores)))
+print("AUC_score: {}".format(roc_auc_score(trues,scores)))
+exit()
 plt.plot(fpr, tpr, marker='o')
 plt.xlabel('FPR: False positive rate')
 plt.ylabel('TPR: True positive rate')
 plt.grid()
-plt.show()
+plt.savefig(f"{target_directory}roccurve_.eps")

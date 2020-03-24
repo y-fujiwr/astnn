@@ -17,7 +17,7 @@ def get_batch(dataset, idx, bs):
     for _, item in tmp.iterrows():
         x1.append(item['code_x'])
         x2.append(item['code_y'])
-        labels.append([item['label']])
+        labels.append([float(item['label'])])
         id1.append(item['id1'])
         id2.append(item['id2'])
     return x1, x2, torch.FloatTensor(labels), id1, id2
@@ -40,13 +40,15 @@ if __name__ == '__main__':
     lang = args.lang
     categories = 1
     if lang == 'java':
-        categories = 5
+        categories = 12
     elif lang in 'gcj':
         categories = 12
     elif lang in 'check':
         categories = 2
     elif lang in 'sesame':
         categories = 2
+    elif lang in 'csn':
+        categories = 100
     print("Train for ", str.upper(lang))
     train_data = pd.read_pickle(root+lang+'/train/blocks.pkl').sample(frac=1)
     train_data = train_data[~(train_data['code_x'] == "[]") & ~(train_data['code_y'] == "[]")]
@@ -92,7 +94,7 @@ if __name__ == '__main__':
         if args.regression:
             train_data_t = train_data
             test_data_t = test_data
-        elif lang in ['java','gcj','check','sesame','oreo']:
+        elif lang in ['java','gcj','check','sesame','oreo','csn']:
             train_data_t = train_data[train_data['label'].isin([t, 0])]
             train_data_t.loc[train_data_t['label'] > 0, 'label'] = 1
 
@@ -190,7 +192,7 @@ if __name__ == '__main__':
     print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
     os.makedirs("model", exist_ok=True)
     if args.regression:
-        modelname = "model/{}.regmodel".format(lang)
+        modelname = "model/{}_simast.regmodel".format(lang)
     else:
         modelname = "model/{}.model".format(lang)
     torch.save(model.state_dict(), modelname)
