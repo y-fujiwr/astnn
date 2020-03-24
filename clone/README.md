@@ -13,6 +13,10 @@ ASTNNでスクリプト上に出力される精度は実際のものではない
 83行目付近のresultdirにログを出力したいパスを指定  
 すれば，動くと思います．
 
+### matching_w2v_vocab.py
+クエリと類似した識別子やそのindexを， gensim.models.word2vec の学習済みモデルに含まれているvocabの中から探すスクリプト  
+simstring （<http://www.chokkan.org/software/simstring/index.html.ja>， 実装：<https://github.com/nullnull/simstring>）を使用
+
 ### train.py, cross_project.py, pipeline.py
 基本的に引数--langにデータセット名を指定します．
 
