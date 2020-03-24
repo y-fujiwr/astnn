@@ -10,6 +10,7 @@ from time import time
 import numpy as np
 from tqdm import trange
 import javalang
+from matching_w2v_vocab import importWordVocab, searchVocab
 
 cross_only = True
 cross_project = "sesame"
@@ -48,7 +49,7 @@ class Pipeline:
                 source.columns = ['id', 'code', 'label']
                 source['code'] = source['code'].apply(parser.parse)
                 source.to_pickle(path)
-            elif self.language in ['java','gcj','sort','check','sesame','oreo','csn']:
+            elif self.language in ['java','gcj','sort','check','sesame','oreo','csn','roy']:
                 def parse_program(func):
                     try:
                         tokens = javalang.tokenizer.tokenize(func)
@@ -163,7 +164,7 @@ class Pipeline:
         if self.language is 'c':
             sys.path.append('../')
             from prepare_data import get_sequences as func
-        elif self.language in ['java', 'gcj','sort', 'check','sesame','oreo','csn']:
+        elif self.language in ['java', 'gcj','sort', 'check','sesame','oreo','csn','roy']:
             from utils import get_sequence as func
 
         def trans_to_sequences(ast):
@@ -184,17 +185,17 @@ class Pipeline:
     def generate_block_seqs(self):
         if self.language is 'c':
             from prepare_data import get_blocks as func
-        elif self.language in ['java', 'gcj', 'sort','check', 'sesame','oreo','csn']:
+        elif self.language in ['java', 'gcj', 'sort','check', 'sesame','oreo','csn','roy']:
             from utils import get_blocks_v1 as func
         from gensim.models.word2vec import Word2Vec
 
+        importWordVocab(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size))
         word2vec = Word2Vec.load(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size)).wv
         vocab = word2vec.vocab
-        max_token = word2vec.syn0.shape[0]
 
         def tree_to_index(node):
             token = node.token
-            result = [vocab[token].index if token in vocab else max_token]
+            result = [vocab[token].index if token in vocab else searchVocab(token)]
             children = node.children
             for child in children:
                 result.append(tree_to_index(child))
@@ -232,7 +233,6 @@ class Pipeline:
             from gensim.models.word2vec import Word2Vec
             word2vec = Word2Vec.load(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size)).wv
             vocab = word2vec.vocab
-            max_token = word2vec.syn0.shape[0]
             def parse_program(func):
                 try:
                     self.x += 1
@@ -246,7 +246,7 @@ class Pipeline:
                     return "parseError"
             def tree_to_index(node):
                 token = node.token
-                result = [vocab[token].index if token in vocab else max_token]
+                result = [vocab[token].index if token in vocab else searchVocab(token)]
                 children = node.children
                 for child in children:
                     result.append(tree_to_index(child))

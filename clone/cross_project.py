@@ -70,7 +70,7 @@ if __name__ == '__main__':
     if args.regression:
         model_extension = "regmodel"        
 
-    model.load_state_dict(torch.load("model/{}_simast.{}".format(lang,model_extension)))
+    model.load_state_dict(torch.load("model/{}.{}".format(lang,model_extension)))
     if USE_GPU:
         model.cuda()
 
