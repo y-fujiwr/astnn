@@ -6,6 +6,7 @@ from sklearn.metrics import precision_recall_fscore_support,roc_curve,roc_auc_sc
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import javalang
 
 def read_csv(filename):
     dataframe = pd.read_csv(filename)
@@ -26,6 +27,22 @@ for i in range(1,len(file_list)):
     dataForAppend = read_csv(file_list[i])
     dataForAppend = dataForAppend[dataForAppend["trues"]==1]
     data = data.append(dataForAppend)
+
+if len(sys.argv) > 2:
+    method_table = pd.read_csv(sys.argv[2])
+    limit = 5
+    methodlist = data["id1"].append(data["id2"]).drop_duplicates()
+    shortmethod = []
+    for i in methodlist:
+        tokens = list(javalang.tokenizer.tokenize(method_table[method_table["id"]==i]["code"].iloc[0]))
+        lines = 0
+        for t in tokens:
+            if t.value == ";":
+                lines += 1
+        if lines <= limit:
+            shortmethod.append(i)
+    print(f"The number of small methods is {len(shortmethod)}")
+    data = data[(~data["id1"].isin(shortmethod)) & (~data["id2"].isin(shortmethod))]
 
 for threshold in np.arange(0.05, 0.95, 0.05):
     TruePositive = len(data[(data["trues"]==1) & (data["scores"]>=threshold)])
