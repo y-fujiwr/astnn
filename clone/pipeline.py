@@ -10,10 +10,12 @@ from time import time
 import numpy as np
 from tqdm import trange
 import javalang
+import lsi
 from matching_w2v_vocab import importWordVocab, searchVocab
+import pickle
 
 cross_only = True
-cross_project = "sesame"
+cross_project = "gcj"
 
 class Pipeline:
     def __init__(self,  ratio, root, language):
@@ -58,15 +60,18 @@ class Pipeline:
                         return tree
                     except:
                         return "parseError"
-                if self.language in 'java':
-                    source = pd.read_csv(self.root+self.language+'/bcb_funcs_all.tsv', sep='\t', header=None, encoding='utf-8')
-                    source.columns = ['id', 'code']
+                if cross_only:
+                    source = pd.read_pickle(path)
                 else:
-                    source = pd.read_csv(self.root+self.language+'/{}_funcs_all.csv'.format(self.language), encoding='utf-8')
+                    if self.language in 'java':
+                        source = pd.read_csv(self.root+self.language+'/bcb_funcs_all.tsv', sep='\t', header=None, encoding='utf-8')
+                        source.columns = ['id', 'code']
+                    else:
+                        source = pd.read_csv(self.root+self.language+'/{}_funcs_all.csv'.format(self.language), encoding='utf-8')
                 
-                if self.language not in ['oreo','check']:
-                    source['code'] = source['code'].apply(parse_program)
-                source.to_pickle(path)
+                    if self.language not in ['oreo']:
+                        source['code'] = source['code'].apply(parse_program)
+                    source.to_pickle(path)
                 if self.language in 'java':
                     source_cross = pd.read_csv(self.root+f'{cross_project}/{cross_project}_funcs_all.csv', encoding='utf-8', engine='python')
                     source_cross['code'] = source_cross['code'].apply(parse_program)
@@ -113,7 +118,7 @@ class Pipeline:
             if not os.path.exists(path):
                 os.mkdir(path)
 
-        if not cross_only:
+        if not cross_only and not os.path.exists(f"{data_path}train/train_.pkl"):
             train_path = data_path+'train/'
             check_or_create(train_path)
             self.train_file_path = train_path+'train_.pkl'
@@ -129,6 +134,10 @@ class Pipeline:
             self.test_file_path = test_path+'test_.pkl'
             test.to_pickle(self.test_file_path)
         
+        self.train_file_path = data_path + "train/train_.pkl"
+        self.dev_file_path = data_path + "dev/dev_.pkl"
+        self.test_file_path = data_path + "test/test_.pkl"
+
         if self.language in ['java','gcj']:
             cross_test_path = data_path + 'cross_test/'
             check_or_create(cross_test_path)
@@ -145,7 +154,7 @@ class Pipeline:
         pairs = pd.read_pickle(input_file)
         train_ids = pairs['id1'].append(pairs['id2']).unique()
         trees = self.sources.set_index('id',drop=False).loc[train_ids]
-        if self.language in ['oreo','check']:
+        if self.language in ['oreo']:
             self.x = 0
             def parse_program(func):
                 try:
@@ -173,13 +182,24 @@ class Pipeline:
             return sequence
         corpus = trees['code'].apply(trans_to_sequences)
         str_corpus = [' '.join(c) for c in corpus]
-        trees['code'] = pd.Series(str_corpus)
+        str_corpus_lsi = [c for c in corpus]
+        
+        trees['code'] = pd.Series(str_corpus)#.lower())
         # trees.to_csv(data_path+'train/programs_ns.tsv')
 
         if not cross_only:
             from gensim.models.word2vec import Word2Vec
             w2v = Word2Vec(corpus, size=size, workers=16, sg=1, max_final_vocab=3000)
             w2v.save(data_path+'train/embedding/node_w2v_' + str(size))
+        #lsi
+        """
+        lsi_model, lsi_dict = lsi.lsi(str_corpus_lsi,size)
+        with open(f"{data_path}train/embedding/dictionary_lsi_{size}.pickle","wb") as fo:
+            pickle.dump(lsi_dict, fo)
+        embeddings = lsi_model.get_topics().T
+        embeddings = np.append(embeddings, [[0.0]*size], axis=0)
+        np.save(f'{data_path}train/embedding/vec_lsi_{size}', embeddings)
+        """
 
     # generate block sequences with index representations
     def generate_block_seqs(self):
@@ -192,10 +212,19 @@ class Pipeline:
         importWordVocab(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size))
         word2vec = Word2Vec.load(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size)).wv
         vocab = word2vec.vocab
+        max_token = word2vec.syn0.shape[0]
+        #lsi
+        """
+        with open(f"{self.root}{self.language}/train/embedding/dictionary_lsi_{self.size}.pickle","rb") as fi:
+            lsi_dict = pickle.load(fi)
+        """
 
         def tree_to_index(node):
             token = node.token
-            result = [vocab[token].index if token in vocab else searchVocab(token)]
+            #word2vec
+            result = [vocab[token].index if token in vocab else max_token]#searchVocab(token)]
+            #lsi
+            #result = [lsi_dict[token] if token in lsi_dict else max_token]
             children = node.children
             for child in children:
                 result.append(tree_to_index(child))
@@ -209,11 +238,12 @@ class Pipeline:
                 btree = tree_to_index(b)
                 tree.append(btree)
             return tree
-        trees = pd.DataFrame(self.sources, copy=True)
-        trees['code'] = trees['code'].apply(trans2seq)
-        if 'label' in trees.columns:
-            trees.drop('label', axis=1, inplace=True)
-        self.blocks = trees
+        if not cross_only:
+            trees = pd.DataFrame(self.sources, copy=True)
+            trees['code'] = trees['code'].apply(trans2seq)
+            if 'label' in trees.columns:
+                trees.drop('label', axis=1, inplace=True)
+            self.blocks = trees
         if self.language in ['java','gcj']:
             trees_cross = pd.DataFrame(self.source_cross, copy=True)
             trees_cross['code'] = trees_cross['code'].apply(trans2seq)
@@ -228,7 +258,7 @@ class Pipeline:
         pairs['id1'] = pairs['id1'].astype(int)
         pairs['id2'] = pairs['id2'].astype(int)
         
-        if self.language in ['oreo','check']:
+        if self.language in ['oreo']:
             from utils import get_blocks_v1 as func
             from gensim.models.word2vec import Word2Vec
             word2vec = Word2Vec.load(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size)).wv
@@ -289,8 +319,8 @@ class Pipeline:
         df.drop(['id_x', 'id_y'], axis=1,inplace=True)
         df.dropna(inplace=True)
 
-        df.to_pickle(self.root+self.language+'/'+part+'/blocks.pkl')
-        df.to_csv(self.root+self.language+'/'+part+'/blocks.csv')
+        df.to_pickle(self.root+self.language+'/'+part+f'/{cross_project}_lsi.pkl')
+        df.to_csv(self.root+self.language+'/'+part+f'/blocks.csv')
 
     # run for processing data to train
     def run(self):
@@ -311,7 +341,7 @@ class Pipeline:
         self.split_data()
         print('train word embedding...')
         self.dictionary_and_embedding(None,128)
-        if self.language in ['oreo','check']:
+        if self.language in ['oreo']:
             self.blocks = self.sources
         else:
             print('generate block sequences...')

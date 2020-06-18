@@ -5,18 +5,28 @@ import numpy as np
 import warnings
 from gensim.models.word2vec import Word2Vec
 from model import BatchProgramCC
+from model_lstm import LSTM, BiLSTM
 from torch.autograd import Variable
 from sklearn.metrics import precision_recall_fscore_support,roc_curve,roc_auc_score
 import os
 import matplotlib.pyplot as plt
+import re
 warnings.filterwarnings('ignore')
 
 def get_batch(dataset, idx, bs):
     tmp = dataset.iloc[idx: idx+bs]
     x1, x2, labels, id1, id2 = [], [], [], [], []
     for _, item in tmp.iterrows():
-        x1.append(item['code_x'])
-        x2.append(item['code_y'])
+        if args.model in ["lstm","bilstm"]:
+            code_x = list(map(int,re.sub("[\[\],]","",str(item["code_x"])).split()))
+            code_y = list(map(int,re.sub("[\[\],]","",str(item["code_y"])).split()))
+            code_x = [min(i,MAX_TOKENS) for i in code_x]
+            code_y = [min(i,MAX_TOKENS) for i in code_y]
+        else:
+            code_x = item["code_x"]
+            code_y = item["code_y"]
+        x1.append(code_x)
+        x2.append(code_y)
         labels.append([float(item['label'])])
         id1.append(item['id1'])
         id2.append(item['id2'])
@@ -32,6 +42,7 @@ if __name__ == '__main__':
     parser.add_argument('-r','--regression', action='store_true')
     parser.add_argument('-b','--batch_size', type=int, default=32)
     parser.add_argument('-e','--epoch', type=int, default=5)
+    parser.add_argument('-m','--model',type=str,default="astnn")
     args = parser.parse_args()
     if not args.lang:
         print("No specified dataset")
@@ -55,11 +66,19 @@ if __name__ == '__main__':
     test_data = pd.read_pickle(root+lang+'/test/blocks.pkl').sample(frac=1)
     test_data = test_data[~(test_data['code_x'] == "[]") & ~(test_data['code_y'] == "[]")]
 
+    #word2vec
+    
     word2vec = Word2Vec.load(root+lang+"/train/embedding/node_w2v_128").wv
     MAX_TOKENS = word2vec.syn0.shape[0]
     EMBEDDING_DIM = word2vec.syn0.shape[1]
     embeddings = np.zeros((MAX_TOKENS + 1, EMBEDDING_DIM), dtype="float32")
     embeddings[:word2vec.syn0.shape[0]] = word2vec.syn0
+    """
+    #lsi
+    embeddings = np.load(root+lang+"/train/embedding/vec_lsi_256.npy").astype(np.float32)
+    MAX_TOKENS = len(embeddings)
+    EMBEDDING_DIM = 256
+    """
 
     HIDDEN_DIM = 128
     ENCODE_DIM = 128
@@ -70,9 +89,18 @@ if __name__ == '__main__':
         USE_GPU = False
     else:
         USE_GPU = True
-
-    model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
+    if args.model == "astnn":
+        model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
+    elif args.model == "lstm":
+        model = LSTM(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
+                                   USE_GPU, embeddings)
+    elif args.model == "bilstm":
+        model = BiLSTM(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
+                                   USE_GPU, embeddings)
+    else:
+        print("No support")
+        exit()
     if USE_GPU:
         model.cuda()
 
@@ -120,12 +148,13 @@ if __name__ == '__main__':
 
                 model.zero_grad()
                 model.batch_size = len(train_labels)
-                model.hidden = model.init_hidden()
+                if args.model == "astnn":
+                    model.hidden = model.init_hidden()
                 output = model(train1_inputs, train2_inputs)
-
                 loss = loss_function(output, Variable(train_labels))
                 loss.backward()
                 optimizer.step()
+            """
             print("Testing-%d..."%t)
             # testing procedure
             predicts = []
@@ -188,11 +217,9 @@ if __name__ == '__main__':
                 precision, recall, f1, _ = precision_recall_fscore_support(trues, predicts, average='binary')
             #result = pd.DataFrame(trues,columns=['trues']).join(pd.DataFrame(predicts,columns=['predicts']))
             #result.to_csv("data/{}/log/Type-{}.csv".format(lang,t))
+            """
 
-    print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
+    #print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
     os.makedirs("model", exist_ok=True)
-    if args.regression:
-        modelname = "model/{}_simast.regmodel".format(lang)
-    else:
-        modelname = "model/{}.model".format(lang)
+    modelname = "model/{}_{}_{}.model".format(lang,args.regression,args.model)
     torch.save(model.state_dict(), modelname)

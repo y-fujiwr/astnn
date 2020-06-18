@@ -5,10 +5,12 @@ import numpy as np
 import warnings
 from gensim.models.word2vec import Word2Vec
 from model import BatchProgramCC
+from model_lstm import LSTM
 from torch.autograd import Variable
 from sklearn.metrics import precision_recall_fscore_support,roc_curve,roc_auc_score
 import os
 import matplotlib.pyplot as plt
+import re
 warnings.filterwarnings('ignore')
 
 
@@ -17,8 +19,23 @@ def get_batch(dataset, idx, bs):
     tmp = dataset.iloc[idx: idx+bs]
     x1, x2, labels, id1, id2 = [], [], [], [], []
     for _, item in tmp.iterrows():
-        x1.append(item['code_x'])
-        x2.append(item['code_y'])
+        if args.model in ["lstm"]:
+            code_x = list(map(int,re.sub("[\[\],]","",str(item["code_x"])).split()))
+            code_y = list(map(int,re.sub("[\[\],]","",str(item["code_y"])).split()))
+            code_x = [min(i,MAX_TOKENS) for i in code_x]
+            code_y = [min(i,MAX_TOKENS) for i in code_y]
+        else:
+            code_x = item["code_x"]
+            code_y = item["code_y"]
+
+        #bcbテスト用
+        try:
+            item["label"] = 1 if float(item["label"]) > 0.0 else 0
+        except ValueError:
+            item["label"] = 1
+        
+        x1.append(code_x)
+        x2.append(code_y)
         labels.append([item['label']])
         id1.append(item['id1'])
         id2.append(item['id2'])
@@ -32,6 +49,7 @@ if __name__ == '__main__':
     parser.add_argument('--lang')
     parser.add_argument('-r','--regression', action='store_true')
     parser.add_argument('-t','--testfile', type=str , default="blocks.pkl")
+    parser.add_argument('-m','--model',type=str,default="astnn")
     args = parser.parse_args()
     if not args.lang:
         print("No specified dataset")
@@ -41,7 +59,7 @@ if __name__ == '__main__':
     categories = 1
     if lang == 'java':
         categories = 12
-        if args.testfile == "csn.pkl":
+        if "csn" in args.testfile:
             categories = 100
             print(100)
     elif lang in ['gcj','oreo']:
@@ -50,12 +68,19 @@ if __name__ == '__main__':
         categories = 2
     print("Train for ", str.upper(lang))
     test_data = pd.read_pickle(root+lang+'/cross_test/{}'.format(args.testfile)).sample(frac=1)
-
+    #word2vec
+    
     word2vec = Word2Vec.load(root+lang+"/train/embedding/node_w2v_128").wv
     MAX_TOKENS = word2vec.syn0.shape[0]
     EMBEDDING_DIM = word2vec.syn0.shape[1]
     embeddings = np.zeros((MAX_TOKENS + 1, EMBEDDING_DIM), dtype="float32")
     embeddings[:word2vec.syn0.shape[0]] = word2vec.syn0
+    """
+    #lsi
+    embeddings = np.load(root+lang+"/train/embedding/vec_lsi_128.npy").astype(np.float32)
+    MAX_TOKENS = len(embeddings)
+    EMBEDDING_DIM = 128
+    """
 
     HIDDEN_DIM = 128
     ENCODE_DIM = 128
@@ -63,14 +88,14 @@ if __name__ == '__main__':
     EPOCHS = 10
     BATCH_SIZE = 32
     USE_GPU = False
-
-    model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
+    if args.model == "astnn":
+        model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
-    model_extension = "model"
-    if args.regression:
-        model_extension = "regmodel"        
-
-    model.load_state_dict(torch.load("model/{}.{}".format(lang,model_extension)))
+    elif args.model == "lstm":
+        model = LSTM(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
+                                   USE_GPU, embeddings)
+    model_name = "{}_{}_{}.model".format(lang,args.regression,args.model)
+    model.load_state_dict(torch.load(f"model/{model_name}"))
     if USE_GPU:
         model.cuda()
 
@@ -80,14 +105,22 @@ if __name__ == '__main__':
 
     precision, recall, f1 = 0, 0, 0
     print('Start testing...')
-    resultdir = "data/{}/log_cross/{}_{}/".format(lang,args.testfile.split(".")[0],model_extension)
+    resultdir = "data/{}/log_cross/{}_{}/".format(lang,args.testfile.split(".")[0],model_name)
     os.makedirs(resultdir,exist_ok=True)
     for t in range(1, categories+1):
         result = open("{}Type-{}.csv".format(resultdir,t),"w")
         result.write("id1,id2,trues,predicts,scores\n")
         if lang in ['java','gcj','oreo','sesame']:
+            
+            """
+            #BCB
+            test_data_t = test_data
+            """
+
+            #それ以外
             test_data_t = test_data[test_data['label'].isin([t, 0])]
             test_data_t.loc[test_data_t['label'] > 0, 'label'] = 1
+
         else:
             train_data_t, test_data_t = train_data, test_data
         print("Testing-%d..."%t)
@@ -107,7 +140,8 @@ if __name__ == '__main__':
                 test_labels = test_labels.cuda()
 
             model.batch_size = len(test_labels)
-            model.hidden = model.init_hidden()
+            if args.model == "astnn":
+                model.hidden = model.init_hidden()
             try:
                 output = model(test1_inputs, test2_inputs)
                 # calc testing acc
