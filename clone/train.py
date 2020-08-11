@@ -5,13 +5,27 @@ import numpy as np
 import warnings
 from gensim.models.word2vec import Word2Vec
 from model import BatchProgramCC
-from model_lstm import LSTM, BiLSTM
+from my_model import LSTM, BiLSTM, DNN
 from torch.autograd import Variable
 from sklearn.metrics import precision_recall_fscore_support,roc_curve,roc_auc_score
 import os
 import matplotlib.pyplot as plt
 import re
+from getCodeMetrics import getMetricsVec
+import javalang
 warnings.filterwarnings('ignore')
+
+source = None
+dict_metrics = {}
+def get_metrics(i):
+    global dict_metrics
+    if i in dict_metrics:
+        return dict_metrics[i]
+    else:
+        s = source[source["id"]==i]["code"].iloc[0]
+        v = getMetricsVec(s)
+        dict_metrics[i] = v
+        return v
 
 def get_batch(dataset, idx, bs):
     tmp = dataset.iloc[idx: idx+bs]
@@ -22,6 +36,12 @@ def get_batch(dataset, idx, bs):
             code_y = list(map(int,re.sub("[\[\],]","",str(item["code_y"])).split()))
             code_x = [min(i,MAX_TOKENS) for i in code_x]
             code_y = [min(i,MAX_TOKENS) for i in code_y]
+        elif args.model in ["dnn"]:
+            try:
+                code_x = get_metrics(item["id1"])
+                code_y = get_metrics(item["id2"])
+            except javalang.parser.JavaSyntaxError:
+                continue
         else:
             code_x = item["code_x"]
             code_y = item["code_y"]
@@ -49,6 +69,11 @@ if __name__ == '__main__':
         exit(1)
     root = 'data/'
     lang = args.lang
+    if args.model in ["dnn"]:
+        if lang in ["java"]:
+            source = pd.read_csv(root+lang+'/bcb_funcs_all.tsv', sep='\t', header=None,names=["id","code"], encoding='utf-8')
+        else:
+            source = pd.read_csv(root+lang+'/{}_funcs_all.csv'.format(lang), encoding='utf-8')
     categories = 1
     if lang == 'java':
         categories = 12
@@ -98,6 +123,8 @@ if __name__ == '__main__':
     elif args.model == "bilstm":
         model = BiLSTM(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
+    elif args.model == "dnn":
+        model = DNN(LABELS,BATCH_SIZE,USE_GPU)
     else:
         print("No support")
         exit()
@@ -112,6 +139,7 @@ if __name__ == '__main__':
         categories = 1
     else:
         loss_function = torch.nn.BCELoss()
+        categories = 1
 
     precision, recall, f1 = 0, 0, 0
     print('Start training...')
@@ -123,13 +151,14 @@ if __name__ == '__main__':
             train_data_t = train_data
             test_data_t = test_data
         elif lang in ['java','gcj','check','sesame','oreo','csn']:
-            train_data_t = train_data[train_data['label'].isin([t, 0])]
+            train_data_t = train_data#[train_data['label'].isin([t, 0])]
             train_data_t.loc[train_data_t['label'] > 0, 'label'] = 1
 
             test_data_t = test_data[test_data['label'].isin([t, 0])]
             test_data_t.loc[test_data_t['label'] > 0, 'label'] = 1
         else:
             train_data_t, test_data_t = train_data, test_data
+
         # training procedure
         for epoch in range(EPOCHS):
             print('Epoch {}'.format(epoch))

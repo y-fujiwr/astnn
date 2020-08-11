@@ -15,7 +15,7 @@ from matching_w2v_vocab import importWordVocab, searchVocab
 import pickle
 
 cross_only = True
-cross_project = "gcj"
+cross_project = "roy"
 
 class Pipeline:
     def __init__(self,  ratio, root, language):
@@ -330,7 +330,7 @@ class Pipeline:
         if self.language in 'c':
             self.read_pairs('oj_clone_ids.pkl')
         elif self.language in 'java':
-            self.read_pairs('bcb_pair_simast.pkl')
+            self.read_pairs('bcb_pair_simast_balanced.pkl')
         elif self.language in 'oreo':
             self.read_pairs('oreo_pair_sim.pkl')
         elif self.language in 'sesame':

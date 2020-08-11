@@ -35,7 +35,6 @@ class BatchTreeEncoder(nn.Module):
         if not size:
             return None
         batch_current = self.create_tensor(Variable(torch.zeros(size, self.embedding_dim)))
-
         index, children_index = [], []
         current_node, children = [], []
         for i in range(size):
@@ -54,7 +53,6 @@ class BatchTreeEncoder(nn.Module):
                             children[j].append(temp[j])
             # else:
             #     batch_index[i] = -1
-
         batch_current = self.W_c(batch_current.index_copy(0, Variable(self.th.LongTensor(index)),
                                                           self.embedding(Variable(self.th.LongTensor(current_node)))))
 
@@ -140,18 +138,15 @@ class BatchProgramCC(nn.Module):
         encodes = torch.cat(seq)
         encodes = encodes.view(self.batch_size, max_len, -1)
         # return encodes
-
         gru_out, hidden = self.bigru(encodes, self.hidden)
         gru_out = torch.transpose(gru_out, 1, 2)
         # pooling
         gru_out = F.max_pool1d(gru_out, gru_out.size(2)).squeeze(2)
         # gru_out = gru_out[:,-1]
-
         return gru_out
 
     def forward(self, x1, x2):
         lvec, rvec = self.encode(x1), self.encode(x2)
-
         abs_dist = torch.abs(torch.add(lvec, -rvec))
 
         y = torch.sigmoid(self.hidden2label(abs_dist))
