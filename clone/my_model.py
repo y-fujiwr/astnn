@@ -3,12 +3,19 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
+from trigram import trigram
 
 class LSTM(nn.Module):
     def __init__(self,embedding_dim, hidden_dim, vocab_size, encode_dim, label_size, batch_size, use_gpu=True, pretrained_weight=None):
         super(LSTM,self).__init__()
-        self.embeddings = nn.Embedding(vocab_size,embedding_dim)
-        self.embedding_dim = embedding_dim
+        self.vector = None
+        if embedding_dim in ["trigram"]:
+            self.embeddings = None
+            self.vector = "trigram"
+            self.embedding_dim = 18929
+        else:
+            self.embeddings = nn.Embedding(vocab_size,embedding_dim)
+            self.embedding_dim = embedding_dim
         self.hidden_dim = hidden_dim
         self.gpu = use_gpu
         self.vocab_size = vocab_size
@@ -37,8 +44,11 @@ class LSTM(nn.Module):
     def forward(self,x1,x2):
         x1, lengths1 = self.padding(x1)
         x2, lengths2 = self.padding(x2)
-        temp1 = self.embeddings(x1)
-        temp2 = self.embeddings(x2)
+        if self.vector == "trigram":
+            
+        else:
+            temp1 = self.embeddings(x1)
+            temp2 = self.embeddings(x2)
         x1, (h1, c1) = self.lstm(temp1)
         x2, (h2, c2) = self.lstm(temp2)
         x1 = torch.transpose(x1, 1, 2)

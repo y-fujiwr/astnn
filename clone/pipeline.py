@@ -16,6 +16,7 @@ import pickle
 
 cross_only = True
 cross_project = "roy"
+vec = None
 
 class Pipeline:
     def __init__(self,  ratio, root, language):
@@ -188,18 +189,18 @@ class Pipeline:
         # trees.to_csv(data_path+'train/programs_ns.tsv')
 
         if not cross_only:
-            from gensim.models.word2vec import Word2Vec
-            w2v = Word2Vec(corpus, size=size, workers=16, sg=1, max_final_vocab=3000)
-            w2v.save(data_path+'train/embedding/node_w2v_' + str(size))
-        #lsi
-        """
-        lsi_model, lsi_dict = lsi.lsi(str_corpus_lsi,size)
-        with open(f"{data_path}train/embedding/dictionary_lsi_{size}.pickle","wb") as fo:
-            pickle.dump(lsi_dict, fo)
-        embeddings = lsi_model.get_topics().T
-        embeddings = np.append(embeddings, [[0.0]*size], axis=0)
-        np.save(f'{data_path}train/embedding/vec_lsi_{size}', embeddings)
-        """
+            if vec == "w2v":
+                from gensim.models.word2vec import Word2Vec
+                w2v = Word2Vec(corpus, size=size, workers=16, sg=1, max_final_vocab=3000)
+                w2v.save(data_path+'train/embedding/node_w2v_' + str(size))
+            #lsi
+            elif vec == "lsi":
+            lsi_model, lsi_dict = lsi.lsi(str_corpus_lsi,size)
+            with open(f"{data_path}train/embedding/dictionary_lsi_{size}.pickle","wb") as fo:
+                pickle.dump(lsi_dict, fo)
+            embeddings = lsi_model.get_topics().T
+            embeddings = np.append(embeddings, [[0.0]*size], axis=0)
+            np.save(f'{data_path}train/embedding/vec_lsi_{size}', embeddings)
 
     # generate block sequences with index representations
     def generate_block_seqs(self):
@@ -209,22 +210,28 @@ class Pipeline:
             from utils import get_blocks_v1 as func
         from gensim.models.word2vec import Word2Vec
 
-        importWordVocab(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size))
-        word2vec = Word2Vec.load(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size)).wv
-        vocab = word2vec.vocab
-        max_token = word2vec.syn0.shape[0]
+        #word2vec
+        if vec=="w2v":
+            importWordVocab(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size))
+            word2vec = Word2Vec.load(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size)).wv
+            vocab = word2vec.vocab
+            max_token = word2vec.syn0.shape[0]
         #lsi
-        """
-        with open(f"{self.root}{self.language}/train/embedding/dictionary_lsi_{self.size}.pickle","rb") as fi:
-            lsi_dict = pickle.load(fi)
-        """
+        elif vec=="lsi":
+            with open(f"{self.root}{self.language}/train/embedding/dictionary_lsi_{self.size}.pickle","rb") as fi:
+                lsi_dict = pickle.load(fi)
 
         def tree_to_index(node):
             token = node.token
             #word2vec
-            result = [vocab[token].index if token in vocab else max_token]#searchVocab(token)]
+            if vec=="w2v":
+                result = [vocab[token].index if token in vocab else max_token]#searchVocab(token)]
             #lsi
-            #result = [lsi_dict[token] if token in lsi_dict else max_token]
+            elif vec=="lsi":
+                result = [lsi_dict[token] if token in lsi_dict else max_token]
+            #trigram
+            elif vec == "trigram":
+                result = [token] #tokenの型がstrかを確認
             children = node.children
             for child in children:
                 result.append(tree_to_index(child))
@@ -307,7 +314,7 @@ class Pipeline:
             df = pd.merge(df, self.blocks, how='left', left_on='id2', right_on='id')
             df.drop(['id_x', 'id_y'], axis=1,inplace=True)
             df.dropna(inplace=True)        
-        df.to_pickle(self.root+self.language+'/'+part+'/blocks.pkl')
+        df.to_pickle(self.root+self.language+'/'+part+f'/blocks_{vec}.pkl')
         df.to_csv(self.root+self.language+'/'+part+'/blocks.csv')
 
     def merge_cross(self,data_path,part):
@@ -319,7 +326,7 @@ class Pipeline:
         df.drop(['id_x', 'id_y'], axis=1,inplace=True)
         df.dropna(inplace=True)
 
-        df.to_pickle(self.root+self.language+'/'+part+f'/{cross_project}_lsi.pkl')
+        df.to_pickle(self.root+self.language+'/'+part+f'/{cross_project}_{vec}.pkl')
         df.to_csv(self.root+self.language+'/'+part+f'/blocks.csv')
 
     # run for processing data to train
@@ -362,11 +369,13 @@ import argparse
 parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
 parser.add_argument('--lang')
 parser.add_argument('--single','-s', action='store_false')
+parser.add_argument('--vector','-v',type=str,default="w2v")
 args = parser.parse_args()
 if not args.lang:
     print("No specified dataset")
     exit(1)
 cross_only = args.single
+vec = args.vector
 if args.lang in 'sort':
     ppl = Pipeline('1:1:1', 'data/', str(args.lang))
 elif args.lang in 'java':

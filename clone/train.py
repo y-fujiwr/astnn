@@ -63,6 +63,7 @@ if __name__ == '__main__':
     parser.add_argument('-b','--batch_size', type=int, default=32)
     parser.add_argument('-e','--epoch', type=int, default=5)
     parser.add_argument('-m','--model',type=str,default="astnn")
+    parser.add_argument('-v','--vector',type=str,default="w2v",help="choose: [w2v|lsi|trigram]")
     args = parser.parse_args()
     if not args.lang:
         print("No specified dataset")
@@ -92,18 +93,22 @@ if __name__ == '__main__':
     test_data = test_data[~(test_data['code_x'] == "[]") & ~(test_data['code_y'] == "[]")]
 
     #word2vec
+    if args.vector == "w2v":
+        word2vec = Word2Vec.load(root+lang+"/train/embedding/node_w2v_128").wv
+        MAX_TOKENS = word2vec.syn0.shape[0]
+        EMBEDDING_DIM = word2vec.syn0.shape[1]
+        embeddings = np.zeros((MAX_TOKENS + 1, EMBEDDING_DIM), dtype="float32")
+        embeddings[:word2vec.syn0.shape[0]] = word2vec.syn0
     
-    word2vec = Word2Vec.load(root+lang+"/train/embedding/node_w2v_128").wv
-    MAX_TOKENS = word2vec.syn0.shape[0]
-    EMBEDDING_DIM = word2vec.syn0.shape[1]
-    embeddings = np.zeros((MAX_TOKENS + 1, EMBEDDING_DIM), dtype="float32")
-    embeddings[:word2vec.syn0.shape[0]] = word2vec.syn0
-    """
     #lsi
-    embeddings = np.load(root+lang+"/train/embedding/vec_lsi_256.npy").astype(np.float32)
-    MAX_TOKENS = len(embeddings)
-    EMBEDDING_DIM = 256
-    """
+    elif args.vector == "lsi":
+        embeddings = np.load(root+lang+"/train/embedding/vec_lsi_256.npy").astype(np.float32)
+        MAX_TOKENS = len(embeddings)
+        EMBEDDING_DIM = 256
+    #trigram
+    elif args.vector == "trigram":
+        MAX_TOKENS = 18928
+        EMBEDDING_DIM = "trigram"
 
     HIDDEN_DIM = 128
     ENCODE_DIM = 128
