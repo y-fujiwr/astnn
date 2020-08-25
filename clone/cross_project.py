@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import re
 from getCodeMetrics import getMetricsVec
 import javalang
+from uploader import upload
 warnings.filterwarnings('ignore')
 
 source = None
@@ -221,3 +222,4 @@ if __name__ == '__main__':
         """
 
     print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
+    upload("result",resultdir[:-1])
