@@ -27,7 +27,7 @@ for i in range(1,len(file_list)):
     dataForAppend = read_csv(file_list[i])
     dataForAppend = dataForAppend[dataForAppend["trues"]==1]
     data = data.append(dataForAppend)
-
+print(len(data))
 if len(sys.argv) > 2:
     method_table = pd.read_csv(sys.argv[2])
     limit = 5
@@ -44,7 +44,12 @@ if len(sys.argv) > 2:
     print(f"The number of small methods is {len(shortmethod)}")
     data = data[(~data["id1"].isin(shortmethod)) & (~data["id2"].isin(shortmethod))]
 
-for threshold in np.arange(0.05, 0.95, 0.05):
+before_f = -1.0
+f = 0.0
+threshold = 0.5
+for threshold in [0.5]:#np.arange(0.01, 0.1, 0.01):
+#while True:#before_f <= f:
+    before_f = f
     TruePositive = len(data[(data["trues"]==1) & (data["scores"]>=threshold)])
     FalsePositive = len(data[(data["trues"]==0) & (data["scores"]>=threshold)])
     FalseNegative = len(data[(data["trues"]==1) & (data["scores"]<threshold)])
@@ -60,6 +65,14 @@ for threshold in np.arange(0.05, 0.95, 0.05):
     print("p:{},r:{},f:{}".format(precision,recall,2*precision*recall/(precision+recall)))
     #print(TruePositive / (TruePositive+FalseNegative))
     #print(FalsePositive / (TrueNegative+FalsePositive))
+    f = 2*precision*recall/(precision+recall)
+    if threshold <=0.11:
+        threshold /=10
+    else:
+        threshold -= 0.1
+    if threshold <= 1/10**10:
+        break
+
 
 trues = data["trues"].values
 scores = data["scores"].values

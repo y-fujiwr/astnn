@@ -45,7 +45,7 @@ class LSTM(nn.Module):
         x1, lengths1 = self.padding(x1)
         x2, lengths2 = self.padding(x2)
         if self.vector == "trigram":
-            
+            pass
         else:
             temp1 = self.embeddings(x1)
             temp2 = self.embeddings(x2)

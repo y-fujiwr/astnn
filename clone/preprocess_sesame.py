@@ -7,7 +7,7 @@ df2 = df.drop(["pairid","project1","file1","method1","project2","file2","method2
 df3 = pd.read_csv("data/sesame/internal_filtered_methoddocs.csv")
 
 df2.columns=["id1","id2","label"]
-for i in range(900):
+while len(df2) < len(df) * 2:
     a = random.randint(0,len(df3)-1)
     b = random.randint(0,len(df3)-1)
     if a==b:
@@ -19,6 +19,7 @@ for i in range(900):
     df2 = df2.append(pd.Series([a,b,0],index=["id1","id2","label"]),ignore_index=True)
 df2 = df2.drop_duplicates(subset=["id1","id2"])
 df2.to_pickle("data/sesame/sesame_pair_ids.pkl")
+exit()
 df4 = pd.DataFrame(columns=['id','code'])
 df3 = df3.drop(["project_id","kwset"],axis=1)
 for _, t in df3.iterrows():

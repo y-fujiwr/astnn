@@ -195,12 +195,12 @@ class Pipeline:
                 w2v.save(data_path+'train/embedding/node_w2v_' + str(size))
             #lsi
             elif vec == "lsi":
-            lsi_model, lsi_dict = lsi.lsi(str_corpus_lsi,size)
-            with open(f"{data_path}train/embedding/dictionary_lsi_{size}.pickle","wb") as fo:
-                pickle.dump(lsi_dict, fo)
-            embeddings = lsi_model.get_topics().T
-            embeddings = np.append(embeddings, [[0.0]*size], axis=0)
-            np.save(f'{data_path}train/embedding/vec_lsi_{size}', embeddings)
+                lsi_model, lsi_dict = lsi.lsi(str_corpus_lsi,size)
+                with open(f"{data_path}train/embedding/dictionary_lsi_{size}.pickle","wb") as fo:
+                    pickle.dump(lsi_dict, fo)
+                embeddings = lsi_model.get_topics().T
+                embeddings = np.append(embeddings, [[0.0]*size], axis=0)
+                np.save(f'{data_path}train/embedding/vec_lsi_{size}', embeddings)
 
     # generate block sequences with index representations
     def generate_block_seqs(self):
