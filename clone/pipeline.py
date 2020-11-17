@@ -13,9 +13,10 @@ import javalang
 import lsi
 from matching_w2v_vocab import importWordVocab, searchVocab
 import pickle
+from trigram import signdict
 
-cross_only = True
-cross_project = "roy"
+cross_only = False
+cross_project = None
 vec = None
 
 class Pipeline:
@@ -73,17 +74,21 @@ class Pipeline:
                     if self.language not in ['oreo']:
                         source['code'] = source['code'].apply(parse_program)
                     source.to_pickle(path)
-                if self.language in 'java':
-                    source_cross = pd.read_csv(self.root+f'{cross_project}/{cross_project}_funcs_all.csv', encoding='utf-8', engine='python')
-                    source_cross['code'] = source_cross['code'].apply(parse_program)
-                    source_cross.to_pickle(self.root+self.language+"/ast_cross.pkl")
-                elif self.language in 'gcj':
-                    source_cross = pd.read_csv(self.root+'java/bcb_funcs_all.tsv', sep='\t', header=None, encoding='utf-8')
-                    source_cross.columns = ['id','code']
-                    source_cross['code'] = source_cross['code'].apply(parse_program)
-                    source_cross.to_pickle(self.root+self.language+"/ast_cross.pkl")                        
+                if cross_project != None:
+                    if self.language in 'java':
+                        source_cross = pd.read_csv(self.root+f'{cross_project}/{cross_project}_funcs_all.csv', encoding='utf-8', engine='python')
+                        source_cross['code'] = source_cross['code'].apply(parse_program)
+                        source_cross.to_pickle(self.root+self.language+"/ast_cross.pkl")
+                    elif self.language in 'gcj':
+                        if cross_project == 'java':
+                            source_cross = pd.read_csv(self.root+'java/bcb_funcs_all.tsv', sep='\t', header=None, encoding='utf-8')
+                            source_cross.columns = ['id','code']
+                        else:
+                            source_cross = pd.read_csv(self.root+f'{cross_project}/{cross_project}_funcs_all.csv', encoding='utf-8', engine='python')
+                        source_cross['code'] = source_cross['code'].apply(parse_program)
+                        source_cross.to_pickle(self.root+self.language+"/ast_cross.pkl")                        
         self.sources = source
-        if self.language in ['java', 'gcj']:
+        if self.language in ['java', 'gcj'] and cross_project != None:
             self.source_cross = source_cross
         return source
 
@@ -93,12 +98,13 @@ class Pipeline:
         pairs = pd.read_pickle(self.root+self.language+'/'+filename)
         pairs = pairs[(~pairs['id1'].isin(parse_error)) & (~pairs['id2'].isin(parse_error))].dropna(how='any')
         self.pairs = pairs
-        if self.language in 'java':
-            pairs_cross = pd.read_pickle(self.root+f"{cross_project}/{cross_project}_pair_ids.pkl")
-            self.pairs_cross = pairs_cross
-        elif self.language in 'gcj':
-            pairs_cross = pd.read_pickle(self.root+"java/bcb_pair_ids.pkl")
-            self.pairs_cross = pairs_cross
+        if cross_project != None:
+            if self.language in 'java':
+                pairs_cross = pd.read_pickle(self.root+f"{cross_project}/{cross_project}_pair_ids.pkl")
+                self.pairs_cross = pairs_cross
+            elif self.language in 'gcj':
+                pairs_cross = pd.read_pickle(self.root+"java/bcb_pair_ids.pkl")
+                self.pairs_cross = pairs_cross
 
     # split data for training, developing and testing
     def split_data(self):
@@ -139,7 +145,7 @@ class Pipeline:
         self.dev_file_path = data_path + "dev/dev_.pkl"
         self.test_file_path = data_path + "test/test_.pkl"
 
-        if self.language in ['java','gcj']:
+        if self.language in ['java','gcj'] and cross_project != None:
             cross_test_path = data_path + 'cross_test/'
             check_or_create(cross_test_path)
             self.cross_test_file_path = cross_test_path+'cross_test_.pkl'
@@ -201,6 +207,8 @@ class Pipeline:
                 embeddings = lsi_model.get_topics().T
                 embeddings = np.append(embeddings, [[0.0]*size], axis=0)
                 np.save(f'{data_path}train/embedding/vec_lsi_{size}', embeddings)
+            elif vec == "trigram":
+                pass
 
     # generate block sequences with index representations
     def generate_block_seqs(self):
@@ -211,15 +219,17 @@ class Pipeline:
         from gensim.models.word2vec import Word2Vec
 
         #word2vec
-        if vec=="w2v":
+        if vec == "w2v":
             importWordVocab(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size))
             word2vec = Word2Vec.load(self.root+self.language+'/train/embedding/node_w2v_' + str(self.size)).wv
             vocab = word2vec.vocab
             max_token = word2vec.syn0.shape[0]
         #lsi
-        elif vec=="lsi":
+        elif vec == "lsi":
             with open(f"{self.root}{self.language}/train/embedding/dictionary_lsi_{self.size}.pickle","rb") as fi:
                 lsi_dict = pickle.load(fi)
+        elif vec == "trigram":
+            pass
 
         def tree_to_index(node):
             token = node.token
@@ -231,7 +241,8 @@ class Pipeline:
                 result = [lsi_dict[token] if token in lsi_dict else max_token]
             #trigram
             elif vec == "trigram":
-                result = [token] #tokenの型がstrかを確認
+                result = [signdict[token] if token in signdict.keys() else token]#数字の扱いをどうするか
+
             children = node.children
             for child in children:
                 result.append(tree_to_index(child))
@@ -251,7 +262,7 @@ class Pipeline:
             if 'label' in trees.columns:
                 trees.drop('label', axis=1, inplace=True)
             self.blocks = trees
-        if self.language in ['java','gcj']:
+        if self.language in ['java','gcj'] and cross_project != None:
             trees_cross = pd.DataFrame(self.source_cross, copy=True)
             trees_cross['code'] = trees_cross['code'].apply(trans2seq)
             if 'label' in trees_cross.columns:
@@ -358,7 +369,7 @@ class Pipeline:
             self.merge(self.train_file_path, 'train')
             self.merge(self.dev_file_path, 'dev')
             self.merge(self.test_file_path, 'test')
-        if self.language in ['java','gcj']:
+        if self.language in ['java','gcj'] and cross_project != None:
             self.merge_cross(self.cross_test_file_path, 'cross_test')
         if self.language in 'sort':
             x = pd.read_pickle("data/sort/train/blocks.pkl").append(pd.read_pickle("data/sort/dev/blocks.pkl")).append(pd.read_pickle("data/sort/test/blocks.pkl"))
@@ -366,22 +377,22 @@ class Pipeline:
             x.to_pickle("data/sort/test/blocks_for_cross.pkl")
 
 import argparse
-parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
-parser.add_argument('--lang')
-parser.add_argument('--single','-s', action='store_false')
+parser = argparse.ArgumentParser(description="Choose a dataset:[java|gcj|roy|sesame|csn]")
+parser.add_argument('--lang',help="Choose a dataset:[java|gcj|roy|sesame|csn]")
+parser.add_argument('--skip_train','-s', action='store_true', help="Skip preprocessing training data")
 parser.add_argument('--vector','-v',type=str,default="w2v")
+parser.add_argument('--cross_project_name','-c',type=str, default=None, help="Choose a dataset for cross project experiment:[java|gcj|roy|sesame|csn]")
 args = parser.parse_args()
 if not args.lang:
     print("No specified dataset")
     exit(1)
-cross_only = args.single
+cross_only = args.skip_train
+cross_project = args.cross_project_name
 vec = args.vector
 if args.lang in 'sort':
     ppl = Pipeline('1:1:1', 'data/', str(args.lang))
 elif args.lang in 'java':
-    ppl = Pipeline('998:1:1', 'data/', str(args.lang))
+    ppl = Pipeline('3:1:1', 'data/', str(args.lang))
 else:
     ppl = Pipeline('8:1:1', 'data/', str(args.lang))
 ppl.run()
-
-
