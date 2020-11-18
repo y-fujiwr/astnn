@@ -25,9 +25,8 @@ data = read_csv(file_list[0])
 
 for i in range(1,len(file_list)):
     dataForAppend = read_csv(file_list[i])
-    dataForAppend = dataForAppend[dataForAppend["trues"]==1]
+    # dataForAppend = dataForAppend[dataForAppend["trues"]==1]
     data = data.append(dataForAppend)
-print(len(data))
 if len(sys.argv) > 2:
     method_table = pd.read_csv(sys.argv[2])
     limit = 5
@@ -72,11 +71,11 @@ for threshold in [0.5]:#np.arange(0.01, 0.1, 0.01):
         threshold -= 0.1
     if threshold <= 1/10**10:
         break
+    break
 
 
-trues = data["trues"].values
+trues = np.array(data["trues"].values,dtype=np.int64)
 scores = data["scores"].values
-
 fpr,tpr,thresholds = roc_curve(trues,scores)
 print("AUC_score: {}".format(roc_auc_score(trues,scores)))
 exit()

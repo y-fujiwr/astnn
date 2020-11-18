@@ -142,14 +142,14 @@ if __name__ == '__main__':
     print('Start testing...')
     resultdir = "data/{}/log_cross/{}_{}/".format(lang,args.testfile.split(".")[0],model_name)
     os.makedirs(resultdir,exist_ok=True)
-    for t in range(1, categories+1):
+    for t in range(categories+1):
         result = open("{}Type-{}.csv".format(resultdir,t),"w")
         result.write("id1,id2,trues,predicts,scores\n")
         if lang in ['java','gcj','oreo','sesame']:
             if testlang == "bcb":
                 test_data_t = test_data
             else:
-                test_data_t = test_data[test_data['label'].isin([t,0])]
+                test_data_t = test_data[test_data['label'].isin([t])]
                 test_data_t.loc[test_data_t['label'] > 0, 'label'] = 1
             
         else:
@@ -221,5 +221,5 @@ if __name__ == '__main__':
         result.to_csv("data/{}/log_cross/Type-{}.csv".format(lang,t))
         """
 
-    print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
+    #print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
     upload("result",resultdir[:-1])
