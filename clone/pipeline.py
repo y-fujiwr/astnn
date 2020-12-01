@@ -13,7 +13,7 @@ import javalang
 import lsi
 from matching_w2v_vocab import importWordVocab, searchVocab
 import pickle
-from trigram import signdict
+from trigram import signdict, getVector
 
 cross_only = False
 cross_project = None
@@ -229,7 +229,8 @@ class Pipeline:
             with open(f"{self.root}{self.language}/train/embedding/dictionary_lsi_{self.size}.pickle","rb") as fi:
                 lsi_dict = pickle.load(fi)
         elif vec == "trigram":
-            pass
+            node_dict = {}
+            node_vector = []
 
         def tree_to_index(node):
             token = node.token
@@ -241,7 +242,14 @@ class Pipeline:
                 result = [lsi_dict[token] if token in lsi_dict else max_token]
             #trigram
             elif vec == "trigram":
-                result = [signdict[token] if token in signdict.keys() else token]#数字の扱いをどうするか
+                t = signdict[token] if token in signdict.keys() else token
+                if t in node_dict.keys():
+                    result = [node_dict[t]]
+                else:
+                    result = [len(node_vector)]
+                    node_dict[t] = len(node_vector)
+                    node_vector.append(getVector(t))
+
 
             children = node.children
             for child in children:
@@ -268,7 +276,8 @@ class Pipeline:
             if 'label' in trees_cross.columns:
                 trees_cross.drop('label', axis=1, inplace=True)
             self.blocks_cross = trees_cross
-
+        with open(self.root+self.language+'/train/embedding/node_trigram','wb') as f:
+            np.save(self.root+self.language+'/train/embedding/node_trigram',node_vector)
 
     # merge pairs
     def merge(self,data_path,part):

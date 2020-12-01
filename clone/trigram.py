@@ -1,7 +1,57 @@
 import numpy as np
+import re
+import pickle
+
+dictionary = {}
+signdict = {
+    "+": "plus",
+    "-": "minus",
+    "*": "multiply",
+    "/": "divide",
+    "%": "remind",
+    "++": "increment",
+    "--": "decrement",
+    "=": "substitute",
+    "+=": "plussubstitute",
+    "-=": "minussubstitute",
+    "*=": "multiplysubstitute",
+    "/=": "devidesubstitute",
+    "%=": "remindsubstitute",
+    "&": "and",
+    "|": "or",
+    "^": "xor",
+    "!": "not",
+    "==": "equal",
+    "&&": "andand",
+    "||": "oror",
+    "!=": "notequal",
+    "<": "lessthan",
+    "<=": "lessequal",
+    ">": "morethan",
+    ">=": "moreequal",
+    "<<": "shiftleft",
+    ">>": "shiftright",
+    ">>>": "shiftright",
+    "&=": "andsubstitute",
+    "^=": "xorsubstitute",
+    "|=": "orsubstitute",
+    "<<=": "shiftleftsubstitute",
+    ">>=": "shiftrightsubstitute",
+    ">>>=": "shiftrightsubstitute",
+}
+def get_signdict():
+    return signdict
+
+def save_dict():
+    with open("chartrigram_dictionary.pkl","wb") as f:
+        pickle.dump(dictionary,f)
+
+def load_dict():
+    global dictionary
+    with open("chartrigram_dictionary.pkl","rb") as f:
+        dictionary = pickle.load(f)
 
 def trigram(string):
-    string = "^" + string.lower() + "$"
     l = np.zeros(18929)
     for i in range(len(string)-2):
         l[calculate_index(string[i:i+3])] += 1
@@ -23,5 +73,11 @@ def alpha2num(alpha):
         num += pow(26,len(alpha)-index-1)*(ord(item)-ord('a'))
     return num
 
-def cos_sim(v1, v2):
-    return np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+def getVector(string):
+    string = "^" + re.sub(r"[^a-z]",r"",string.lower()) + "$"
+    if string in dictionary.keys():
+        return dictionary[string]
+    else:
+        v = trigram(string)
+        dictionary[string] = v
+        return v

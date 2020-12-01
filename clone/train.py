@@ -88,9 +88,9 @@ if __name__ == '__main__':
     elif lang in 'csn':
         categories = 100
     print("Train for ", str.upper(lang))
-    train_data = pd.read_pickle(root+lang+'/train/blocks.pkl').sample(frac=1)
+    train_data = pd.read_pickle(root+lang+f'/train/blocks_{args.vector}.pkl').sample(frac=1)
     train_data = train_data[~(train_data['code_x'] == "[]") & ~(train_data['code_y'] == "[]")]
-    test_data = pd.read_pickle(root+lang+'/test/blocks.pkl').sample(frac=1)
+    test_data = pd.read_pickle(root+lang+f'/test/blocks_{args.vector}.pkl').sample(frac=1)
     test_data = test_data[~(test_data['code_x'] == "[]") & ~(test_data['code_y'] == "[]")]
 
     #word2vec
@@ -108,8 +108,9 @@ if __name__ == '__main__':
         EMBEDDING_DIM = 256
     #trigram
     elif args.vector == "trigram":
-        MAX_TOKENS = 18928
-        EMBEDDING_DIM = "trigram"
+        embeddings = np.load(root+lang+"/train/embedding/node_trigram.npy").astype(np.float32)
+        MAX_TOKENS = len(embeddings)-1
+        EMBEDDING_DIM = 18929
 
     HIDDEN_DIM = 128
     ENCODE_DIM = 128
