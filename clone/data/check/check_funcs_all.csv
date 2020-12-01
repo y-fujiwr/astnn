@@ -1,5 +1,5 @@
 id,code
-0,"public static void main(String[] args){
+0,"public static void main(String[] args){   int a = num >= 0 ? 1 : 2;
   String fileName=""A-small-attempt1.in"";
   try (BufferedReader br=new BufferedReader(new FileReader(fileName))){
     try (BufferedWriter bw=new BufferedWriter(new FileWriter(fileName + "".out""))){
@@ -1184,7 +1184,7 @@ catch (  Exception e) {
   cin.close();
   cout.close();
 }"
-19,"public static void main(String... orange) throws Exception {
+21,"public static void main(String... orange) throws Exception {
   Scanner input=new Scanner(System.in);
   int numCases=input.nextInt();
   for (int n=0; n < numCases; n++) {
@@ -1232,5 +1232,5 @@ catch (  Exception e) {
   }
   out.close();
 }"
-21,public static void main(String[] args)
-22,Public static void main (String[] args)
+22,public static void main(String[] args)
+19,Public static void main (String[] args)

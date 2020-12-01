@@ -14,7 +14,7 @@ def importWordVocab(path):
     global word2vec
     global max_token
     global searcher
-    db = DictDatabase(CharacterNgramFeatureExtractor(3))
+    db = DictDatabase(CharacterNgramFeatureExtractor(2))
     model = Word2Vec.load(path).wv
     word2vec = model.vocab
     max_token = model.syn0.shape[0]
