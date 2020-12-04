@@ -96,6 +96,7 @@ class Pipeline:
     def read_pairs(self, filename):
         parse_error = list(self.sources[self.sources['code'].isin(['parseError'])].id)
         pairs = pd.read_pickle(self.root+self.language+'/'+filename)
+        pairs = pairs[~pairs["label"].astype(str).str.contains("ERROR")].dropna(how='any')
         pairs = pairs[(~pairs['id1'].isin(parse_error)) & (~pairs['id2'].isin(parse_error))].dropna(how='any')
         self.pairs = pairs
         if cross_project != None:
@@ -117,7 +118,7 @@ class Pipeline:
         val_split = train_split + int(ratios[1]/sum(ratios)*data_num)
 
         data = data.sample(frac=1, random_state=666)
-        train = data.iloc[:train_split]
+        train = data.iloc[:]
         dev = data.iloc[train_split:val_split]
         test = data.iloc[val_split:]
 
@@ -358,11 +359,11 @@ class Pipeline:
         if self.language in 'c':
             self.read_pairs('oj_clone_ids.pkl')
         elif self.language in 'java':
-            self.read_pairs('bcb_pair_simast_balanced.pkl')
+            self.read_pairs('bcb_pair_simast.pkl')
         elif self.language in 'oreo':
             self.read_pairs('oreo_pair_sim.pkl')
         elif self.language in 'sesame':
-            self.read_pairs('sesame_pair_simast.pkl')
+            self.read_pairs('sesame_pair_ids.pkl')
         else:
             self.read_pairs('{}_pair_ids.pkl'.format(self.language))
         print('split data...')
