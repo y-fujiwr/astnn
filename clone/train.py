@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import re
 from getCodeMetrics import getMetricsVec
 import javalang
-from uploader import upload
+#from uploader import upload
 warnings.filterwarnings('ignore')
 
 source = None
@@ -259,4 +259,4 @@ if __name__ == '__main__':
     os.makedirs("model", exist_ok=True)
     modelname = "model/{}_{}_{}.model".format(lang,args.regression,args.model)
     torch.save(model.state_dict(), modelname)
-    upload("model",modelname)
+    #upload("model",modelname)

@@ -11,12 +11,16 @@ This repository includes the code and experimental data in the paper entitled "A
 + javalang 0.11.0<br>
 + RAM 16GB or more
 + BATCH_SIZE should be configured based on the memory size
++ tqdm
++ simstring
 
 ### How to install
 Install all the dependent packages via conda and pip:
 
-	$ conda install pandas scikit-learn pycparser paramiko -c anaconda gensim
+	$ conda install pandas scikit-learn pycparser paramiko tqdm
+	$ conda install -c anaconda gensim
 	$ pip install --no-deps javalang
+	$ pip install --no-deps simstring-pure
  
 Install pytorch: 
 
