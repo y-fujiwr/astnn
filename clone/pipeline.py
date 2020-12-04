@@ -276,8 +276,9 @@ class Pipeline:
             if 'label' in trees_cross.columns:
                 trees_cross.drop('label', axis=1, inplace=True)
             self.blocks_cross = trees_cross
-        with open(self.root+self.language+'/train/embedding/node_trigram','wb') as f:
-            np.save(self.root+self.language+'/train/embedding/node_trigram',node_vector)
+        if vec == "trigram":
+            with open(self.root+self.language+'/train/embedding/node_trigram','wb') as f:
+                np.save(self.root+self.language+'/train/embedding/node_trigram',node_vector)
 
     # merge pairs
     def merge(self,data_path,part):
