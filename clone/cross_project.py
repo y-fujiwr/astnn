@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import re
 from getCodeMetrics import getMetricsVec
 import javalang
-from uploader import upload
+#from uploader import upload
 warnings.filterwarnings('ignore')
 
 source = None
@@ -96,7 +96,7 @@ if __name__ == '__main__':
         categories = 12
     elif lang in "sesame":
         categories = 2
-    print("Train for ", str.upper(lang))
+    print("Test for ", str.upper(lang))
     test_data = pd.read_pickle(root+lang+'/cross_test/{}'.format(args.testfile)).sample(frac=1)
     #word2vec
     
@@ -222,4 +222,4 @@ if __name__ == '__main__':
         """
 
     #print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
-    upload("result",resultdir[:-1])
+    #upload("result",resultdir[:-1])
