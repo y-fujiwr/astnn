@@ -5,7 +5,7 @@ import numpy as np
 import warnings
 from gensim.models.word2vec import Word2Vec
 from model import BatchProgramCC
-from my_model import LSTM, BiLSTM, DNN
+from my_model import LSTM, BiLSTM, DNN, LSTM_ngram
 from torch.autograd import Variable
 from sklearn.metrics import precision_recall_fscore_support,roc_curve,roc_auc_score
 import os
@@ -32,11 +32,16 @@ def get_batch(dataset, idx, bs):
     tmp = dataset.iloc[idx: idx+bs]
     x1, x2, labels, id1, id2 = [], [], [], [], []
     for _, item in tmp.iterrows():
-        if args.model in ["lstm","bilstm"]:
+        if args.vector in ["trigram","monogram"]:
+            code_x = re.sub("[\[\],\"\']","",str(item["code_x"])).split()
+            code_y = re.sub("[\[\],\"\']","",str(item["code_y"])).split()
+
+        elif args.model in ["lstm","bilstm"]:
             code_x = list(map(int,re.sub("[\[\],]","",str(item["code_x"])).split()))
             code_y = list(map(int,re.sub("[\[\],]","",str(item["code_y"])).split()))
             code_x = [min(i,MAX_TOKENS) for i in code_x]
             code_y = [min(i,MAX_TOKENS) for i in code_y]
+
         elif args.model in ["dnn"]:
             try:
                 code_x = get_metrics(item["id1"])
@@ -108,9 +113,11 @@ if __name__ == '__main__':
         EMBEDDING_DIM = 256
     #trigram
     elif args.vector == "trigram":
-        embeddings = np.load(root+lang+"/train/embedding/node_trigram.npy").astype(np.float32)
-        MAX_TOKENS = len(embeddings)-1
+        # embeddings = np.load(root+lang+"/train/embedding/node_trigram.npy").astype(np.float32)
+        # MAX_TOKENS = len(embeddings)-1
         EMBEDDING_DIM = 18929
+    elif args.vector == "monogram":
+        EMBEDDING_DIM = 26
 
     HIDDEN_DIM = 128
     ENCODE_DIM = 128
@@ -121,7 +128,9 @@ if __name__ == '__main__':
         USE_GPU = False
     else:
         USE_GPU = True
-    if args.model == "astnn":
+    if args.vector in ["trigram","monogram"]:
+        model = LSTM_ngram(HIDDEN_DIM,LABELS,BATCH_SIZE,args.vector,USE_GPU)
+    elif args.model == "astnn":
         model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
     elif args.model == "lstm":
@@ -184,13 +193,13 @@ if __name__ == '__main__':
 
                 model.zero_grad()
                 model.batch_size = len(train_labels)
-                if args.model == "astnn":
+                if args.model == "astnn" and args.vector not in ["monogram","trigram"]:
                     model.hidden = model.init_hidden()
                 output = model(train1_inputs, train2_inputs)
                 loss = loss_function(output, Variable(train_labels))
                 loss.backward()
                 optimizer.step()
-            """
+            
             print("Testing-%d..."%t)
             # testing procedure
             predicts = []
@@ -206,13 +215,13 @@ if __name__ == '__main__':
                 if USE_GPU:
                     test_labels = test_labels.cuda()
                 model.batch_size = len(test_labels)
-                model.hidden = model.init_hidden()
+                #model.hidden = model.init_hidden()
                 output = model(test1_inputs, test2_inputs)
 
                 loss = loss_function(output, Variable(test_labels))
 
                 # calc testing acc
-                outputs.extend(output.data.numpy())
+                outputs.extend(output.data.cpu().numpy())
                 predicted = (output.data > 0.5).cpu().numpy()
                 predicts.extend(predicted)
                 if args.regression:
@@ -222,7 +231,7 @@ if __name__ == '__main__':
                 total += len(test_labels)
                 total_loss += loss.data[0] * len(test_labels)
                 for j in range(len(predicted)):
-                    result.write("{},{},{},{},{}\n".format(id1_batch[j],id2_batch[j],test_labels.cpu().numpy()[j],predicted[j],output.data.numpy()[j]))
+                    result.write("{},{},{},{},{}\n".format(id1_batch[j],id2_batch[j],test_labels.cpu().numpy()[j],predicted[j],output.data.cpu().numpy()[j]))
 
             if args.regression:
                 fpr,tpr,thresholds = roc_curve(trues,outputs)
@@ -253,7 +262,7 @@ if __name__ == '__main__':
                 precision, recall, f1, _ = precision_recall_fscore_support(trues, predicts, average='binary')
             #result = pd.DataFrame(trues,columns=['trues']).join(pd.DataFrame(predicts,columns=['predicts']))
             #result.to_csv("data/{}/log/Type-{}.csv".format(lang,t))
-            """
+            
 
     #print("Total testing results(P,R,F1):%.3f, %.3f, %.3f" % (precision, recall, f1))
     os.makedirs("model", exist_ok=True)

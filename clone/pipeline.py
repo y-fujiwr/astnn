@@ -13,7 +13,8 @@ import javalang
 import lsi
 from matching_w2v_vocab import importWordVocab, searchVocab
 import pickle
-from trigram import signdict, getVector
+from trigram import signdict
+import monogram
 
 cross_only = False
 cross_project = None
@@ -208,8 +209,6 @@ class Pipeline:
                 embeddings = lsi_model.get_topics().T
                 embeddings = np.append(embeddings, [[0.0]*size], axis=0)
                 np.save(f'{data_path}train/embedding/vec_lsi_{size}', embeddings)
-            elif vec == "trigram":
-                pass
 
     # generate block sequences with index representations
     def generate_block_seqs(self):
@@ -229,10 +228,6 @@ class Pipeline:
         elif vec == "lsi":
             with open(f"{self.root}{self.language}/train/embedding/dictionary_lsi_{self.size}.pickle","rb") as fi:
                 lsi_dict = pickle.load(fi)
-        elif vec == "trigram":
-            node_dict = {}
-            node_vector = []
-
         def tree_to_index(node):
             token = node.token
             #word2vec
@@ -242,15 +237,8 @@ class Pipeline:
             elif vec=="lsi":
                 result = [lsi_dict[token] if token in lsi_dict else max_token]
             #trigram
-            elif vec == "trigram":
-                t = signdict[token] if token in signdict.keys() else token
-                if t in node_dict.keys():
-                    result = [node_dict[t]]
-                else:
-                    result = [len(node_vector)]
-                    node_dict[t] = len(node_vector)
-                    node_vector.append(getVector(t))
-
+            elif vec in ["trigram","monogram"]:
+                result = [signdict[token] if token in signdict.keys() else token]
 
             children = node.children
             for child in children:
@@ -277,9 +265,6 @@ class Pipeline:
             if 'label' in trees_cross.columns:
                 trees_cross.drop('label', axis=1, inplace=True)
             self.blocks_cross = trees_cross
-        if vec == "trigram":
-            with open(self.root+self.language+'/train/embedding/node_trigram','wb') as f:
-                np.save(self.root+self.language+'/train/embedding/node_trigram',node_vector)
 
     # merge pairs
     def merge(self,data_path,part):
