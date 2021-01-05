@@ -46,7 +46,7 @@ if len(sys.argv) > 2:
 before_f = -1.0
 f = 0.0
 threshold = 0.5
-for threshold in [0.5]:#np.arange(0.01, 0.1, 0.01):
+for threshold in [0.1]:#np.arange(0.01, 0.1, 0.01):
 #while True:#before_f <= f:
     before_f = f
     TruePositive = len(data[(data["trues"]==1) & (data["scores"]>=threshold)])

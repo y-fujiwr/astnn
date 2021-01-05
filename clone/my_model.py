@@ -5,6 +5,7 @@ from torch.autograd import Variable
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 import trigram
 import monogram
+import bigram
 import numpy as np
 
 class LSTM(nn.Module):
@@ -124,7 +125,7 @@ class DNN(nn.Module):
         return y
 
 class LSTM_ngram(nn.Module):
-    def __init__(self, hidden_dim, label_size, batch_size, ngram, use_gpu=True):
+    def __init__(self, embedding_dim, hidden_dim, label_size, batch_size, ngram, use_gpu=True):
         super(LSTM_ngram,self).__init__()
         self.vector = None
         self.hidden_dim = hidden_dim
@@ -132,12 +133,13 @@ class LSTM_ngram(nn.Module):
         self.label_size = label_size
         self.batch_size = batch_size
         self.th = torch.cuda if use_gpu else torch
+        self.embedding_dim = embedding_dim
         if ngram == "monogram":
-            self.embedding_dim = 26
             self.ngram = monogram
         elif ngram == "trigram":
-            self.embedding_dim =18929
             self.ngram = trigram
+        elif ngram == "bigram":
+            self.ngram = bigram
         self.lstm = nn.LSTM(self.embedding_dim, self.hidden_dim, dropout=0.2)
         self.hidden = nn.Linear(self.hidden_dim, self.label_size)
     

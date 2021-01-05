@@ -237,7 +237,7 @@ class Pipeline:
             elif vec=="lsi":
                 result = [lsi_dict[token] if token in lsi_dict else max_token]
             #trigram
-            elif vec in ["trigram","monogram"]:
+            elif vec in ["trigram","monogram","bigram"]:
                 result = [signdict[token] if token in signdict.keys() else token]
 
             children = node.children

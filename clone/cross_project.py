@@ -5,7 +5,7 @@ import numpy as np
 import warnings
 from gensim.models.word2vec import Word2Vec
 from model import BatchProgramCC
-from my_model import LSTM,BiLSTM,DNN
+from my_model import LSTM,BiLSTM,DNN,LSTM_ngram
 from torch.autograd import Variable
 from sklearn.metrics import precision_recall_fscore_support,roc_curve,roc_auc_score
 import os
@@ -33,7 +33,11 @@ def get_batch(dataset, idx, bs):
     tmp = dataset.iloc[idx: idx+bs]
     x1, x2, labels, id1, id2 = [], [], [], [], []
     for _, item in tmp.iterrows():
-        if args.model in ["lstm","bilstm"]:
+        if args.vector in ["trigram","monogram","bigram"]:
+            code_x = re.sub("[\[\],\"\']","",str(item["code_x"])).split()
+            code_y = re.sub("[\[\],\"\']","",str(item["code_y"])).split()
+
+        elif args.model in ["lstm","bilstm"]:
             code_x = list(map(int,re.sub("[\[\],]","",str(item["code_x"])).split()))
             code_y = list(map(int,re.sub("[\[\],]","",str(item["code_y"])).split()))
             code_x = [min(i,MAX_TOKENS) for i in code_x]
@@ -65,9 +69,11 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Choose a dataset:[c|java|gcj]")
     parser.add_argument('--lang')
+    parser.add_argument('-g','--gpu', action='store_true')
     parser.add_argument('-r','--regression', action='store_true')
     parser.add_argument('-t','--testfile', type=str , default="blocks.pkl")
     parser.add_argument('-m','--model',type=str,default="astnn")
+    parser.add_argument('-v','--vector',type=str,default="w2v",help="choose: [w2v|lsi|trigram]")
     args = parser.parse_args()
     if not args.lang:
         print("No specified dataset")
@@ -97,28 +103,42 @@ if __name__ == '__main__':
     elif lang in "sesame":
         categories = 2
     print("Test for ", str.upper(lang))
-    test_data = pd.read_pickle(root+lang+'/cross_test/{}'.format(args.testfile)).sample(frac=1)
+    test_data = pd.read_pickle(root+lang+'/cross_test/{}.pkl'.format(args.testfile)).sample(frac=1)
+    test_data = test_data[~(test_data['code_x'] == "[]") & ~(test_data['code_y'] == "[]")]
+
     #word2vec
+    if args.vector == "w2v":
+        word2vec = Word2Vec.load(root+lang+"/train/embedding/node_w2v_128").wv
+        MAX_TOKENS = word2vec.syn0.shape[0]
+        EMBEDDING_DIM = word2vec.syn0.shape[1]
+        embeddings = np.zeros((MAX_TOKENS + 1, EMBEDDING_DIM), dtype="float32")
+        embeddings[:word2vec.syn0.shape[0]] = word2vec.syn0
     
-    word2vec = Word2Vec.load(root+lang+"/train/embedding/node_w2v_128").wv
-    MAX_TOKENS = word2vec.syn0.shape[0]
-    EMBEDDING_DIM = word2vec.syn0.shape[1]
-    embeddings = np.zeros((MAX_TOKENS + 1, EMBEDDING_DIM), dtype="float32")
-    embeddings[:word2vec.syn0.shape[0]] = word2vec.syn0
-    """
     #lsi
-    embeddings = np.load(root+lang+"/train/embedding/vec_lsi_128.npy").astype(np.float32)
-    MAX_TOKENS = len(embeddings)
-    EMBEDDING_DIM = 128
-    """
+    elif args.vector == "lsi":
+        embeddings = np.load(root+lang+"/train/embedding/vec_lsi_256.npy").astype(np.float32)
+        MAX_TOKENS = len(embeddings)
+        EMBEDDING_DIM = 256
+    #trigram
+    elif args.vector == "trigram":
+        EMBEDDING_DIM = 18929
+    elif args.vector == "monogram":
+        EMBEDDING_DIM = 26
+    elif args.vector == "bigram":
+        EMBEDDING_DIM = 728
 
     HIDDEN_DIM = 128
     ENCODE_DIM = 128
     LABELS = 1
     EPOCHS = 10
     BATCH_SIZE = 32
-    USE_GPU = False
-    if args.model == "astnn":
+    if args.gpu == False:
+        USE_GPU = False
+    else:
+        USE_GPU = True
+    if args.vector in ["trigram","monogram","bigram"]:
+        model = LSTM_ngram(EMBEDDING_DIM,HIDDEN_DIM,LABELS,BATCH_SIZE,args.vector,USE_GPU)
+    elif args.model == "astnn":
         model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
     elif args.model == "lstm":
@@ -129,6 +149,9 @@ if __name__ == '__main__':
                                    USE_GPU, embeddings)
     elif args.model == "dnn":
         model = DNN(LABELS,BATCH_SIZE,USE_GPU)
+    else:
+        print("No support")
+        exit()
     model_name = "{}_{}_{}.model".format(lang,args.regression,args.model)
     model.load_state_dict(torch.load(f"model/{model_name}"))
     if USE_GPU:
@@ -171,13 +194,13 @@ if __name__ == '__main__':
                 test_labels = test_labels.cuda()
 
             model.batch_size = len(test_labels)
-            if args.model == "astnn":
+            if args.model == "astnn" and args.vector not in ["monogram","bigram","trigram"]:
                 model.hidden = model.init_hidden()
             try:
                 output = model(test1_inputs, test2_inputs)
                 # calc testing acc
                 predicted = (output.data > 0.5).cpu().numpy()
-                scores.extend(output.data.numpy())
+                scores.extend(output.data.cpu().numpy())
                 """
                 id1.extend(id1_batch)
                 id2.extend(id2_batch)
@@ -185,7 +208,7 @@ if __name__ == '__main__':
                 trues.extend(test_labels.cpu().numpy())
                 predicts.extend(predicted)
                 for j in range(len(predicted)):
-                    result.write("{},{},{},{},{}\n".format(id1_batch[j],id2_batch[j],test_labels.cpu().numpy()[j],predicted[j],output.data.numpy()[j]))
+                    result.write("{},{},{},{},{}\n".format(id1_batch[j],id2_batch[j],test_labels.cpu().numpy()[j],predicted[j],output.data.cpu().numpy()[j]))
             except ValueError as e:
                 print(e)
                 print(f"{id1_batch},{id2_batch}")

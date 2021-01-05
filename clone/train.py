@@ -32,7 +32,7 @@ def get_batch(dataset, idx, bs):
     tmp = dataset.iloc[idx: idx+bs]
     x1, x2, labels, id1, id2 = [], [], [], [], []
     for _, item in tmp.iterrows():
-        if args.vector in ["trigram","monogram"]:
+        if args.vector in ["trigram","monogram","bigram"]:
             code_x = re.sub("[\[\],\"\']","",str(item["code_x"])).split()
             code_y = re.sub("[\[\],\"\']","",str(item["code_y"])).split()
 
@@ -113,11 +113,11 @@ if __name__ == '__main__':
         EMBEDDING_DIM = 256
     #trigram
     elif args.vector == "trigram":
-        # embeddings = np.load(root+lang+"/train/embedding/node_trigram.npy").astype(np.float32)
-        # MAX_TOKENS = len(embeddings)-1
         EMBEDDING_DIM = 18929
     elif args.vector == "monogram":
         EMBEDDING_DIM = 26
+    elif args.vector == "bigram":
+        EMBEDDING_DIM = 728
 
     HIDDEN_DIM = 128
     ENCODE_DIM = 128
@@ -128,8 +128,8 @@ if __name__ == '__main__':
         USE_GPU = False
     else:
         USE_GPU = True
-    if args.vector in ["trigram","monogram"]:
-        model = LSTM_ngram(HIDDEN_DIM,LABELS,BATCH_SIZE,args.vector,USE_GPU)
+    if args.vector in ["trigram","monogram","bigram"]:
+        model = LSTM_ngram(EMBEDDING_DIM,HIDDEN_DIM,LABELS,BATCH_SIZE,args.vector,USE_GPU)
     elif args.model == "astnn":
         model = BatchProgramCC(EMBEDDING_DIM,HIDDEN_DIM,MAX_TOKENS+1,ENCODE_DIM,LABELS,BATCH_SIZE,
                                    USE_GPU, embeddings)
@@ -193,7 +193,7 @@ if __name__ == '__main__':
 
                 model.zero_grad()
                 model.batch_size = len(train_labels)
-                if args.model == "astnn" and args.vector not in ["monogram","trigram"]:
+                if args.model == "astnn" and args.vector not in ["monogram","bigram","trigram"]:
                     model.hidden = model.init_hidden()
                 output = model(train1_inputs, train2_inputs)
                 loss = loss_function(output, Variable(train_labels))

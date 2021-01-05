@@ -57,9 +57,7 @@ def calculate_index(s):
 def alpha2num(alpha):
     num=0
     for index, item in enumerate(list(alpha)):
-        print(index,item)
         num += pow(26,len(alpha)-index-1)*(ord(item)-ord('a'))
-        print(num)
     return num
 
 def getVector(string):
