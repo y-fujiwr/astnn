@@ -71,7 +71,7 @@ if __name__ == '__main__':
     parser.add_argument('--lang')
     parser.add_argument('-g','--gpu', action='store_true')
     parser.add_argument('-r','--regression', action='store_true')
-    parser.add_argument('-t','--testfile', type=str , default="blocks.pkl")
+    parser.add_argument('-t','--testfile', type=str , default="sample")
     parser.add_argument('-m','--model',type=str,default="astnn")
     parser.add_argument('-v','--vector',type=str,default="w2v",help="choose: [w2v|lsi|trigram]")
     args = parser.parse_args()

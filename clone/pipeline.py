@@ -15,6 +15,11 @@ from matching_w2v_vocab import importWordVocab, searchVocab
 import pickle
 from trigram import signdict
 import monogram
+from bigram import getVector
+from notify import notify
+import atexit
+text = " ".join(sys.argv)
+atexit.register(notify, f'【悲報】産総研の業務で動かしているスクリプト: {text} がエラーで終了しました。')
 
 cross_only = False
 cross_project = None
@@ -102,7 +107,7 @@ class Pipeline:
         self.pairs = pairs
         if cross_project != None:
             if self.language in 'java':
-                pairs_cross = pd.read_pickle(self.root+f"{cross_project}/{cross_project}_pair_ids.pkl")
+                pairs_cross = pd.read_pickle(self.root+f"{cross_project}/{cross_project}_pair_ids_real.pkl")
                 self.pairs_cross = pairs_cross
             elif self.language in 'gcj':
                 pairs_cross = pd.read_pickle(self.root+"java/bcb_pair_ids.pkl")
@@ -228,6 +233,14 @@ class Pipeline:
         elif vec == "lsi":
             with open(f"{self.root}{self.language}/train/embedding/dictionary_lsi_{self.size}.pickle","rb") as fi:
                 lsi_dict = pickle.load(fi)
+        #bigram in astnn
+        elif vec == "bigram_astnn":
+            dict_path = f"{self.root}{self.language}/train/embedding/dictionary_bigram"
+            if os.path.exists(dict_path):
+                with open(dict_path) as fi:
+                    bigram_dict = pickle.load(fi)
+            else:
+                bigram_dict = {}
         def tree_to_index(node):
             token = node.token
             #word2vec
@@ -239,7 +252,13 @@ class Pipeline:
             #trigram
             elif vec in ["trigram","monogram","bigram"]:
                 result = [signdict[token] if token in signdict.keys() else token]
-
+            elif vec == "bigram_astnn":
+                token = signdict[token] if token in signdict.keys() else token
+                if token in bigram_dict.keys():
+                    result = [bigram_dict[token]]
+                else:
+                    result = [len(bigram_dict)]
+                    bigram_dict[token] = len(bigram_dict)
             children = node.children
             for child in children:
                 result.append(tree_to_index(child))
@@ -265,6 +284,13 @@ class Pipeline:
             if 'label' in trees_cross.columns:
                 trees_cross.drop('label', axis=1, inplace=True)
             self.blocks_cross = trees_cross
+        if vec == "bigram_astnn":
+            embeddings = np.zeros((len(bigram_dict),728))
+            for k in bigram_dict.keys():
+                embeddings[bigram_dict[k]] = getVector(k)
+            np.save(self.root+self.language+'/'+f'train/embedding/vec_bigram_astnn', embeddings)
+            with open(dict_path,"wb") as fo:
+                pickle.dump(dict_path, fo)
 
     # merge pairs
     def merge(self,data_path,part):
@@ -333,8 +359,8 @@ class Pipeline:
         df.drop(['id_x', 'id_y'], axis=1,inplace=True)
         df.dropna(inplace=True)
 
-        df.to_pickle(self.root+self.language+'/'+part+f'/{cross_project}_{vec}.pkl')
-        df.to_csv(self.root+self.language+'/'+part+f'/blocks.csv')
+        df.to_pickle(self.root+self.language+'/'+part+f'/{cross_project}_{vec}_real.pkl')
+        df.to_csv(self.root+self.language+'/'+part+f'/{cross_project}_{vec}_real.csv')
 
     # run for processing data to train
     def run(self):
@@ -392,3 +418,5 @@ elif args.lang in 'java':
 else:
     ppl = Pipeline('8:1:1', 'data/', str(args.lang))
 ppl.run()
+atexit.unregister(notify)
+atexit.register(notify,f"産総研で実行しているスクリプト: {text} が正常に終了しました．")

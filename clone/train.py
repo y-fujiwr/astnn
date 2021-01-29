@@ -13,6 +13,11 @@ import matplotlib.pyplot as plt
 import re
 from getCodeMetrics import getMetricsVec
 import javalang
+from notify import notify
+import atexit
+import sys
+text = " ".join(sys.argv)
+atexit.register(notify, f'【悲報】産総研の業務で動かしているスクリプト: {text} がエラーで終了しました。')
 #from uploader import upload
 warnings.filterwarnings('ignore')
 
@@ -118,6 +123,10 @@ if __name__ == '__main__':
         EMBEDDING_DIM = 26
     elif args.vector == "bigram":
         EMBEDDING_DIM = 728
+    elif args.vector == "bigram_astnn":
+        embeddings = np.load(root+lang+"/train/embedding/vec_bigram_astnn.npy").astype(np.float32)
+        MAX_TOKENS = len(embeddings)-1
+        EMBEDDING_DIM = 728
 
     HIDDEN_DIM = 128
     ENCODE_DIM = 128
@@ -215,7 +224,8 @@ if __name__ == '__main__':
                 if USE_GPU:
                     test_labels = test_labels.cuda()
                 model.batch_size = len(test_labels)
-                #model.hidden = model.init_hidden()
+                if args.model == "astnn":
+                    model.hidden = model.init_hidden()
                 output = model(test1_inputs, test2_inputs)
 
                 loss = loss_function(output, Variable(test_labels))
@@ -269,3 +279,6 @@ if __name__ == '__main__':
     modelname = "model/{}_{}_{}.model".format(lang,args.regression,args.model)
     torch.save(model.state_dict(), modelname)
     #upload("model",modelname)
+    atexit.unregister(notify)
+    atexit.register(notify,f"産総研で実行しているスクリプト: {text} が正常に終了しました．")
+    

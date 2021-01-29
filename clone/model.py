@@ -4,7 +4,6 @@ import torch
 from torch.autograd import Variable
 import random
 
-
 class BatchTreeEncoder(nn.Module):
     def __init__(self, vocab_size, embedding_dim, encode_dim, batch_size, use_gpu, pretrained_weight=None):
         super(BatchTreeEncoder, self).__init__()
@@ -53,8 +52,9 @@ class BatchTreeEncoder(nn.Module):
                             children[j].append(temp[j])
             # else:
             #     batch_index[i] = -1
+        node_vectors = self.embedding(Variable(self.th.LongTensor(current_node)))
         batch_current = self.W_c(batch_current.index_copy(0, Variable(self.th.LongTensor(index)),
-                                                          self.embedding(Variable(self.th.LongTensor(current_node)))))
+                                                          node_vectors))
 
         for c in range(len(children)):
             zeros = self.create_tensor(Variable(torch.zeros(size, self.encode_dim)))

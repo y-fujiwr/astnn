@@ -5,9 +5,9 @@ import os
 
 target = "csn"
 
-pairs = pd.read_pickle(f"data/java/cross_test/{target}.pkl").sample(frac=1)
-funcs = pd.read_csv(f"data/csn/{target}_funcs_all.csv")
-answer_frame = pd.DataFrame(columns=["id1","id2","label","answer"])
+pairs = pd.read_csv(f"data/{target}/{target}_must_check.pkl").sample(frac=1)
+funcs = pd.read_csv(f"data/{target}/{target}_funcs_all.csv")
+answer_frame = pd.DataFrame(columns=["id1","id2","label"])
 inadequate_data = pd.DataFrame()
 if os.path.isfile(f"shuf_pair_{target}.pkl"):
     pairs = pd.read_pickle(f"shuf_pair_{target}.pkl")
@@ -29,13 +29,13 @@ code2 = tkinter.Text(main_frm, width=110)
 
 def app_clone():
     global answer_frame
-    answer_frame = answer_frame.append(pd.Series([pairs.iloc[pointer]["id1"],pairs.iloc[pointer]["id2"],pairs.iloc[pointer]["label"],1], index=answer_frame.columns), ignore_index=True)
+    answer_frame = answer_frame.append(pd.Series([pairs.iloc[pointer]["id1"],pairs.iloc[pointer]["id2"],1], index=answer_frame.columns), ignore_index=True)
     next_pair()
 
 
 def app_notclone():
     global answer_frame
-    answer_frame = answer_frame.append(pd.Series([pairs.iloc[pointer]["id1"],pairs.iloc[pointer]["id2"],pairs.iloc[pointer]["label"],0], index=answer_frame.columns), ignore_index=True)
+    answer_frame = answer_frame.append(pd.Series([pairs.iloc[pointer]["id1"],pairs.iloc[pointer]["id2"],0], index=answer_frame.columns), ignore_index=True)
     next_pair()
 
 def app_inadequate():
@@ -48,10 +48,7 @@ def app_exit():
     pairs.drop(range(pointer)).reset_index(drop=True).to_pickle(f"shuf_pair_{target}.pkl")
     inadequate_data.to_csv(f"inadequate_data_{target}.csv", index=False)
     answer_frame.to_csv(f"answers_{target}.csv", index=False)
-    TP = len(answer_frame[(answer_frame["label"]>0) & (answer_frame["answer"]==1)])
-    TF = len(answer_frame[(answer_frame["label"]==0) & (answer_frame["answer"]==0)])
-    precision = (TP+TF)/len(answer_frame)
-    messagebox.showinfo("save",f"precision:{precision}")
+    messagebox.showinfo("save")
 
 def next_pair():
     global pointer

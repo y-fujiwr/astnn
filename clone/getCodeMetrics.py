@@ -6,13 +6,14 @@ def getMetricsVec(code):
     tokens = javalang.tokenizer.tokenize(code)
     parser = javalang.parser.Parser(tokens)
     tree = parser.parse_member_declaration()
-
+    print(tree)
     def trans_to_sequences(ast):
         sequence = []
         func(ast, sequence)
         return sequence
 
     corpus = trans_to_sequences(tree)
+    return corpus
     c = Counter(corpus)
     numVariablesDeclared = c["VariableDeclarator"]
     numOperands = c["BinaryOperation"]*2+c["TernaryExpression"]*3+c["++"]+c["--"]+c["!"]+c["~"]
@@ -24,3 +25,7 @@ def getMetricsVec(code):
     numExceptRefer = c["CatchClause"]
     cyclomaticNumber = c["IfStatement"]+c["WhileStatement"]+c["ForStatement"]+c["TryStatement"]+c["SwitchStatementCase"]
     return [numVariablesDeclared,numOperators,numArgs,numExpressions,numOperands,numLoops,numExceptThrown,numExceptRefer,cyclomaticNumber]
+
+if __name__ == "__main__":
+    string = open(sys.argv[1]).read()
+    print(getMetricsVec(string))
