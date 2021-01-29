@@ -5,14 +5,15 @@ import os
 
 target = "csn"
 
-pairs = pd.read_csv(f"data/{target}/{target}_must_check.pkl").sample(frac=1)
+pairs = pd.read_csv(f"data/{target}/{target}_must_check.csv")
 funcs = pd.read_csv(f"data/{target}/{target}_funcs_all.csv")
 answer_frame = pd.DataFrame(columns=["id1","id2","label"])
 inadequate_data = pd.DataFrame()
-if os.path.isfile(f"shuf_pair_{target}.pkl"):
-    pairs = pd.read_pickle(f"shuf_pair_{target}.pkl")
-    answer_frame = pd.read_csv(f"answers_{target}.csv")
-    inadequate_data = pd.read_csv(f"inadequate_data_{target}.csv")
+if os.path.isfile(f"data/{target}/answers_{target}.csv"):
+    answer_frame = pd.read_csv(f"data/{target}/answers_{target}.csv")
+    answerd = answer_frame.drop("label",axis=1)
+    pairs = pairs.append(answerd).drop_duplicates(keep=False)
+    #inadequate_data = pd.read_csv(f"data/{target}/inadequate_data_{target}.csv")
 
 pointer = 0
 #print(pairs.iloc[0])
@@ -45,9 +46,9 @@ def app_inadequate():
 
 def app_exit():
     global inadequate_data
-    pairs.drop(range(pointer)).reset_index(drop=True).to_pickle(f"shuf_pair_{target}.pkl")
-    inadequate_data.to_csv(f"inadequate_data_{target}.csv", index=False)
-    answer_frame.to_csv(f"answers_{target}.csv", index=False)
+    #pairs.drop(range(pointer)).reset_index(drop=True).to_pickle(f"data/{target}/shuf_pair_{target}.pkl")
+    #inadequate_data.to_csv(f"data/{target}/inadequate_data_{target}.csv", index=False)
+    answer_frame.to_csv(f"data/{target}/answers_{target}.csv", index=False)
     messagebox.showinfo("save")
 
 def next_pair():
